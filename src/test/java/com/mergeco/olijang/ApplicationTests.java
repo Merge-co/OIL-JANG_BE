@@ -1,4 +1,4 @@
-package com.olijang;
+package com.mergeco.olijang;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
