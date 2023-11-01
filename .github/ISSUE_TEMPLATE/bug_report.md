@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: "[BE] [BUG] 날짜 업무명 "
 labels: bug
-assignees: minbumKIM0501, somang1206, costudying, ksostuft, lSuns
+assignees: costudying, ksostuft, lSuns, minbumKIM0501, somang1206
 
 ---
 

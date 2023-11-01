@@ -1,20 +1,21 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+title: "[FE] [FEATURE] 날짜 업무명"
+labels: enhancement
+assignees: minbumKIM0501, somang1206, costudying, ksostuft, lSuns
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## 설명
+* * *
+설명을 작성하세요.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## To-do
+* * *
+- [ ] todo
+- [ ] todo
+- [ ] todo
+- [ ] todo
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## ETC
