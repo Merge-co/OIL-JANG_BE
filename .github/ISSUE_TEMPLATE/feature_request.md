@@ -1,9 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: "[FE] [FEATURE] 날짜 업무명"
+title: "[BE] [FEATURE] 날짜 업무명"
 labels: enhancement
-assignees: minbumKIM0501, somang1206, costudying, ksostuft, lSuns
+assignees: costudying, ksostuft, lSuns, minbumKIM0501, somang1206
 
 ---
 
