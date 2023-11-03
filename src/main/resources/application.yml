@@ -1,0 +1,43 @@
+server:
+  port: 8000
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql.coffit.today:3306/oiljang
+    username: HIkdt6
+    password: HIkdt6
+
+  security:
+    oauth2:
+      client:
+        registration:
+
+          google:
+            client-id: 634314389152-hvham3k7rguk6i36b190d2adr0pi2ddb.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - profile
+              - email
+
+          naver:
+            client-id: Z3HB6zpnYOQfQxAReRdR
+            client-secret: fn4XxZnxRZ
+            redirect-uri: http://localhost:8000
+            authorization-grant-type: authorization_code
+            scope:
+              - name
+              - email
+              - profile_image
+              - phone
+
+jwt:
+  key: dkfjksjfdkls123kjakljksdfsd98798asd578a
+  time: 9000000000
