@@ -1,8 +1,8 @@
-package com.mergeco.olijang.product;
+package com.mergeco.olijang.product1;
 
-import com.mergeco.olijang.product.dto1.ProductCategoryDTO;
-import com.mergeco.olijang.product.entity1.Product;
-import com.mergeco.olijang.product.service1.ProductService;
+import com.mergeco.olijang.product1.dto1.ProductCategoryDTO;
+import com.mergeco.olijang.product1.entity1.Product;
+import com.mergeco.olijang.product1.service1.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

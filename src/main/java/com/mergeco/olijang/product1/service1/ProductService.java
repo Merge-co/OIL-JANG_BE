@@ -1,11 +1,11 @@
-package com.mergeco.olijang.product.service1;
+package com.mergeco.olijang.product1.service1;
 
-import com.mergeco.olijang.product.dto1.ProductCategoryDTO;
-import com.mergeco.olijang.product.entity1.Product;
-import com.mergeco.olijang.product.entity1.ProductCategory;
-import com.mergeco.olijang.product.repository1.CategoryRepository;
-import com.mergeco.olijang.product.repository1.ProImageRepository;
-import com.mergeco.olijang.product.repository1.ProductRepository;
+import com.mergeco.olijang.product1.dto1.ProductCategoryDTO;
+import com.mergeco.olijang.product1.entity1.Product;
+import com.mergeco.olijang.product1.entity1.ProductCategory;
+import com.mergeco.olijang.product1.repository1.CategoryRepository;
+import com.mergeco.olijang.product1.repository1.ProImageRepository;
+import com.mergeco.olijang.product1.repository1.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.mergeco.olijang.product.dto1;
+package com.mergeco.olijang.product1.dto1;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

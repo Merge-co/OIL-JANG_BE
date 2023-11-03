@@ -1,4 +1,4 @@
-package com.mergeco.olijang.product.dto1;
+package com.mergeco.olijang.product1.dto1;
 
 public class ProductCategoryDTO {
     private int categoryCode;
