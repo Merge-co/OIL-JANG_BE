@@ -1,4 +1,7 @@
 package com.mergeco.olijang.report.repository;
 
-public interface ReportRepository {
+import com.mergeco.olijang.report.entity.Report;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReportRepository extends JpaRepository<Report, Integer> {
 }
