@@ -40,6 +40,56 @@ public class Product {
     @Column(name = "product_sell_status")
     private String productSellStatus;
 
+    public Product productCode(int val) {
+        productCode = val;
+        return this;
+    }
+
+    public Product productName(String val) {
+        productName = val;
+        return this;
+    }
+
+    public Product productPrice(int val) {
+        productPrice = val;
+        return this;
+    }
+
+    public Product productDesc(String val) {
+        productDesc = val;
+        return this;
+    }
+
+    public Product wishPlaceTrade(String val) {
+        wishPlaceTrade = val;
+        return this;
+    }
+
+    public Product enrollDateTime(LocalDateTime val) {
+        enrollDateTime = val;
+        return this;
+    }
+
+    public Product viewCount(int val) {
+        viewCount = val;
+        return this;
+    }
+
+    public Product refUserCode(UUID val) {
+        refUserCode = val;
+        return this;
+    }
+
+    public Product categoryCode(int val) {
+        categoryCode = val;
+        return this;
+    }
+
+    public Product productSellStatus(String val) {
+        productSellStatus = val;
+        return this;
+    }
+
     protected Product() {
     }
 
