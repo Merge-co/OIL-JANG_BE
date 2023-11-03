@@ -1,4 +1,4 @@
-package com.mergeco.olijang.product.dto;
+package com.mergeco.olijang.product.dto1;
 
 public class ProImageInfoDTO {
     private int proImageCode;

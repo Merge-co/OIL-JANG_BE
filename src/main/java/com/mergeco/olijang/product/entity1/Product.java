@@ -1,4 +1,4 @@
-package com.mergeco.olijang.product.entity;
+package com.mergeco.olijang.product.entity1;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
