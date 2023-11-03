@@ -2,7 +2,7 @@ package com.mergeco.olijang.product.entity;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "ProductImageInfo")
 @Table(name = "pro_image_info")
 public class ProImageInfo {
 
@@ -25,6 +25,38 @@ public class ProImageInfo {
 
     @Column(name = "pro_image_origin_addr")
     private String proImageOriginAddr;
+
+    public ProImageInfo proImageCode(int val) {
+        proImageCode = val;
+        return this;
+    }
+
+    public ProImageInfo refProductCode(int val) {
+        refProductCode = val;
+        return this;
+    }
+
+    public ProImageInfo proImageOriginName(String val) {
+        proImageOriginName = val;
+        return this;
+    }
+
+    public ProImageInfo proImageDbName(String val) {
+        proImageDbName = val;
+        return this;
+    }
+
+    public ProImageInfo proImageThumbAddr(String val) {
+        proImageThumbAddr = val;
+        return this;
+    }
+
+    public ProImageInfo proImageOriginAddr(String val) {
+        proImageOriginAddr = val;
+        return this;
+    }
+
+
 
     protected ProImageInfo() {
     }

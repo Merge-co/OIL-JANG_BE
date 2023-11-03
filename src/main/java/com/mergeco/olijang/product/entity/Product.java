@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "Product")
 @Table(name = "product_info")
 public class Product {
 
@@ -22,7 +22,7 @@ public class Product {
     @Column(name = "product_desc")
     private String productDesc;
 
-    @Column(name = "wish_place_trade")
+    @Column(name = "wish_place_to_trade")
     private String wishPlaceTrade;
 
     @Column(name = "enroll_datetime")
@@ -34,11 +34,12 @@ public class Product {
     @Column(name = "ref_user_code")
     private UUID refUserCode;
 
-    @Column(name = "category_code")
-    private int categoryCode;
-
-    @Column(name = "product_sell_status")
+    @Column(name = "sell_status_code")
     private String productSellStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "ref_category_code")
+    private ProductCategory productCategory;
 
     public Product productCode(int val) {
         productCode = val;
@@ -80,11 +81,6 @@ public class Product {
         return this;
     }
 
-    public Product categoryCode(int val) {
-        categoryCode = val;
-        return this;
-    }
-
     public Product productSellStatus(String val) {
         productSellStatus = val;
         return this;
@@ -93,7 +89,7 @@ public class Product {
     protected Product() {
     }
 
-    public Product(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int categoryCode, String productSellStatus) {
+    public Product(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, String productSellStatus, ProductCategory productCategory) {
         this.productCode = productCode;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -102,8 +98,8 @@ public class Product {
         this.enrollDateTime = enrollDateTime;
         this.viewCount = viewCount;
         this.refUserCode = refUserCode;
-        this.categoryCode = categoryCode;
         this.productSellStatus = productSellStatus;
+        this.productCategory = productCategory;
     }
 
     public int getProductCode() {
@@ -138,12 +134,12 @@ public class Product {
         return refUserCode;
     }
 
-    public int getCategoryCode() {
-        return categoryCode;
-    }
-
     public String getProductSellStatus() {
         return productSellStatus;
+    }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
     }
 
     @Override
@@ -157,8 +153,8 @@ public class Product {
                 ", enrollDateTime=" + enrollDateTime +
                 ", viewCount=" + viewCount +
                 ", refUserCode=" + refUserCode +
-                ", categoryCode=" + categoryCode +
                 ", productSellStatus='" + productSellStatus + '\'' +
+                ", productCategory=" + productCategory +
                 '}';
     }
 }

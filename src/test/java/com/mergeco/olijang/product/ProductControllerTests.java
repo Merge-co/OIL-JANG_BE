@@ -1,7 +1,8 @@
 package com.mergeco.olijang.product;
 
-import com.olijang.product.dto.ProductCategoryDTO;
-import com.olijang.product.service.ProductService;
+import com.mergeco.olijang.product.dto.ProductCategoryDTO;
+import com.mergeco.olijang.product.entity.Product;
+import com.mergeco.olijang.product.service.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,12 @@ public class ProductControllerTests {
         List<ProductCategoryDTO> productCategoryList = productService.findCategoryList();
         System.out.println(productCategoryList);
         Assertions.assertNotNull(productCategoryList);
+    }
+
+    @Test
+    void selectProductList() {
+        List<Product> productList = productService.selectProductList();
+        System.out.println(productList);
     }
 
 }
