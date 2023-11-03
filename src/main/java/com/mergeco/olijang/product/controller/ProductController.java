@@ -1,8 +1,8 @@
 package com.mergeco.olijang.product.controller;
 
-import com.olijang.common.restApi.ResponseMessage;
-import com.olijang.product.dto.ProductCategoryDTO;
-import com.olijang.product.service.ProductService;
+import com.mergeco.olijang.common.restApi.ResponseMessage;
+import com.mergeco.olijang.product.dto.ProductCategoryDTO;
+import com.mergeco.olijang.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
