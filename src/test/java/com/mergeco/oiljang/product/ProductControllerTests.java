@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest
 public class ProductControllerTests {
@@ -41,6 +43,15 @@ public class ProductControllerTests {
     @Test
     void insertProduct() {
         ProductDTO productDTO = new ProductDTO();
+        productDTO.setCategoryCode(1);
+        productDTO.setEnrollDateTime(LocalDateTime.now());
+        productDTO.setProductDesc("1");
+        productDTO.setProductSellStatus("1");
+        productDTO.setProductName("1");
+        productDTO.setProductPrice(111);
+        productDTO.setRefUserCode(UUID.randomUUID());
+        productDTO.setWishPlaceTrade("1");
+        productService.addProduct(productDTO);
         System.out.println();
     }
 
