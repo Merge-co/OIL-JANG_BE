@@ -64,4 +64,10 @@ public class ProductControllerTests {
         productService.addProduct(productDTO);
     }
 
+    @Test
+    void selectProductDetail() {
+        List<Object[]> productDetail = productService.selectProductDetail();
+        System.out.println(productDetail);
+    }
+
 }

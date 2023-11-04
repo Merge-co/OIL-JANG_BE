@@ -73,4 +73,10 @@ public class ProductService {
         return productList;
     }
 
+    public List<Object[]> selectProductDetail() {
+        String jpql ="SELECT m FROM Product m";
+        List<Object[]> productDetail = entityManager.createQuery(jpql).getResultList();
+        return productDetail;
+    }
+
 }
