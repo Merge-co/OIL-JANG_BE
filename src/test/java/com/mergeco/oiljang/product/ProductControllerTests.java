@@ -2,9 +2,11 @@ package com.mergeco.oiljang.product;
 
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
+import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.service.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -39,11 +41,16 @@ public class ProductControllerTests {
             }
         }
     }
+    public ModelMapper modelMapper;
+
+    private Product convertToEntity(ProductDTO productDTO) {
+        return modelMapper.map(productDTO, Product.class);
+    }
 
     @Test
     void insertProduct() {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setCategoryCode(1);
+        productDTO.setRefCategoryCode(1);
         productDTO.setEnrollDateTime(LocalDateTime.now());
         productDTO.setProductDesc("1");
         productDTO.setProductSellStatus("1");
@@ -51,8 +58,10 @@ public class ProductControllerTests {
         productDTO.setProductPrice(111);
         productDTO.setRefUserCode(UUID.randomUUID());
         productDTO.setWishPlaceTrade("1");
+        productDTO.setRefUserCode(UUID.randomUUID());
+        productDTO.setRefCategoryCode(1);
+        System.out.println(productDTO);
         productService.addProduct(productDTO);
-        System.out.println();
     }
 
 }
