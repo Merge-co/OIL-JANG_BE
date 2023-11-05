@@ -26,10 +26,12 @@ public class WishListService {
         this.wishListRepository = wishListRepository;
     }
 
-    public List<WishListDTO> selectWishList(UUID refUserCode) {
+    public List<WishListDTO> selectWishList(int offset, int limit, UUID refUserCode) {
         String jpql = "SELECT w from WishList w WHERE refUserCode = :refUserCode ORDER BY w.wishCode DESC";
         List<WishListDTO> wishList = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
         return wishList;
     }

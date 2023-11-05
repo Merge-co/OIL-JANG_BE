@@ -15,7 +15,7 @@ public class WishList {
     @Column(name = "ref_product_code")
     private int refProductCode;
 
-    @Column(name = "ref_user_code")
+    @Column(columnDefinition = "BINARY(16)", name = "ref_user_code")
     private UUID refUserCode;
 
     protected WishList() {

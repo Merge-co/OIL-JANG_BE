@@ -31,7 +31,7 @@ public class Product {
     @Column(name = "view_count")
     private int viewCount;
 
-    @Column(name = "ref_user_code")
+    @Column(columnDefinition = "BINARY(16)", name = "ref_user_code")
     private UUID refUserCode;
 
     @ManyToOne

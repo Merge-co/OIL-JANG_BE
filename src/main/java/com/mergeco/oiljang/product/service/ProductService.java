@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -71,15 +72,45 @@ public class ProductService {
     }
 
     public List<Object[]> selectProductList(int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = 1");
+        StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
+
+        if(minPrice > 0) {
+            jpql.append(" AND m.productPrice >= :minPrice");
+        }
+
+        if(maxPrice > 0) {
+            jpql.append(" AND m.productPrice <= :maxPrice");
+        }
+
+        if(!"".equals(sortCondition) && sortCondition != null) {
+            jpql.append(" ORDER BY");
+            switch (sortCondition) {
+                case "latest":
+                    jpql.append(" m.enrollDateTime DESC");
+                    break;
+                case "minPrice":
+                    jpql.append(" m.productPrice ASC");
+                    break;
+                case "maxPrice":
+                    jpql.append(" m.productPrice DESC");
+                    break;
+            }
+        }
 
         TypedQuery<Object[]> query = (TypedQuery<Object[]>) entityManager.createQuery(jpql.toString());
-        //query.setParameter("categoryCode" ,categoryCode);
-        //query.setParameter("sortCondition" ,sortCondition);
-        //query.setParameter("minPrice" ,minPrice);
-        //query.setParameter("maxPrice" ,maxPrice);
+
+        query.setParameter("categoryCode" ,categoryCode);
+
+        if(minPrice > 0) {
+            query.setParameter("minPrice" ,minPrice);
+        }
+
+        if(maxPrice > 0) {
+            query.setParameter("maxPrice" ,maxPrice);
+        }
 
         List<Object[]> productList = query.getResultList();
+
         return productList;
     }
 
@@ -89,5 +120,16 @@ public class ProductService {
         List<Object[]> productDetail = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
         return productDetail;
     }
+
+    public List<Integer> selectWishCode(UUID refUserCode, int productCode) {
+        String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND refProductCode = :productCode";
+        List<Integer> wishCode = entityManager.createQuery(jpql)
+                .setParameter("refUserCode", refUserCode)
+                .setParameter("productCode", productCode)
+                .getResultList();
+        return wishCode;
+    }
+
+
 
 }
