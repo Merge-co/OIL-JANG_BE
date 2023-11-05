@@ -12,11 +12,13 @@ import com.mergeco.oiljang.product.repository.CategoryRepository;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -71,8 +73,8 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<Object[]> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
+    public List<Object[]> selectProductList(int offset, int limit, @Param("categoryCodes") List<Integer> categoryCodes, String sortCondition, int minPrice, int maxPrice) {
+        StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode IN(:categoryCodes)");
 
         if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
@@ -99,7 +101,7 @@ public class ProductService {
 
         TypedQuery<Object[]> query = (TypedQuery<Object[]>) entityManager.createQuery(jpql.toString());
 
-        query.setParameter("categoryCode" ,categoryCode);
+        query.setParameter("categoryCodes" ,categoryCodes);
         query.setFirstResult(offset)
                 .setMaxResults(limit);
 
