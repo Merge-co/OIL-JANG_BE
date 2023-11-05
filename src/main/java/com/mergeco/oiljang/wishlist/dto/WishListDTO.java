@@ -1,17 +1,20 @@
 package com.mergeco.oiljang.wishlist.dto;
 
+import java.util.UUID;
+
 public class WishListDTO {
     private int wishCode;
-    private int refUserCode;
     private int refProductCode;
+    private UUID refUserCode;
+
 
     public WishListDTO() {
     }
 
-    public WishListDTO(int wishCode, int refUserCode, int refProductCode) {
+    public WishListDTO(int wishCode, int refProductCode, UUID refUserCode) {
         this.wishCode = wishCode;
-        this.refUserCode = refUserCode;
         this.refProductCode = refProductCode;
+        this.refUserCode = refUserCode;
     }
 
     public int getWishCode() {
@@ -22,14 +25,6 @@ public class WishListDTO {
         this.wishCode = wishCode;
     }
 
-    public int getRefUserCode() {
-        return refUserCode;
-    }
-
-    public void setRefUserCode(int refUserCode) {
-        this.refUserCode = refUserCode;
-    }
-
     public int getRefProductCode() {
         return refProductCode;
     }
@@ -38,12 +33,20 @@ public class WishListDTO {
         this.refProductCode = refProductCode;
     }
 
+    public UUID getRefUserCode() {
+        return refUserCode;
+    }
+
+    public void setRefUserCode(UUID refUserCode) {
+        this.refUserCode = refUserCode;
+    }
+
     @Override
     public String toString() {
         return "WishListDTO{" +
                 "wishCode=" + wishCode +
-                ", refUserCode=" + refUserCode +
                 ", refProductCode=" + refProductCode +
+                ", refUserCode=" + refUserCode +
                 '}';
     }
 }

@@ -24,8 +24,8 @@ public class WishListControllerTests {
 
     @Test
     void selectWishList() {
-        System.out.println(UUID.randomUUID());
-        List<WishListDTO> wishList = wishListService.selectWishList(0, 3, UUID.randomUUID());
+        UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
+        List<WishListDTO> wishList = wishListService.selectWishList(0, 3, uuid);
         System.out.println(wishList);
     }
 

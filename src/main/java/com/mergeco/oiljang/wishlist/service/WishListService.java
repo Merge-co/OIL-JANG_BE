@@ -1,6 +1,7 @@
 package com.mergeco.oiljang.wishlist.service;
 
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
+import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,10 @@ public class WishListService {
     @Transactional
     public void deleteWishList(int wishListCode) {
         wishListRepository.deleteById(wishListCode);
+    }
+
+    @Transactional
+    public void insertWishList(WishListDTO wishListDTO) {
+        wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
     }
 }
