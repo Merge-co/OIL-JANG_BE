@@ -9,12 +9,14 @@ import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.repository.CategoryRepository;
+import com.mergeco.oiljang.wishlist.repository.WishListRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,17 +29,18 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
-
     private final CategoryRepository categoryRepository;
-
     private final ProImageRepository proImageRepository;
+    private final WishListRepository wishListRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository) {
+    public ProductService(EntityManager entityManager, ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository, WishListRepository wishListRepository) {
+        this.entityManager = entityManager;
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.categoryRepository = categoryRepository;
         this.proImageRepository = proImageRepository;
+        this.wishListRepository = wishListRepository;
     }
 
     public ProductDTO addProduct(ProductDTO productDTO) {
@@ -67,15 +70,25 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<Object[]> selectProductList() {
-        String jpql ="SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = 1";
-        List<Object[]> productList = entityManager.createQuery(jpql).getResultList();
+    public List<Object[]> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
+        StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = 1");
+
+        TypedQuery<Object[]> query = (TypedQuery<Object[]>) entityManager.createQuery(jpql.toString());
+        //query.setParameter("offset" ,offset);
+        //query.setParameter("limit" ,limit);
+        //query.setParameter("categoryCode" ,categoryCode);
+        //query.setParameter("sortCondition" ,sortCondition);
+        //query.setParameter("minPrice" ,minPrice);
+        //query.setParameter("maxPrice" ,maxPrice);
+
+        List<Object[]> productList = query.getResultList();
         return productList;
     }
 
-    public List<Object[]> selectProductDetail() {
-        String jpql ="SELECT m FROM Product m";
-        List<Object[]> productDetail = entityManager.createQuery(jpql).getResultList();
+    // refUserCode 나중에 판매자 이름 추츨 해야 한다.
+    public List<Object[]> selectProductDetail(int productCode) {
+        String jpql ="SELECT m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, m.productDesc, m.wishPlaceTrade FROM Product m WHERE m.productCode = :productCode";
+        List<Object[]> productDetail = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
         return productDetail;
     }
 

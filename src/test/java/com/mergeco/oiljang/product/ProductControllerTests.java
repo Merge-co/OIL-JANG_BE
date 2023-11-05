@@ -34,17 +34,12 @@ public class ProductControllerTests {
 
     @Test
     void selectProductList() {
-        List<Object[]> productList = productService.selectProductList();
+        List<Object[]> productList = productService.selectProductList(1, 1, 1, "1", 1, 1);
         for(Object[] a : productList) {
             for(Object b : a) {
                 System.out.println(b);
             }
         }
-    }
-    public ModelMapper modelMapper;
-
-    private Product convertToEntity(ProductDTO productDTO) {
-        return modelMapper.map(productDTO, Product.class);
     }
 
     @Test
@@ -58,7 +53,6 @@ public class ProductControllerTests {
         productDTO.setProductPrice(111);
         productDTO.setRefUserCode(UUID.randomUUID());
         productDTO.setWishPlaceTrade("1");
-        productDTO.setRefUserCode(UUID.randomUUID());
         productDTO.setRefCategoryCode(1);
         System.out.println(productDTO);
         productService.addProduct(productDTO);
@@ -66,8 +60,12 @@ public class ProductControllerTests {
 
     @Test
     void selectProductDetail() {
-        List<Object[]> productDetail = productService.selectProductDetail();
-        System.out.println(productDetail);
+        List<Object[]> productDetail = productService.selectProductDetail(1);
+        for(Object[] a : productDetail) {
+            for(Object b: a) {
+                System.out.println(b);
+            }
+        }
     }
 
 }
