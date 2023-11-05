@@ -13,12 +13,12 @@ public class ProductDTO {
     private int viewCount;
     private UUID refUserCode;
     private int refCategoryCode;
-    private String productSellStatus;
+    private String sellStatusCode;
 
     public ProductDTO() {
     }
 
-    public ProductDTO(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int refCategoryCode, String productSellStatus) {
+    public ProductDTO(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int refCategoryCode, String sellStatusCode) {
         this.productCode = productCode;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -28,7 +28,7 @@ public class ProductDTO {
         this.viewCount = viewCount;
         this.refUserCode = refUserCode;
         this.refCategoryCode = refCategoryCode;
-        this.productSellStatus = productSellStatus;
+        this.sellStatusCode = sellStatusCode;
     }
 
     public int getProductCode() {
@@ -103,12 +103,12 @@ public class ProductDTO {
         this.refCategoryCode = refCategoryCode;
     }
 
-    public String getProductSellStatus() {
-        return productSellStatus;
+    public String getSellStatusCode() {
+        return sellStatusCode;
     }
 
-    public void setProductSellStatus(String productSellStatus) {
-        this.productSellStatus = productSellStatus;
+    public void setSellStatusCode(String sellStatusCode) {
+        this.sellStatusCode = sellStatusCode;
     }
 
     @Override
@@ -123,7 +123,7 @@ public class ProductDTO {
                 ", viewCount=" + viewCount +
                 ", refUserCode=" + refUserCode +
                 ", refCategoryCode=" + refCategoryCode +
-                ", productSellStatus='" + productSellStatus + '\'' +
+                ", productSellStatus='" + sellStatusCode + '\'' +
                 '}';
     }
 }

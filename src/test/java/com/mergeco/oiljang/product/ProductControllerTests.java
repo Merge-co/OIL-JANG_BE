@@ -2,11 +2,9 @@ package com.mergeco.oiljang.product;
 
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
-import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.service.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -48,7 +46,7 @@ public class ProductControllerTests {
         productDTO.setRefCategoryCode(1);
         productDTO.setEnrollDateTime(LocalDateTime.now());
         productDTO.setProductDesc("1");
-        productDTO.setProductSellStatus("1");
+        productDTO.setSellStatusCode("1");
         productDTO.setProductName("1");
         productDTO.setProductPrice(111);
         productDTO.setRefUserCode(UUID.randomUUID());

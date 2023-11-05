@@ -34,8 +34,9 @@ public class Product {
     @Column(name = "ref_user_code")
     private UUID refUserCode;
 
-    @Column(name = "sell_status_code")
-    private String productSellStatus;
+    @ManyToOne
+    @JoinColumn(name = "sell_status_code")
+    private SellStatus SellStatus;
 
     @ManyToOne
     @JoinColumn(name = "ref_category_code")
@@ -81,15 +82,10 @@ public class Product {
         return this;
     }
 
-    public Product productSellStatus(String val) {
-        productSellStatus = val;
-        return this;
-    }
-
     protected Product() {
     }
 
-    public Product(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, String productSellStatus, Category category) {
+    public Product(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, SellStatus sellStatus, Category category) {
         this.productCode = productCode;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -98,7 +94,7 @@ public class Product {
         this.enrollDateTime = enrollDateTime;
         this.viewCount = viewCount;
         this.refUserCode = refUserCode;
-        this.productSellStatus = productSellStatus;
+        SellStatus = sellStatus;
         Category = category;
     }
 
@@ -106,81 +102,35 @@ public class Product {
         return productCode;
     }
 
-    public void setProductCode(int productCode) {
-        this.productCode = productCode;
-    }
-
     public String getProductName() {
         return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
     }
 
     public int getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(int productPrice) {
-        this.productPrice = productPrice;
-    }
-
     public String getProductDesc() {
         return productDesc;
-    }
-
-    public void setProductDesc(String productDesc) {
-        this.productDesc = productDesc;
     }
 
     public String getWishPlaceTrade() {
         return wishPlaceTrade;
     }
 
-    public void setWishPlaceTrade(String wishPlaceTrade) {
-        this.wishPlaceTrade = wishPlaceTrade;
-    }
-
     public LocalDateTime getEnrollDateTime() {
         return enrollDateTime;
-    }
-
-    public void setEnrollDateTime(LocalDateTime enrollDateTime) {
-        this.enrollDateTime = enrollDateTime;
     }
 
     public int getViewCount() {
         return viewCount;
     }
 
-    public void setViewCount(int viewCount) {
-        this.viewCount = viewCount;
-    }
-
     public UUID getRefUserCode() {
         return refUserCode;
     }
 
-    public void setRefUserCode(UUID refUserCode) {
-        this.refUserCode = refUserCode;
-    }
 
-    public String getProductSellStatus() {
-        return productSellStatus;
-    }
-
-    public void setProductSellStatus(String productSellStatus) {
-        this.productSellStatus = productSellStatus;
-    }
-
-    public Category getCategory() {
-        return Category;
-    }
-
-    public void setCategory(Category category) {
-        Category = category;
-    }
 
     @Override
     public String toString() {
@@ -193,7 +143,7 @@ public class Product {
                 ", enrollDateTime=" + enrollDateTime +
                 ", viewCount=" + viewCount +
                 ", refUserCode=" + refUserCode +
-                ", productSellStatus='" + productSellStatus + '\'' +
+                ", SellStatus=" + SellStatus +
                 ", Category=" + Category +
                 '}';
     }
