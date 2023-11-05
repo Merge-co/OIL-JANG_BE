@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private final EntityManager entityManager;
 
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
@@ -70,12 +70,10 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<Object[]> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
+    public List<Object[]> selectProductList(int categoryCode, String sortCondition, int minPrice, int maxPrice) {
         StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = 1");
 
         TypedQuery<Object[]> query = (TypedQuery<Object[]>) entityManager.createQuery(jpql.toString());
-        //query.setParameter("offset" ,offset);
-        //query.setParameter("limit" ,limit);
         //query.setParameter("categoryCode" ,categoryCode);
         //query.setParameter("sortCondition" ,sortCondition);
         //query.setParameter("minPrice" ,minPrice);
