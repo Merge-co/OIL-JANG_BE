@@ -71,14 +71,14 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<Object[]> selectProductList(int categoryCode, String sortCondition, int minPrice, int maxPrice) {
+    public List<Object[]> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
         StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
 
-        if(minPrice > 0) {
+        if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
         }
 
-        if(maxPrice > 0) {
+        if(maxPrice >= 0) {
             jpql.append(" AND m.productPrice <= :maxPrice");
         }
 
@@ -100,14 +100,18 @@ public class ProductService {
         TypedQuery<Object[]> query = (TypedQuery<Object[]>) entityManager.createQuery(jpql.toString());
 
         query.setParameter("categoryCode" ,categoryCode);
+        query.setFirstResult(offset)
+                .setMaxResults(limit);
 
-        if(minPrice > 0) {
+        if(minPrice >= 0) {
             query.setParameter("minPrice" ,minPrice);
         }
 
-        if(maxPrice > 0) {
+        if(maxPrice >= 0) {
             query.setParameter("maxPrice" ,maxPrice);
         }
+
+
 
         List<Object[]> productList = query.getResultList();
 

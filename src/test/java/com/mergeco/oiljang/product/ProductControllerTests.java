@@ -32,7 +32,7 @@ public class ProductControllerTests {
 
     @Test
     void selectProductList() {
-        List<Object[]> productList = productService.selectProductList(1, "latest", 0, 10000000);
+        List<Object[]> productList = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
         for(Object[] a : productList) {
             for(Object b : a) {
                 System.out.println(b);
