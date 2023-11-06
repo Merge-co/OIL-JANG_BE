@@ -1,4 +1,3 @@
-/*
 package com.mergeco.oiljang.auth.handler;
 
 import com.mergeco.oiljang.auth.model.DetailsUser;
@@ -49,4 +48,3 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
     }
 
 }
-*/

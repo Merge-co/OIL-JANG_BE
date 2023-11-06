@@ -1,4 +1,3 @@
-/*
 package com.mergeco.oiljang.auth.model.service;
 
 import com.mergeco.oiljang.auth.model.DetailsUser;
@@ -32,4 +31,3 @@ public class DetailsService implements UserDetailsService {
         }
     }
 }
-*/

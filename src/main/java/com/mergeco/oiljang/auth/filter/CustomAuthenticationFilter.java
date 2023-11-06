@@ -1,9 +1,8 @@
-/*
 package com.mergeco.oiljang.auth.filter;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mergeco.oiljang.user.model.dto.UserDTO;
+import com.mergeco.oiljang.auth.model.dto.LoginDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,11 +38,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 
-        UserDTO user = objectMapper.readValue(request.getInputStream(), UserDTO.class);
+        LoginDTO user = objectMapper.readValue(request.getInputStream(), LoginDTO.class);
 
         return new UsernamePasswordAuthenticationToken(user.getId(), user.getPwd());
 
 
     }
 }
-*/

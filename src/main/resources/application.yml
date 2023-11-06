@@ -2,26 +2,25 @@ server:
   port: 8000
 
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/report
-    username: ohgiraffers
-    password: ohgiraffers
   jpa:
-    show-sql: true
-    database: mysql
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
         format_sql: true
-
-
+        show_sql: true
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://mysql.coffit.today:3306/oiljang
 #    username: HIkdt6
 #    password: HIkdt6
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/oiljang
+    username: ohgiraffers
+    password: ohgiraffers
+
 
 #  security:
 #    oauth2:
@@ -29,19 +28,17 @@ spring:
 #        registration:
 #
 #          naver:
-#            client-id: 클라이언트ID
-#            client-secret: 클라이언트Secret
-#            redirect-uri: 리다이렉트 url
+#            client-id: Z3HB6zpnYOQfQxAReRdR
+#            client-secret: fn4XxZnxRZ
+#            redirect-uri: http://localhost:3306
 #            authorization-grant-type: authorization_code
 #            scope: name, email, profile_image
-##            client-name: Naver
+#            client-name: Naver
 #
 #          google:
 #            client-id: 634314389152-hvham3k7rguk6i36b190d2adr0pi2ddb.apps.googleusercontent.com
 #            client-secret: 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
-#            scope:
-#              - profile
-#              - email
+#            scope: profile, email
 #
 #
 #        provider:
@@ -52,5 +49,12 @@ spring:
 #            user_name_attribute: response
 
 jwt:
-  key: dkfjksjfdkls123kjakljksdfsd98798asd578a
-  time: 9000000000
+  secretKey : dkfjksjfdkls123kjakljksdfsd98798asd578a
+
+  access:
+    expiration: 3600000
+#    header: Authorization
+#
+#  refresh:
+#    expiration: 1209600000
+#    header: Authorization-refresh

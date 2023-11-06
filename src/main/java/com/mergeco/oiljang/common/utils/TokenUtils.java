@@ -1,6 +1,7 @@
-/*
 package com.mergeco.oiljang.common.utils;
 
+import com.auth0.jwt.JWT;
+import com.mergeco.oiljang.common.AuthConstants;
 import com.mergeco.oiljang.user.entity.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,30 +14,30 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-*/
-/*
- * 토큰을 관리하기 위한 uitls 모음 클래스
- * *//*
-
 @Component
 public class TokenUtils {
 
     private static String jwtSecretKey;
     private static Long tokenValidateTime;
 
+   /* @Value("${jwt.access.header}")
+    private static String accessHeader;
 
-    @Value("${jwt.key}")
+    @Value("${jwt.refresh.expiration}")
+    private static String refreshHeader;
+*/
+
+    @Value("${jwt.secretKey}")
     public void setJwtSecretKey(String jwtSecretKey) {
         TokenUtils.jwtSecretKey = jwtSecretKey;
     }
 
-    @Value("${jwt.time}")
+    @Value("${jwt.access.expiration}")
     public void setTokenValidateTime(Long tokenValidateTime) {
         TokenUtils.tokenValidateTime = tokenValidateTime;
     }
 
-    */
-/* header의 token을 분리하는 메소드 *//*
+
 
     public static String splitHeader(String header) {
         if(!header.equals("")) {
@@ -46,8 +47,6 @@ public class TokenUtils {
         }
     }
 
-    */
-/* 토큰이 유효한지 확인하는 메소드 *//*
 
     public static boolean isValidToken(String token) {
 
@@ -69,16 +68,12 @@ public class TokenUtils {
         }
     }
 
-    */
-/* 토큰을 복호화 하는 메소드 *//*
 
     public static Claims getClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(jwtSecretKey))
                 .parseClaimsJws(token).getBody();
     }
 
-    */
-/* 토큰을 생성하는 메소드 *//*
 
     public static String generateJwtToken(User user) {
         Date expireTime = new Date(System.currentTimeMillis() + tokenValidateTime);
@@ -91,8 +86,6 @@ public class TokenUtils {
         return builder.compact();
     }
 
-    */
-/* 토큰의 header를 설정하는 메소드 *//*
 
     private static Map<String, Object> createHeader() {
         Map<String, Object> header = new HashMap<>();
@@ -104,8 +97,6 @@ public class TokenUtils {
         return header;
     }
 
-    */
-/* 사용자 정보를 기반으로 클레임을 생성하는 메소드 *//*
 
     private static Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
@@ -117,12 +108,18 @@ public class TokenUtils {
         return claims;
     }
 
-    */
-/* JWT 서명을 발급하는 메소드 *//*
 
     private static Key createSignature() {
         byte[] secretBytes = DatatypeConverter.parseBase64Binary(jwtSecretKey);
         return new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
     }
+
+/*    public String createRefreshToken() {
+        Date now = new Date();
+        return JWT.create()
+                .withSubject(AuthConstants.REFRESH_TOKEN_SUBJECT)
+                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
+                .sign(Algorithm.HMAC512(secretKey));
+    }*/
+
 }
-*/
