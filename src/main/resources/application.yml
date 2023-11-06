@@ -2,18 +2,26 @@ server:
   port: 8000
 
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/report
+    username: ohgiraffers
+    password: ohgiraffers
   jpa:
+    show-sql: true
+    database: mysql
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
         format_sql: true
-        show_sql: true
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql.coffit.today:3306/oiljang
-    username: HIkdt6
-    password: HIkdt6
+
+
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://mysql.coffit.today:3306/oiljang
+#    username: HIkdt6
+#    password: HIkdt6
 
 #  security:
 #    oauth2:
