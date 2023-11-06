@@ -14,4 +14,23 @@ public class InqCategory {
 
     @Column(name = "inq_cate_name")
     private String inqCateName;
+
+    protected InqCategory() {
+    }
+
+    public int getInqCateCode() {
+        return inqCateCode;
+    }
+
+    public String getInqCateName() {
+        return inqCateName;
+    }
+
+    @Override
+    public String toString() {
+        return "InqCategory{" +
+                "inqCateCode=" + inqCateCode +
+                ", inqCateName='" + inqCateName + '\'' +
+                '}';
+    }
 }

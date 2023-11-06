@@ -2,7 +2,7 @@ package com.mergeco.oiljang.product.entity;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "Category")
 @Table(name = "category_info")
 public class Category {
 
@@ -15,12 +15,27 @@ public class Category {
     private String categoryName;
 
     @Column(name = "upper_category_code")
-    private int upperCategoryCode;
+    private Integer upperCategoryCode;
+
+    public Category categoryCode(int val) {
+        categoryCode = val;
+        return this;
+    }
+
+    public Category categoryName(String val) {
+        categoryName = val;
+        return this;
+    }
+
+    public Category upperCategoryCode(Integer val) {
+        upperCategoryCode = val;
+        return this;
+    }
 
     protected Category() {
     }
 
-    public Category(int categoryCode, String categoryName, int upperCategoryCode) {
+    public Category(int categoryCode, String categoryName, Integer upperCategoryCode) {
         this.categoryCode = categoryCode;
         this.categoryName = categoryName;
         this.upperCategoryCode = upperCategoryCode;
@@ -34,7 +49,7 @@ public class Category {
         return categoryName;
     }
 
-    public int getUpperCategoryCode() {
+    public Integer getUpperCategoryCode() {
         return upperCategoryCode;
     }
 

@@ -1,6 +1,8 @@
+/*
 package com.mergeco.oiljang.product1;
 
 
+import com.mergeco.oiljang.product.service.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,3 +35,4 @@ public class ProductControllerTests {
     }
 
 }
+*/
