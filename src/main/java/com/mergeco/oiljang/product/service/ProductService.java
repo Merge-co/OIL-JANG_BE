@@ -51,9 +51,6 @@ public class ProductService {
         this.userProfileRepository = userProfileRepository;
     }
 
-
-
-
     public ProductDTO addProduct(ProductDTO productDTO) {
         //ProductDTO를 Product Entity로 변환
         Product product = convertToEntity(productDTO);
@@ -82,8 +79,9 @@ public class ProductService {
     }
 
     public List<ProductList> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductList(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime)" +
-                " FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductList(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
+                " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode");
+
         if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
         }
@@ -128,8 +126,8 @@ public class ProductService {
 
     // refUserCode 나중에 판매자 이름 추츨 해야 한다.
     public List<ProductDetail> selectProductDetail(int productCode) {
-        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetail(m.productCode, (SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickName FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade)" +
-                " FROM Product m WHERE m.productCode = :productCode";
+        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetail(m.productCode, (SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickName FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
+                " FROM Product m JOIN m.SellStatus s WHERE m.productCode = :productCode";
         List<ProductDetail> productDetails = entityManager.createQuery(jpql, ProductDetail.class).setParameter("productCode", productCode).getResultList();
         return productDetails;
     }
@@ -154,7 +152,7 @@ public class ProductService {
     }
 
     public void updateTest() {
-        Product product = productRepository.findById(1).orElseThrow(IllegalArgumentException::new);
+        Product product = productRepository.findById(6).orElseThrow(IllegalArgumentException::new);
         Product productSave = product.category(20);
         productRepository.save(productSave);
     }

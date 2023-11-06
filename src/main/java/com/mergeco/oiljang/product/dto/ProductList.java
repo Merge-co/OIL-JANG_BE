@@ -8,16 +8,18 @@ public class ProductList {
     private String productName;
     private int productPrice;
     private LocalDateTime enrollDateTime;
+    private String sellStatus;
 
     public ProductList() {
     }
 
-    public ProductList(int productCode, String proImageThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime) {
+    public ProductList(int productCode, String proImageThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus) {
         this.productCode = productCode;
         this.proImageThumbAddr = proImageThumbAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.enrollDateTime = enrollDateTime;
+        this.sellStatus = sellStatus;
     }
 
     public int getProductCode() {
@@ -60,6 +62,14 @@ public class ProductList {
         this.enrollDateTime = enrollDateTime;
     }
 
+    public String getSellStatus() {
+        return sellStatus;
+    }
+
+    public void setSellStatus(String sellStatus) {
+        this.sellStatus = sellStatus;
+    }
+
     @Override
     public String toString() {
         return "ProductList{" +
@@ -68,6 +78,7 @@ public class ProductList {
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", enrollDateTime=" + enrollDateTime +
+                ", sellStatus='" + sellStatus + '\'' +
                 '}';
     }
 }

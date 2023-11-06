@@ -19,11 +19,12 @@ public class ProductDetail {
     private String nickName;
     private String productDesc;
     private String wishPlaceTrade;
+    private String sellStatus;
 
     public ProductDetail() {
     }
 
-    public ProductDetail(int productCode, String proImageOriginAddr, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade) {
+    public ProductDetail(int productCode, String proImageOriginAddr, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade, String sellStatus) {
         this.productCode = productCode;
         this.proImageOriginAddr = proImageOriginAddr;
         this.productName = productName;
@@ -38,6 +39,7 @@ public class ProductDetail {
         this.nickName = nickName;
         this.productDesc = productDesc;
         this.wishPlaceTrade = wishPlaceTrade;
+        this.sellStatus = sellStatus;
     }
 
     public int getProductCode() {
@@ -152,6 +154,14 @@ public class ProductDetail {
         this.wishPlaceTrade = wishPlaceTrade;
     }
 
+    public String getSellStatus() {
+        return sellStatus;
+    }
+
+    public void setSellStatus(String sellStatus) {
+        this.sellStatus = sellStatus;
+    }
+
     @Override
     public String toString() {
         return "ProductDetail{" +
@@ -169,6 +179,7 @@ public class ProductDetail {
                 ", nickName='" + nickName + '\'' +
                 ", productDesc='" + productDesc + '\'' +
                 ", wishPlaceTrade='" + wishPlaceTrade + '\'' +
+                ", sellStatus='" + sellStatus + '\'' +
                 '}';
     }
 }
