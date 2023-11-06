@@ -1,30 +1,44 @@
 package com.mergeco.oiljang.inquery.dto;
 
+import com.mergeco.oiljang.inquery.entity.InqCategory;
+import com.mergeco.oiljang.user.model.dto.UserDTO;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 
 public class InqDTO {
     private int inqCode;
+
     private String inqTitle;
+
     private String inqContent;
+
     private String inqAnswer;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate inqTime;
     private String inqStatus;
-    private byte[] refUserCode;
-    private int refInqCateCode;
+    private List<UserDTO> userDTO;
+    private InqCategory inqCategory;
 
     public InqDTO() {
     }
 
-    public InqDTO(int inqCode, String inqTitle, String inqContent, String inqAnswer, LocalDate inqTime, String inqStatus, byte[] refUserCode, int refInqCateCode) {
+    public InqDTO(int inqCode, String inqTitle, String inqContent, String inqAnswer, LocalDate inqTime, String inqStatus, List<UserDTO> userDTO, InqCategory inqCategory) {
         this.inqCode = inqCode;
         this.inqTitle = inqTitle;
         this.inqContent = inqContent;
         this.inqAnswer = inqAnswer;
         this.inqTime = inqTime;
         this.inqStatus = inqStatus;
-        this.refUserCode = refUserCode;
-        this.refInqCateCode = refInqCateCode;
+        this.userDTO = userDTO;
+        this.inqCategory = inqCategory;
     }
 
     public int getInqCode() {
@@ -75,20 +89,20 @@ public class InqDTO {
         this.inqStatus = inqStatus;
     }
 
-    public byte[] getRefUserCode() {
-        return refUserCode;
+    public List<UserDTO> getUserDTO() {
+        return userDTO;
     }
 
-    public void setRefUserCode(byte[] refUserCode) {
-        this.refUserCode = refUserCode;
+    public void setUserDTO(List<UserDTO> userDTO) {
+        this.userDTO = userDTO;
     }
 
-    public int getRefInqCateCode() {
-        return refInqCateCode;
+    public InqCategory getInqCategory() {
+        return inqCategory;
     }
 
-    public void setRefInqCateCode(int refInqCateCode) {
-        this.refInqCateCode = refInqCateCode;
+    public void setInqCategory(InqCategory inqCategory) {
+        this.inqCategory = inqCategory;
     }
 
     @Override
@@ -100,8 +114,8 @@ public class InqDTO {
                 ", inqAnswer='" + inqAnswer + '\'' +
                 ", inqTime=" + inqTime +
                 ", inqStatus='" + inqStatus + '\'' +
-                ", refUserCode=" + Arrays.toString(refUserCode) +
-                ", refInqCateCode=" + refInqCateCode +
+                ", userDTO=" + userDTO +
+                ", inqCategory=" + inqCategory +
                 '}';
     }
 }

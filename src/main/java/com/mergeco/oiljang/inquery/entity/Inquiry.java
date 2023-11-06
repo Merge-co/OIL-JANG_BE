@@ -2,6 +2,7 @@ package com.mergeco.oiljang.inquery.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 @Entity(name = "inquiry_and_category")
 @Table(name = "inquiry")
@@ -33,4 +34,53 @@ public class Inquiry {
     @JoinColumn(name = "inq_cate_code")
     @ManyToOne(cascade = CascadeType.PERSIST)
     private InqCategory inqCategory;
+
+    protected Inquiry() {
+    }
+
+    public int getInqCode() {
+        return inqCode;
+    }
+
+    public String getInqTitle() {
+        return inqTitle;
+    }
+
+    public String getInqContent() {
+        return inqContent;
+    }
+
+    public String getInqAnswer() {
+        return inqAnswer;
+    }
+
+    public LocalDate getInqTime() {
+        return inqTime;
+    }
+
+    public String getInqStatus() {
+        return inqStatus;
+    }
+
+    public byte[] getRefUserCode() {
+        return refUserCode;
+    }
+
+    public InqCategory getInqCategory() {
+        return inqCategory;
+    }
+
+    @Override
+    public String toString() {
+        return "Inquiry{" +
+                "inqCode=" + inqCode +
+                ", inqTitle='" + inqTitle + '\'' +
+                ", inqContent='" + inqContent + '\'' +
+                ", inqAnswer='" + inqAnswer + '\'' +
+                ", inqTime=" + inqTime +
+                ", inqStatus='" + inqStatus + '\'' +
+                ", refUserCode=" + Arrays.toString(refUserCode) +
+                ", inqCategory=" + inqCategory +
+                '}';
+    }
 }
