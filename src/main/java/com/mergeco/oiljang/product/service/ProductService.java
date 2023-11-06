@@ -5,6 +5,7 @@ import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
 
 import com.mergeco.oiljang.product.dto.ProductDetail;
+import com.mergeco.oiljang.product.dto.ProductList;
 import com.mergeco.oiljang.product.entity.Category;
 import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
@@ -72,9 +73,9 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<Object[]> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode) as thumbImg, m.productName, m.productPrice, m.enrollDateTime FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
-
+    public List<ProductList> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductList(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime)" +
+                " FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
         if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
         }
@@ -98,7 +99,7 @@ public class ProductService {
             }
         }
 
-        TypedQuery<Object[]> query = (TypedQuery<Object[]>) entityManager.createQuery(jpql.toString());
+        TypedQuery<ProductList> query = (TypedQuery<ProductList>) entityManager.createQuery(jpql.toString(), ProductList.class);
 
         query.setParameter("categoryCode" ,categoryCode);
         query.setFirstResult(offset)
@@ -114,7 +115,7 @@ public class ProductService {
 
 
 
-        List<Object[]> productList = query.getResultList();
+        List<ProductList> productList = query.getResultList();
 
         return productList;
     }

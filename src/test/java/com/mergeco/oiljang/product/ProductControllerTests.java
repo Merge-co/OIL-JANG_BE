@@ -3,6 +3,7 @@ package com.mergeco.oiljang.product;
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
 import com.mergeco.oiljang.product.dto.ProductDetail;
+import com.mergeco.oiljang.product.dto.ProductList;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.service.WishListService;
@@ -38,11 +39,9 @@ public class ProductControllerTests {
 
     @Test
     void selectProductList() {
-        List<Object[]> productList = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
-        for(Object[] a : productList) {
-            for(Object b : a) {
-                System.out.println(b);
-            }
+        List<ProductList> productList = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
+        for(ProductList product : productList) {
+            System.out.println(product);
         }
     }
 
