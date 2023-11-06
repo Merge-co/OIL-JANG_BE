@@ -82,8 +82,8 @@ public class Product {
         return this;
     }
 
-    public Product category(Category val) {
-        Category = val;
+    public Product category(int val) {
+        Category.categoryCode(val);
         return this;
     }
 

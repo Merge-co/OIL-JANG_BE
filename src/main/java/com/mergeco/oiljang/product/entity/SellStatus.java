@@ -14,6 +14,15 @@ public class SellStatus {
     @Column(name = "sell_status")
     private String sellStatus;
 
+    public SellStatus sellStatusCode(int val) {
+        sellStatusCode = val;
+        return this;
+    }
+
+    public SellStatus sellStatus(String val) {
+        sellStatus = val;
+        return this;
+    }
     protected SellStatus() {
     }
 

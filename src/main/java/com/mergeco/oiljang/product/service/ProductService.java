@@ -120,7 +120,7 @@ public class ProductService {
 
     // refUserCode 나중에 판매자 이름 추츨 해야 한다.
     public List<Object[]> selectProductDetail(int productCode) {
-        String jpql ="SELECT m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, m.productDesc, m.wishPlaceTrade FROM Product m WHERE m.productCode = :productCode";
+        String jpql ="SELECT m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, m.productDesc, m.wishPlaceTrade FROM Product m WHERE m.productCode = :productCode";
         List<Object[]> productDetail = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
         return productDetail;
     }
@@ -138,8 +138,13 @@ public class ProductService {
 
     public void updateViewCount(int productCode) {
         Product product = productRepository.findById(1).orElseThrow(IllegalArgumentException::new);
-        System.out.println(product);
         Product productSave = product.viewCount(product.getViewCount() + 1).builder();
+        productRepository.save(productSave);
+    }
+
+    public void updateTest() {
+        Product product = productRepository.findById(1).orElseThrow(IllegalArgumentException::new);
+        Product productSave = product.category(20);
         productRepository.save(productSave);
     }
 

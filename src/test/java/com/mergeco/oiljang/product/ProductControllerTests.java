@@ -88,4 +88,9 @@ public class ProductControllerTests {
         }
     }
 
+    @Test
+    void updateTest() {
+        productService.updateTest();
+    }
+
 }
