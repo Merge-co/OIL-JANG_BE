@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.wishlist.service;
 
+import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
@@ -20,15 +21,21 @@ public class WishListService {
     private final EntityManager entityManager;
     private final ModelMapper modelMapper;
     private final WishListRepository wishListRepository;
+    private final ProductRepository productRepository;
+
     @Autowired
-    public WishListService(EntityManager entityManager, ModelMapper modelMapper, WishListRepository wishListRepository) {
+    public WishListService(EntityManager entityManager, ModelMapper modelMapper, WishListRepository wishListRepository, ProductRepository productRepository) {
         this.entityManager = entityManager;
         this.modelMapper = modelMapper;
         this.wishListRepository = wishListRepository;
+        this.productRepository = productRepository;
     }
 
+
+
+
     public List<WishListDTO> selectWishList(int offset, int limit, UUID refUserCode) {
-        String jpql = "SELECT w from WishList w WHERE refUserCode = :refUserCode ORDER BY w.wishCode DESC";
+        String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode ORDER BY w.wishCode DESC";
         List<WishListDTO> wishList = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
                 .setFirstResult(offset)

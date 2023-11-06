@@ -1,5 +1,7 @@
 package com.mergeco.oiljang.wishlist.entity;
 
+import com.mergeco.oiljang.product.entity.Product;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -12,8 +14,9 @@ public class WishList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int wishCode;
 
-    @Column(name = "ref_product_code")
-    private int refProductCode;
+    @ManyToOne
+    @JoinColumn(name = "ref_product_code")
+    private Product product;
 
     @Column(columnDefinition = "BINARY(16)", name = "ref_user_code")
     private UUID refUserCode;
@@ -21,9 +24,9 @@ public class WishList {
     protected WishList() {
     }
 
-    public WishList(int wishCode, int refProductCode, UUID refUserCode) {
+    public WishList(int wishCode, Product product, UUID refUserCode) {
         this.wishCode = wishCode;
-        this.refProductCode = refProductCode;
+        this.product = product;
         this.refUserCode = refUserCode;
     }
 
@@ -31,8 +34,8 @@ public class WishList {
         return wishCode;
     }
 
-    public int getRefProductCode() {
-        return refProductCode;
+    public Product getProduct() {
+        return product;
     }
 
     public UUID getRefUserCode() {
@@ -43,7 +46,7 @@ public class WishList {
     public String toString() {
         return "WishList{" +
                 "wishCode=" + wishCode +
-                ", refProductCode=" + refProductCode +
+                ", product=" + product +
                 ", refUserCode=" + refUserCode +
                 '}';
     }
