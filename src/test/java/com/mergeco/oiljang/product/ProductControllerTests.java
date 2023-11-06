@@ -56,6 +56,7 @@ public class ProductControllerTests {
         productDTO.setRefCategoryCode(1);
         System.out.println(productDTO);
         productService.addProduct(productDTO);
+
     }
 
     @Test
