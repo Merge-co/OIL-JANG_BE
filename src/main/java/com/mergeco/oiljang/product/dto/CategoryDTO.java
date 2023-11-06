@@ -3,12 +3,12 @@ package com.mergeco.oiljang.product.dto;
 public class CategoryDTO {
     private int categoryCode;
     private String categoryName;
-    private int upperCategoryCode;
+    private Integer upperCategoryCode;
 
     public CategoryDTO() {
     }
 
-    public CategoryDTO(int categoryCode, String categoryName, int upperCategoryCode) {
+    public CategoryDTO(int categoryCode, String categoryName, Integer upperCategoryCode) {
         this.categoryCode = categoryCode;
         this.categoryName = categoryName;
         this.upperCategoryCode = upperCategoryCode;
@@ -30,7 +30,7 @@ public class CategoryDTO {
         this.categoryName = categoryName;
     }
 
-    public int getUpperCategoryCode() {
+    public Integer getUpperCategoryCode() {
         return upperCategoryCode;
     }
 

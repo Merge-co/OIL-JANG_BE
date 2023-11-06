@@ -12,13 +12,13 @@ public class ProductDTO {
     private LocalDateTime enrollDateTime;
     private int viewCount;
     private UUID refUserCode;
-    private int categoryCode;
-    private String productSellStatus;
+    private int refCategoryCode;
+    private String sellStatusCode;
 
     public ProductDTO() {
     }
 
-    public ProductDTO(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int categoryCode, String productSellStatus) {
+    public ProductDTO(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int refCategoryCode, String sellStatusCode) {
         this.productCode = productCode;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -27,8 +27,8 @@ public class ProductDTO {
         this.enrollDateTime = enrollDateTime;
         this.viewCount = viewCount;
         this.refUserCode = refUserCode;
-        this.categoryCode = categoryCode;
-        this.productSellStatus = productSellStatus;
+        this.refCategoryCode = refCategoryCode;
+        this.sellStatusCode = sellStatusCode;
     }
 
     public int getProductCode() {
@@ -95,20 +95,20 @@ public class ProductDTO {
         this.refUserCode = refUserCode;
     }
 
-    public int getCategoryCode() {
-        return categoryCode;
+    public int getRefCategoryCode() {
+        return refCategoryCode;
     }
 
-    public void setCategoryCode(int categoryCode) {
-        this.categoryCode = categoryCode;
+    public void setRefCategoryCode(int refCategoryCode) {
+        this.refCategoryCode = refCategoryCode;
     }
 
-    public String getProductSellStatus() {
-        return productSellStatus;
+    public String getSellStatusCode() {
+        return sellStatusCode;
     }
 
-    public void setProductSellStatus(String productSellStatus) {
-        this.productSellStatus = productSellStatus;
+    public void setSellStatusCode(String sellStatusCode) {
+        this.sellStatusCode = sellStatusCode;
     }
 
     @Override
@@ -122,8 +122,8 @@ public class ProductDTO {
                 ", enrollDateTime=" + enrollDateTime +
                 ", viewCount=" + viewCount +
                 ", refUserCode=" + refUserCode +
-                ", categoryCode=" + categoryCode +
-                ", productSellStatus='" + productSellStatus + '\'' +
+                ", refCategoryCode=" + refCategoryCode +
+                ", productSellStatus='" + sellStatusCode + '\'' +
                 '}';
     }
 }
