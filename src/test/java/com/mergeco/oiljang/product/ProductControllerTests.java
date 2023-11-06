@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,13 +37,7 @@ public class ProductControllerTests {
 
     @Test
     void selectProductList() {
-        List<Integer> categoryCodes = new ArrayList<>();
-        categoryCodes.add(1);
-        categoryCodes.add(2);
-        categoryCodes.add(3);
-        categoryCodes.add(4);
-        categoryCodes.add(5);
-        List<Object[]> productList = productService.selectProductList(0, 9, categoryCodes, "latest", 0, 10000000);
+        List<Object[]> productList = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
         for(Object[] a : productList) {
             for(Object b : a) {
                 System.out.println(b);
@@ -86,6 +79,13 @@ public class ProductControllerTests {
         wishListDTO.setRefProductCode(1);
         wishListDTO.setRefUserCode(uuid);
         wishListService.insertWishList(wishListDTO);
+    }
+
+    @Test
+    void updateViewCount() {
+        for(int i = 0; i < 10; i++) {
+            productService.updateViewCount(1);
+        }
     }
 
 }

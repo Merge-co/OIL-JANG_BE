@@ -82,6 +82,20 @@ public class Product {
         return this;
     }
 
+    public Product category(Category val) {
+        Category = val;
+        return this;
+    }
+
+    public Product sellStatus(SellStatus val) {
+        SellStatus = val;
+        return this;
+    }
+
+    public Product builder() {
+        return new Product(productCode, productName, productPrice, productDesc, wishPlaceTrade, enrollDateTime, viewCount, refUserCode, SellStatus, Category);
+    }
+
     protected Product() {
     }
 
