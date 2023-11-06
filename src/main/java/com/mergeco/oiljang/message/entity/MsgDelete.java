@@ -15,4 +15,23 @@ public class MsgDelete {
 
     @Column(name = "msg_delete_status")
     private String msgDeleteStatus;
+
+    protected MsgDelete() {
+    }
+
+    public int getMsgDeleteCode() {
+        return msgDeleteCode;
+    }
+
+    public String getMsgDeleteStatus() {
+        return msgDeleteStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "MsgDelete{" +
+                "msgDeleteCode=" + msgDeleteCode +
+                ", msgDeleteStatus='" + msgDeleteStatus + '\'' +
+                '}';
+    }
 }
