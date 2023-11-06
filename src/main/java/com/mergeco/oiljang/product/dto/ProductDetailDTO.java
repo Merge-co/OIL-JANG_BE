@@ -3,7 +3,7 @@ package com.mergeco.oiljang.product.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ProductDetail {
+public class ProductDetailDTO {
     //    SELECT m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode) as upperCategoryCode, m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode) as wishCount, m.refUserCode, m.productDesc, m.wishPlaceTrade FROM Product m WHERE m.productCode = :productCode;
     private int productCode;
     private String proImageOriginAddr;
@@ -21,10 +21,10 @@ public class ProductDetail {
     private String wishPlaceTrade;
     private String sellStatus;
 
-    public ProductDetail() {
+    public ProductDetailDTO() {
     }
 
-    public ProductDetail(int productCode, String proImageOriginAddr, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade, String sellStatus) {
+    public ProductDetailDTO(int productCode, String proImageOriginAddr, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade, String sellStatus) {
         this.productCode = productCode;
         this.proImageOriginAddr = proImageOriginAddr;
         this.productName = productName;

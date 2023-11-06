@@ -2,7 +2,7 @@ package com.mergeco.oiljang.product.dto;
 
 import java.time.LocalDateTime;
 
-public class ProductList {
+public class ProductListDTO {
     private int productCode;
     private String proImageThumbAddr;
     private String productName;
@@ -10,10 +10,10 @@ public class ProductList {
     private LocalDateTime enrollDateTime;
     private String sellStatus;
 
-    public ProductList() {
+    public ProductListDTO() {
     }
 
-    public ProductList(int productCode, String proImageThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus) {
+    public ProductListDTO(int productCode, String proImageThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus) {
         this.productCode = productCode;
         this.proImageThumbAddr = proImageThumbAddr;
         this.productName = productName;
