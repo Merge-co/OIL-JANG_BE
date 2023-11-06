@@ -1,10 +1,15 @@
 package com.mergeco.oiljang.report.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity(name = "Report")
+@Entity(name = "tbl_report")
 @Table(name = "report")
+@Getter
 public class Report {
 
     @Id
@@ -19,19 +24,21 @@ public class Report {
     private LocalDateTime reportDate; //신고일시
     @Column(name = "product_code")
     private int productCode; // 상품 코드
-    @Column(name = "sell_state_code")
-    private int sellStateusCode; // 판매상태코드
+    @Column(name = "sell_status_code")
+    private int sellStatusCode; // 판매상태코드
     @Column(name = "process_distincation")
     private String processDistincation; // 처리분류
     @Column(name = "process_comment")
     private String processComment; // 처리 내용
     @Column(name = "process_date")
     private LocalDateTime processDate; // 처리 일시
-    @Column(name = "ref_report_category_no")
-    private int refReportCategoryNo; // 신고분류 코드 FK
+
+    @JoinColumn(name = "ref_report_category_no")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private ReportCategory reportCategory;// 신고분류 코드 FK
 
 
-    public Report reportNo(int val) {
+/*    public Report reportNo(int val) {
         reportNo = val;
         return this;
     }
@@ -51,8 +58,8 @@ public class Report {
         productCode = val ;
         return this;
     }
-    public Report sellStateusCode(int val) {
-        sellStateusCode = val;
+    public Report sellStatusCode(int val) {
+        sellStatusCode = val;
         return this;
     }
     public Report processComment(String val){
@@ -62,65 +69,21 @@ public class Report {
     public Report processDate (LocalDateTime val){
         processDate = val;
         return this;
-    }
-    public Report refReportCategoryNo (int val) {
-        refReportCategoryNo = val;
-        return this;
-    }
+    }*/
     protected Report() {
     }
 
-    public Report(int reportNo, String reportUserNick, String reportComment, LocalDateTime reportDate, int productCode, int sellStateusCode, int refReportCategoryNo, String processDistincation, String processComment, LocalDateTime processDate) {
+    public Report(int reportNo, String reportUserNick, String reportComment, LocalDateTime reportDate, int productCode, int sellStatusCode, String processDistincation, String processComment, LocalDateTime processDate, ReportCategory reportCategory) {
         this.reportNo = reportNo;
         this.reportUserNick = reportUserNick;
         this.reportComment = reportComment;
         this.reportDate = reportDate;
         this.productCode = productCode;
-        this.sellStateusCode = sellStateusCode;
-        this.refReportCategoryNo = refReportCategoryNo;
+        this.sellStatusCode = sellStatusCode;
         this.processDistincation = processDistincation;
         this.processComment = processComment;
         this.processDate = processDate;
-    }
-
-    public int getReportNo() {
-        return reportNo;
-    }
-
-    public String getReportUserNick() {
-        return reportUserNick;
-    }
-
-    public String getReportComment() {
-        return reportComment;
-    }
-
-    public LocalDateTime getReportDate() {
-        return reportDate;
-    }
-
-    public int getProductCode() {
-        return productCode;
-    }
-
-    public int getSellStateusCode() {
-        return sellStateusCode;
-    }
-
-    public int getRefReportCategoryNo() {
-        return refReportCategoryNo;
-    }
-
-    public String getProcessDistincation() {
-        return processDistincation;
-    }
-
-    public String getProcessComment() {
-        return processComment;
-    }
-
-    public LocalDateTime getProcessDate() {
-        return processDate;
+        this.reportCategory = reportCategory;
     }
 
     @Override
@@ -131,11 +94,11 @@ public class Report {
                 ", reportComment='" + reportComment + '\'' +
                 ", reportDate=" + reportDate +
                 ", productCode=" + productCode +
-                ", sellStateusCode=" + sellStateusCode +
-                ", refReportCategoryNo=" + refReportCategoryNo +
+                ", sellStatusCode=" + sellStatusCode +
                 ", processDistincation='" + processDistincation + '\'' +
                 ", processComment='" + processComment + '\'' +
                 ", processDate=" + processDate +
+                ", reportCategory=" + reportCategory +
                 '}';
     }
 }
