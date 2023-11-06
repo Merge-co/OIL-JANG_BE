@@ -42,8 +42,4 @@ public class WishListService {
         wishListRepository.deleteById(wishListCode);
     }
 
-    @Transactional
-    public void insertWishList(WishListDTO wishListDTO) {
-        wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
-    }
 }

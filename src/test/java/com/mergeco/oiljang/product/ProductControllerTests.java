@@ -76,7 +76,7 @@ public class ProductControllerTests {
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(1);
         wishListDTO.setRefUserCode(uuid);
-        wishListService.insertWishList(wishListDTO);
+        productService.insertWishList(wishListDTO);
     }
 
     @Test

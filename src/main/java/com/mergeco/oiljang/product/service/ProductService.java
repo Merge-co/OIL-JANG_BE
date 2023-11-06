@@ -11,6 +11,8 @@ import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.repository.CategoryRepository;
+import com.mergeco.oiljang.wishlist.dto.WishListDTO;
+import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -113,8 +116,6 @@ public class ProductService {
             query.setParameter("maxPrice" ,maxPrice);
         }
 
-
-
         List<ProductList> productList = query.getResultList();
 
         return productList;
@@ -149,6 +150,11 @@ public class ProductService {
         Product product = productRepository.findById(1).orElseThrow(IllegalArgumentException::new);
         Product productSave = product.category(20);
         productRepository.save(productSave);
+    }
+
+    @Transactional
+    public void insertWishList(WishListDTO wishListDTO) {
+        wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
     }
 
 }
