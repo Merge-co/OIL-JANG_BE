@@ -87,8 +87,8 @@ public class Product {
         return this;
     }
 
-    public Product sellStatus(SellStatus val) {
-        SellStatus = val;
+    public Product sellStatus(int val) {
+        SellStatus.sellStatusCode(val);
         return this;
     }
 

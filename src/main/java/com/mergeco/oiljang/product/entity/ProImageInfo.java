@@ -2,7 +2,7 @@ package com.mergeco.oiljang.product.entity;
 
 import javax.persistence.*;
 
-@Entity(name = "ProductImageInfo")
+@Entity(name = "ProImageInfo")
 @Table(name = "pro_image_info")
 public class ProImageInfo {
 

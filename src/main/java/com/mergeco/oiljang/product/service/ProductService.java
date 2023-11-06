@@ -4,6 +4,7 @@ package com.mergeco.oiljang.product.service;
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
 
+import com.mergeco.oiljang.product.dto.ProductDetail;
 import com.mergeco.oiljang.product.entity.Category;
 import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
@@ -72,7 +73,7 @@ public class ProductService {
     }
 
     public List<Object[]> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT m.productCode, m.productName, m.productPrice, m.enrollDateTime, m.Category.categoryName FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
+        StringBuilder jpql = new StringBuilder("SELECT m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode) as thumbImg, m.productName, m.productPrice, m.enrollDateTime FROM Product m JOIN m.Category c WHERE m.Category.categoryCode = :categoryCode");
 
         if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
@@ -119,12 +120,13 @@ public class ProductService {
     }
 
     // refUserCode 나중에 판매자 이름 추츨 해야 한다.
-    public List<Object[]> selectProductDetail(int productCode) {
-        String jpql ="SELECT m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, m.productDesc, m.wishPlaceTrade FROM Product m WHERE m.productCode = :productCode";
-        List<Object[]> productDetail = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
-        return productDetail;
+    public List<ProductDetail> selectProductDetail(int productCode) {
+        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetail(m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, m.productDesc, m.wishPlaceTrade)" +
+                " FROM Product m WHERE m.productCode = :productCode";
+        List<ProductDetail> productDetails = entityManager.createQuery(jpql, ProductDetail.class).setParameter("productCode", productCode).getResultList();
+        return productDetails;
     }
-
+//
 
 
     public List<Integer> selectWishCode(UUID refUserCode, int productCode) {

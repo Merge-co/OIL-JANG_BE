@@ -2,6 +2,7 @@ package com.mergeco.oiljang.product;
 
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
+import com.mergeco.oiljang.product.dto.ProductDetail;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.service.WishListService;
@@ -64,11 +65,9 @@ public class ProductControllerTests {
 
     @Test
     void selectProductDetail() {
-        List<Object[]> productDetail = productService.selectProductDetail(1);
-        for(Object[] a : productDetail) {
-            for(Object b: a) {
-                System.out.println(b);
-            }
+        List<ProductDetail> productDetails = productService.selectProductDetail(1);
+        for(ProductDetail productDetail : productDetails) {
+            System.out.println(productDetail);
         }
     }
 
