@@ -6,6 +6,7 @@ import java.util.UUID;
 public class ProductDetail {
     //    SELECT m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode) as upperCategoryCode, m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode) as wishCount, m.refUserCode, m.productDesc, m.wishPlaceTrade FROM Product m WHERE m.productCode = :productCode;
     private int productCode;
+    private String proImageOriginAddr;
     private String productName;
     private int productPrice;
     private String categoryName;
@@ -14,14 +15,17 @@ public class ProductDetail {
     private int viewCount;
     private Long wishCount;
     private UUID refUserCode;
+    private String userImageThumbAddr;
+    private String nickName;
     private String productDesc;
     private String wishPlaceTrade;
 
     public ProductDetail() {
     }
 
-    public ProductDetail(int productCode, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String productDesc, String wishPlaceTrade) {
+    public ProductDetail(int productCode, String proImageOriginAddr, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade) {
         this.productCode = productCode;
+        this.proImageOriginAddr = proImageOriginAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.categoryName = categoryName;
@@ -30,6 +34,8 @@ public class ProductDetail {
         this.viewCount = viewCount;
         this.wishCount = wishCount;
         this.refUserCode = refUserCode;
+        this.userImageThumbAddr = userImageThumbAddr;
+        this.nickName = nickName;
         this.productDesc = productDesc;
         this.wishPlaceTrade = wishPlaceTrade;
     }
@@ -40,6 +46,14 @@ public class ProductDetail {
 
     public void setProductCode(int productCode) {
         this.productCode = productCode;
+    }
+
+    public String getProImageOriginAddr() {
+        return proImageOriginAddr;
+    }
+
+    public void setProImageOriginAddr(String proImageOriginAddr) {
+        this.proImageOriginAddr = proImageOriginAddr;
     }
 
     public String getProductName() {
@@ -106,6 +120,22 @@ public class ProductDetail {
         this.refUserCode = refUserCode;
     }
 
+    public String getUserImageThumbAddr() {
+        return userImageThumbAddr;
+    }
+
+    public void setUserImageThumbAddr(String userImageThumbAddr) {
+        this.userImageThumbAddr = userImageThumbAddr;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
     public String getProductDesc() {
         return productDesc;
     }
@@ -126,6 +156,7 @@ public class ProductDetail {
     public String toString() {
         return "ProductDetail{" +
                 "productCode=" + productCode +
+                ", proImageOriginAddr='" + proImageOriginAddr + '\'' +
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", categoryName='" + categoryName + '\'' +
@@ -134,6 +165,8 @@ public class ProductDetail {
                 ", viewCount=" + viewCount +
                 ", wishCount=" + wishCount +
                 ", refUserCode=" + refUserCode +
+                ", userImageThumbAddr='" + userImageThumbAddr + '\'' +
+                ", nickName='" + nickName + '\'' +
                 ", productDesc='" + productDesc + '\'' +
                 ", wishPlaceTrade='" + wishPlaceTrade + '\'' +
                 '}';

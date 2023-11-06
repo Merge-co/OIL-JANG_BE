@@ -6,7 +6,6 @@ import com.mergeco.oiljang.product.dto.ProductDetail;
 import com.mergeco.oiljang.product.dto.ProductList;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
-import com.mergeco.oiljang.wishlist.service.WishListService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,6 @@ public class ProductControllerTests {
 
     @Autowired
     private ProductService productService;
-
-    @Autowired
-    private WishListService wishListService;
 
     @Test
     void printService() {
@@ -64,7 +60,7 @@ public class ProductControllerTests {
 
     @Test
     void selectProductDetail() {
-        List<ProductDetail> productDetails = productService.selectProductDetail(1);
+        List<ProductDetail> productDetails = productService.selectProductDetail(5);
         for(ProductDetail productDetail : productDetails) {
             System.out.println(productDetail);
         }
@@ -74,7 +70,7 @@ public class ProductControllerTests {
     void insertWishList() {
         UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         WishListDTO wishListDTO = new WishListDTO();
-        wishListDTO.setRefProductCode(1);
+        wishListDTO.setRefProductCode(5);
         wishListDTO.setRefUserCode(uuid);
         productService.insertWishList(wishListDTO);
     }
@@ -82,7 +78,7 @@ public class ProductControllerTests {
     @Test
     void updateViewCount() {
         for(int i = 0; i < 10; i++) {
-            productService.updateViewCount(1);
+            productService.updateViewCount(5);
         }
     }
 
