@@ -1,4 +1,3 @@
-/*
 package com.mergeco.oiljang.auth.model;
 
 import com.mergeco.oiljang.user.entity.User;
@@ -65,4 +64,3 @@ public class DetailsUser implements UserDetails {
         return true;
     }
 }
-*/

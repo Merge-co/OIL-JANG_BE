@@ -1,4 +1,3 @@
-/*
 package com.mergeco.oiljang.auth.config;
 
 import com.mergeco.oiljang.auth.filter.HeaderFilter;
@@ -14,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-    private static String[] CLASSPATH_RESOURCE_LOCATIONS = {
+    private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
             "classpath:/static/", "classpath:/public/", "classpath:/", "classpath:/resources/",
             "classpath:/META-INF/resources/", "classpath:/META-INF/resources/webjars/"
     };
@@ -43,4 +42,3 @@ public class WebConfig implements WebMvcConfigurer {
         return new JwtTokenInterceptor();
     }
 }
-*/

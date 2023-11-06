@@ -1,4 +1,3 @@
-/*
 package com.mergeco.oiljang.auth.handler;
 
 import com.mergeco.oiljang.auth.model.DetailsUser;
@@ -41,4 +40,3 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 }
-*/

@@ -1,25 +1,26 @@
-/*
 package com.mergeco.oiljang.user.entity;
 
 import com.mergeco.oiljang.common.UserRole;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "user_info")
-@Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@Getter
+@Builder
+@ToString
 public class User {
 
     @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "user_code", columnDefinition = "BINARY(16)")
     private UUID userId;
 
@@ -47,10 +48,6 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @CreatedDate
-    @Column(name = "enroll_date")
-    private LocalDateTime enrollDate;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "enroll_type")
     private EnrollType enrollType;
@@ -65,13 +62,22 @@ public class User {
     @Column(name = "verify_status")
     private String verifyStatus;
 
-    */
-/*객체 생성 시 탈퇴 여부 디폴트로 "N" 설정*//*
-
-    @Builder.Default
     @Column(name = "withdraw_status")
-    private String withdrawStatus = "N";
+    private String withdrawStatus;
 
+
+    public void authorizeUser() {
+        this.role = UserRole.USER;
+    }
+
+    public void passwordEncode(PasswordEncoder passwordEncoder) {
+        this.pwd= passwordEncoder.encode(this.pwd);
+    }
+
+
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.token = updateRefreshToken;
+    }
 
     public List<String> getRoleList() {
         if(this.role.getRole().length() > 0) {
@@ -81,4 +87,3 @@ public class User {
     }
 
 }
-*/

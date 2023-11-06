@@ -1,4 +1,3 @@
-/*
 package com.mergeco.oiljang.common;
 
 public enum UserRole {
@@ -16,4 +15,3 @@ public enum UserRole {
         return role;
     }
 }
-*/
