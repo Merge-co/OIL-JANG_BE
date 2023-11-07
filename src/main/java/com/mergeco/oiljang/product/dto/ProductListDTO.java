@@ -1,19 +1,24 @@
 package com.mergeco.oiljang.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
-public class ProductList {
+public class ProductListDTO {
     private int productCode;
     private String proImageThumbAddr;
     private String productName;
     private int productPrice;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime enrollDateTime;
     private String sellStatus;
 
-    public ProductList() {
+    public ProductListDTO() {
     }
 
-    public ProductList(int productCode, String proImageThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus) {
+    public ProductListDTO(int productCode, String proImageThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus) {
         this.productCode = productCode;
         this.proImageThumbAddr = proImageThumbAddr;
         this.productName = productName;

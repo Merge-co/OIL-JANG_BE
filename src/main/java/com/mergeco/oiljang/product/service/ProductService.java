@@ -4,14 +4,13 @@ package com.mergeco.oiljang.product.service;
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
 
-import com.mergeco.oiljang.product.dto.ProductDetail;
-import com.mergeco.oiljang.product.dto.ProductList;
+import com.mergeco.oiljang.product.dto.ProductDetailDTO;
+import com.mergeco.oiljang.product.dto.ProductListDTO;
 import com.mergeco.oiljang.product.entity.Category;
 import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.repository.CategoryRepository;
-import com.mergeco.oiljang.product.repository.UserProfileRepository;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
@@ -38,17 +37,15 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProImageRepository proImageRepository;
     private final WishListRepository wishListRepository;
-    private final UserProfileRepository userProfileRepository;
 
     @Autowired
-    public ProductService(EntityManager entityManager, ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository, WishListRepository wishListRepository, UserProfileRepository userProfileRepository) {
+    public ProductService(EntityManager entityManager, ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository, WishListRepository wishListRepository) {
         this.entityManager = entityManager;
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.categoryRepository = categoryRepository;
         this.proImageRepository = proImageRepository;
         this.wishListRepository = wishListRepository;
-        this.userProfileRepository = userProfileRepository;
     }
 
     public ProductDTO addProduct(ProductDTO productDTO) {
@@ -78,9 +75,9 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductList> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductList(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
-                " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode");
+    public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
+                " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
 
         if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
@@ -105,7 +102,7 @@ public class ProductService {
             }
         }
 
-        TypedQuery<ProductList> query = (TypedQuery<ProductList>) entityManager.createQuery(jpql.toString(), ProductList.class);
+        TypedQuery<ProductListDTO> query = (TypedQuery<ProductListDTO>) entityManager.createQuery(jpql.toString(), ProductListDTO.class);
 
         query.setParameter("categoryCode" ,categoryCode);
         query.setFirstResult(offset)
@@ -119,20 +116,20 @@ public class ProductService {
             query.setParameter("maxPrice" ,maxPrice);
         }
 
-        List<ProductList> productList = query.getResultList();
+        List<ProductListDTO> productListDTO = query.getResultList();
 
-        return productList;
+        return productListDTO;
     }
 
     // refUserCode 나중에 판매자 이름 추츨 해야 한다.
-    public List<ProductDetail> selectProductDetail(int productCode) {
-        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetail(m.productCode, (SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickName FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
+    public List<ProductDetailDTO> selectProductDetail(int productCode) {
+        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, (SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userId = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
                 " FROM Product m JOIN m.SellStatus s WHERE m.productCode = :productCode";
-        List<ProductDetail> productDetails = entityManager.createQuery(jpql, ProductDetail.class).setParameter("productCode", productCode).getResultList();
-        return productDetails;
+        List<ProductDetailDTO> productDetailDTOS = entityManager.createQuery(jpql, ProductDetailDTO.class).setParameter("productCode", productCode).getResultList();
+        return productDetailDTOS;
     }
     public List<Integer> selectWishCode(UUID refUserCode, int productCode) {
-        String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND refProductCode = :productCode";
+        String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND w.product.productCode = :productCode";
         List<Integer> wishCode = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
                 .setParameter("productCode", productCode)
@@ -140,6 +137,7 @@ public class ProductService {
         return wishCode;
     }
 
+    @Transactional
     public void updateViewCount(int productCode) {
         Product product = productRepository.findById(productCode).orElseThrow(IllegalArgumentException::new);
         Product productSave = product.viewCount(product.getViewCount() + 1).builder();

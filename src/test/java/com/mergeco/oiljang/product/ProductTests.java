@@ -2,8 +2,8 @@ package com.mergeco.oiljang.product;
 
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
-import com.mergeco.oiljang.product.dto.ProductDetail;
-import com.mergeco.oiljang.product.dto.ProductList;
+import com.mergeco.oiljang.product.dto.ProductDetailDTO;
+import com.mergeco.oiljang.product.dto.ProductListDTO;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
-public class ProductControllerTests {
+public class ProductTests {
 
     @Autowired
     private ProductService productService;
@@ -35,8 +35,8 @@ public class ProductControllerTests {
 
     @Test
     void selectProductList() {
-        List<ProductList> productList = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
-        for(ProductList product : productList) {
+        List<ProductListDTO> productListDTO = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
+        for(ProductListDTO product : productListDTO) {
             System.out.println(product);
         }
     }
@@ -61,9 +61,9 @@ public class ProductControllerTests {
 
     @Test
     void selectProductDetail() {
-        List<ProductDetail> productDetails = productService.selectProductDetail(5);
-        for(ProductDetail productDetail : productDetails) {
-            System.out.println(productDetail);
+        List<ProductDetailDTO> productDetailDTOS = productService.selectProductDetail(5);
+        for(ProductDetailDTO productDetailDTO : productDetailDTOS) {
+            System.out.println(productDetailDTO);
         }
     }
 
