@@ -37,7 +37,7 @@ public class ProductController {
 
     @ApiOperation(value = "중고 상품 카테고리 목록 조회")
     @GetMapping("/categories")
-    public ResponseEntity<ResponseMessage> findCategoryList() {
+    public ResponseEntity<ResponseMessage> selectCategoryList() {
 
         HttpHeaders headers = new HttpHeaders();
 
