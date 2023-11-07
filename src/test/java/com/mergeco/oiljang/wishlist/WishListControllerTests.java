@@ -32,6 +32,6 @@ public class WishListControllerTests {
     // 값이 있을 경우에 제대로 작동 한다.
     @Test
     void deleteWishList() {
-        wishListService.deleteWishList(4);
+        wishListService.deleteWishList(21);
     }
 }
