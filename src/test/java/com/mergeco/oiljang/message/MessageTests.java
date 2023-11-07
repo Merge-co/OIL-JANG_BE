@@ -2,8 +2,10 @@ package com.mergeco.oiljang.message;
 
 import com.mergeco.oiljang.message.dto.*;
 import com.mergeco.oiljang.message.service.MsgService;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -63,13 +65,12 @@ public class MessageTests {
 
     //-----------------------------------//
 
-
     private static Stream<Arguments> getMsgInfos() {
         LocalDate msgTime = LocalDate.parse("2023-11-06");
         UUID sunsu = UUID.fromString("7b3ce47b-4080-49a5-b463-ecf3148117f4");
         UUID bumbum = UUID.fromString("7b3ce47b-4080-49a5-b463-ecf3148117f4");
 
-        return Stream.of(Arguments.of(1, "맥북 사고싶어요", "N", msgTime, 1,
+        return Stream.of(Arguments.of("맥북 사고싶어요", "N", msgTime, 1,
                 sunsu, bumbum, 1, "N")
         );
     }
@@ -78,11 +79,10 @@ public class MessageTests {
     @DisplayName("쪽지 등록 테스트")
     @ParameterizedTest
     @MethodSource("getMsgInfos")
-   void msgInsertTest(int msgCode, String msgContent, String msgStatus,
+   void msgInsertTest(String msgContent, String msgStatus,
                       LocalDate msgTime,int refProductCode, UUID senderCode, UUID receiverCode,
                        int msgDeleteCode, String msgDeleteStatus){
         MsgInsertDTO msgInfo = new MsgInsertDTO(
-                msgCode,
                 msgContent,
                 msgStatus,
                 msgTime,
@@ -98,5 +98,14 @@ public class MessageTests {
 
         System.out.println("test: " + msgInfo);
 
+
     }
+
+
+
+
+
+
+
+
 }

@@ -8,6 +8,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Service
 public class MsgService {
 
@@ -29,4 +32,6 @@ public class MsgService {
         System.out.println("msgInfo: " + msgInfo);
         msgRepository.save(modelMapper.map(msgInfo, Message.class));
     }
+
+
 }
