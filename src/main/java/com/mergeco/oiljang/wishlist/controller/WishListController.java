@@ -54,7 +54,7 @@ public class WishListController {
     @ApiOperation("사용자의 관심목록에서 관심 상품 삭제")
     @ApiResponses({
         @ApiResponse(code = 204, message = "관심 상품 삭제 성공"),
-        @ApiResponse(code = 404, message = "잘못 입력된 파라미터ㅜㅜ")
+        @ApiResponse(code = 404, message = "파라미터 값 입력이 잘못됨")
     })
     @DeleteMapping("wishList/{wishCode}")
     public ResponseEntity<ResponseMessage> deleteWishList(@PathVariable int wishCode) {
