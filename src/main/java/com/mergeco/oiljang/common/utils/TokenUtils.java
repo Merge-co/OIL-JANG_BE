@@ -1,7 +1,7 @@
 package com.mergeco.oiljang.common.utils;
 
-import com.auth0.jwt.JWT;
-import com.mergeco.oiljang.common.AuthConstants;
+/*import com.auth0.jwt.JWT;
+import com.mergeco.oiljang.common.AuthConstants;*/
 import com.mergeco.oiljang.user.entity.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;

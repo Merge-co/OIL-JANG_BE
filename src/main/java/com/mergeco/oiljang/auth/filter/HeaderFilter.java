@@ -3,7 +3,7 @@ package com.mergeco.oiljang.auth.filter;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.logging.LogRecord;
+/*import java.util.logging.LogRecord;*/
 
 public class HeaderFilter implements Filter {
     @Override
