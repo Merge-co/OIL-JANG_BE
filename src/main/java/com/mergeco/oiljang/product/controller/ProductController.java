@@ -61,8 +61,6 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        // 임시 번호 발급
-        UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
         Map<String, Object> responseMap = new HashMap<>();
