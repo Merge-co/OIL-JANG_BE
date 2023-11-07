@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Api(tags = "중고 상품 관련")
@@ -55,16 +52,60 @@ public class ProductController {
 
     @ApiOperation(value = "중고 상품 목록 조회")
     @GetMapping("/products")
-    public ResponseEntity<ResponseMessage> selectProductList(@RequestParam int offset, @RequestParam int limit, @RequestParam int categoryCode, @RequestParam String sortCondition, @RequestParam int minPrice, @RequestParam int maxPrice) {
+    public ResponseEntity<ResponseMessage> selectProductList(@RequestParam int page, @RequestParam String pageKind, @RequestParam int categoryCode, @RequestParam String sortCondition, @RequestParam int minPrice, @RequestParam int maxPrice) {
 
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        int limit = 0;
+        switch (pageKind) {
+            case "merge":
+                limit = 6;
+            case "list":
+                limit = 8;
+        }
+
+        int totalPage = Long.valueOf(productService.countProductList()).intValue();
+        if(page >= totalPage) {
+            page = totalPage;
+        }
+
+        int offset = limit * (page - 1);
+
+        int FIRST_PAGE = 1;
+        int before = (page - 1) / 5 * 5;
+        int after = 0;
+
+        if((page - 1) / 5 * 5 + 6 > totalPage) {
+            after = 0;
+        } else {
+            after = (page - 1) / 5 * 5 + 6;
+        }
+
+        int lastButton = 0;
+        if(before + 4 >= totalPage) {
+            lastButton = totalPage;
+        } else {
+            lastButton = before + 4;
+        }
+
+        List<String> pageNo = new ArrayList<>();
+        pageNo.add("firstPage : " + FIRST_PAGE);
+        pageNo.add("before : " + before);
+
+        for(int i = before; i <= lastButton; i++) {
+            pageNo.add(1 + " : " + lastButton);
+        }
+
+        pageNo.add("after : " + after);
+        pageNo.add("lastPage : " + totalPage);
+
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productListDTOList);
+        responseMap.put("pageNo", pageNo);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 목록", responseMap);
 

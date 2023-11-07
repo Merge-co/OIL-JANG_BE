@@ -74,6 +74,10 @@ public class ProductService {
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
     }
+    public Long countProductList() {
+        Long countPage = productRepository.count();
+        return countPage;
+    }
 
     public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
         StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +

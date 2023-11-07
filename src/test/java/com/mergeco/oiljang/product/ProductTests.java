@@ -34,6 +34,11 @@ public class ProductTests {
     }
 
     @Test
+    void countProductList() {
+        System.out.println(productService.countProductList());
+    }
+
+    @Test
     void selectProductList() {
         List<ProductListDTO> productListDTO = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
         for(ProductListDTO product : productListDTO) {
