@@ -11,7 +11,7 @@ import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.repository.CategoryRepository;
-import com.mergeco.oiljang.product.repository.UserProfileRepository;
+import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
@@ -126,7 +126,7 @@ public class ProductService {
 
     // refUserCode 나중에 판매자 이름 추츨 해야 한다.
     public List<ProductDetailDTO> selectProductDetail(int productCode) {
-        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, (SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickName FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
+        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, (SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userId = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
                 " FROM Product m JOIN m.SellStatus s WHERE m.productCode = :productCode";
         List<ProductDetailDTO> productDetailDTOS = entityManager.createQuery(jpql, ProductDetailDTO.class).setParameter("productCode", productCode).getResultList();
         return productDetailDTOS;
