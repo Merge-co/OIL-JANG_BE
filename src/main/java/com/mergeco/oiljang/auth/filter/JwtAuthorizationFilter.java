@@ -36,7 +36,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        List<String> roleLessList = Arrays.asList("/join");
+        List<String> roleLessList = Arrays.asList("/users");
 
         if (roleLessList.contains((request.getRequestURI()))) {
             chain.doFilter(request, response);

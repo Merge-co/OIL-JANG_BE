@@ -4,9 +4,11 @@ import com.mergeco.oiljang.common.UserRole;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -16,6 +18,7 @@ import java.util.*;
 @Getter
 @Builder
 @ToString
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Id
@@ -65,6 +68,15 @@ public class User {
     @Column(name = "withdraw_status")
     private String withdrawStatus;
 
+    @Column(name = "enroll_date")
+    @DateTimeFormat(pattern = "YYYY-MM-DD hh:mm:ss")
+    private LocalDateTime enrollDate;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    private UserProfile userProfile;
+
+    @Column(name = "profile_Image_Url")
+    private String profileImageUrl;
 
     public void authorizeUser() {
         this.role = UserRole.USER;

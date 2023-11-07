@@ -5,7 +5,7 @@ import com.mergeco.oiljang.auth.filter.JwtAuthorizationFilter;
 import com.mergeco.oiljang.auth.handler.CustomAuthFailureHandler;
 import com.mergeco.oiljang.auth.handler.CustomAuthSuccessHandler;
 import com.mergeco.oiljang.auth.handler.CustomAuthenticationProvider;
-import lombok.RequiredArgsConstructor;
+/*import lombok.RequiredArgsConstructor;*/
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+/*import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;*/
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,10 +39,9 @@ public class WebSecurityConfig {
         http.csrf().disable()
                 .headers(header -> header.frameOptions().sameOrigin())
                 .authorizeRequests()
-                .anyRequest().permitAll()
-//                .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
-//                .antMatchers("/join").permitAll()
-//                .anyRequest().authenticated()
+                .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
+                .antMatchers("/users").permitAll()
+                .anyRequest().authenticated()
                 .and()
                /* .oauth2Login()
                 .successHandler(oAuth2LoginSuccessHandler())

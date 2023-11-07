@@ -9,8 +9,12 @@ import lombok.*;
 @ToString
 public class UserDTO {
 
+    private String nickname;
+    private String name;
     private String id;
     private String pwd;
-
+    private String email;
+    private String phone;
+    private String profileImageUrl;
 
 }

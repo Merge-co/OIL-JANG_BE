@@ -2,9 +2,13 @@ package com.mergeco.oiljang.common.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mergeco.oiljang.auth.model.dto.JoinDTO;
+import com.mergeco.oiljang.user.entity.User;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ConvertUtil {
 
     public static Object convertObjectToJsonObject(Object obj) {
@@ -23,5 +27,14 @@ public class ConvertUtil {
         }
 
         return convertObject;
+    }
+
+    public User convertToEntity(JoinDTO joinDTO){
+        User user = User.builder()
+                .name(joinDTO.getName())
+                .profileImageUrl(joinDTO.getProfileImageUrl())
+                .build();
+
+        return user;
     }
 }
