@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
-public class ProductControllerTests {
+public class ProductTests {
 
     @Autowired
     private ProductService productService;

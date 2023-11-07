@@ -13,7 +13,7 @@ import java.util.UUID;
 
 
 @SpringBootTest
-public class WishListControllerTests {
+public class WishListTests {
 
     @Autowired
     private WishListService wishListService;
