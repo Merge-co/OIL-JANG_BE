@@ -1,7 +1,6 @@
 package com.mergeco.oiljang.message.service;
 
-import com.mergeco.oiljang.message.dto.MsgDTO;
-import com.mergeco.oiljang.message.dto.MsgProInfoDTO;
+import com.mergeco.oiljang.message.dto.MsgInsertDTO;
 import com.mergeco.oiljang.message.entity.Message;
 import com.mergeco.oiljang.message.repository.MsgDeleteRepository;
 import com.mergeco.oiljang.message.repository.MsgRepository;
@@ -14,6 +13,7 @@ public class MsgService {
 
     private final MsgRepository msgRepository;
     private final ModelMapper modelMapper;
+
     private final MsgDeleteRepository msgDeleteRepository;
 
     public MsgService(MsgRepository msgRepository,
@@ -25,7 +25,7 @@ public class MsgService {
     }
 
     @Transactional
-    public void insertMsg(MsgDTO msgInfo) {
+        public void insertMsg(MsgInsertDTO msgInfo) {
         System.out.println("msgInfo: " + msgInfo);
         msgRepository.save(modelMapper.map(msgInfo, Message.class));
     }

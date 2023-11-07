@@ -10,5 +10,4 @@ import lombok.*;
 public class MsgDeleteDTO {
     private int msgDeleteCode;
     private String msgDeleteStatus;
-
 }
