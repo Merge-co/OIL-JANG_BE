@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.text.BreakIterator;
 import java.util.List;
 
 @Service
@@ -111,4 +112,80 @@ public class ReportService {
                 .getResultList();
         return reportList;
     }
+
+    public Long countReportOfCategory(int categoryCode) {
+        String jpql = "SELECT COUNT(m.reportCategory.reportCategoryNo) " +
+                "FROM tbl_report m " +
+                "WHERE m.reportCategory.reportCategoryNo = :categoryCode";
+
+         Long countOfReport = manager.createQuery(jpql, Long.class)
+                .setParameter("categoryCode" , categoryCode)
+                .getSingleResult();
+        return countOfReport;
+    }
+
+    public List<Report> selectByInnerJoin() {
+        String jpql = "SELECT m FROM tbl_report m JOIN m.product c";
+        List<Report> reportList = manager.createQuery(jpql, Report.class).getResultList();
+
+        return reportList;
+    }
+
+
+    public List<Object[]> selectByOuterJoin() {
+        String jpql = "SELECT m.reportUserNick, c.reportCategoryCode " +
+                "FROM tbl_report m " +
+                "RIGHT JOIN m.reportCategory c " +
+                "ORDER BY m.reportCategory.reportCategoryCode";
+        List<Object[]> reportList = manager.createQuery(jpql).getResultList();
+        return reportList;
+    }
+
+    public List<Object[]> selectByReportProduct() {
+        String jpql = "SELECT r.reportCategory.reportCategoryNo, r.product.productCode " +
+                "FROM tbl_report r " +
+                "LEFT JOIN r.reportCategory c";
+        List<Object[]> categoryList = manager.createQuery(jpql).getResultList();
+
+        return categoryList;
+    }
+
+    public List<Object[]> selectByReportProcess() {
+        String jpql = "SELECT r.reportCategory.reportCategoryNo, r.product.productName, r.reportComment " +
+                "FROM tbl_report r " +
+                "LEFT JOIN r.product c";
+        List<Object[]> reportList = manager.createQuery(jpql).getResultList();
+
+        return reportList;
+    }
+
+    public List<Object[]> selectByReportManagement() {
+        String jpql = "SELECT r.reportNo, r.product.refUserCode, r.product.productName, r.reportCategory.reportCategoryCode, r.sellStatus.sellStatus " +
+                "FROM tbl_report r " +
+                "RIGHT JOIN r.product c";
+        List<Object[]> managment = manager.createQuery(jpql).getResultList();
+
+        return managment;
+
+    }
+
+    public List<Object[]> selectByProcessDetail() {
+        String jpql = "SELECT r.reportNo, r.reportDate, r.reportCategory.reportCategoryCode, r.product.productName, r.processDate, r.sellStatus.sellStatus, r.reportComment, r.processComment " +
+                "FROM tbl_report r " +
+                "LEFT JOIN r.product c";
+        List<Object[]> process = manager.createQuery(jpql).getResultList();
+
+        return process;
+    }
+
+
+
+   /* public List<Object[]> selectByCollectionJoun() {
+        String jpql = "SELECT c.reportCategoryNo, p.productCode " +
+                "FROM ReportCategory c " +
+                "LEFT JOIN c.product p ";
+        List<Object[]> caterogyList = manager.createQuery(jpql).getResultList();
+        return caterogyList;
+    }*/
+
 }

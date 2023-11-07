@@ -6,6 +6,8 @@ import com.mergeco.oiljang.report.model.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
 import com.mergeco.oiljang.report.service.ReportService;
 import org.aspectj.weaver.patterns.ReferencePointcut;
+import org.hibernate.engine.transaction.jta.platform.internal.OC4JJtaPlatform;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -182,15 +184,138 @@ public class ReportTests {
 
         //given
         int offset = 0; // 조회를 건널뛸 행
-        int limit =  5; // 조회할 최대 항 수
+        int limit = 5; // 조회할 최대 항 수
         //when
         List<Report> reportList = service.usingPagingAPI(offset, limit);
         //then
         Assertions.assertNotNull(reportList);
         System.out.println("=============================================");
         reportList.forEach(System.out::println);
+    }
 
+    @DisplayName("특정 카테고리에 등록된 메뉴 수 조회")
+    @Test
+    public void testCountReportOfCategory () {
+        //given
+        int categoryCode = 3;
+        //when
+        Long countOfReport = service.countReportOfCategory(categoryCode);
+        //then
+        Assertions.assertTrue(countOfReport >= 0);
+        System.out.println("countOfReport : " + countOfReport);
+    }
 
+    @DisplayName("내부조인을 이용한 조회")
+    @Test
+    public void testSelectByInnerJoin(){
 
-}
+        //given
+        //when
+        List<Report> reportList = service.selectByInnerJoin();
+        //then
+        Assertions.assertNotNull(reportList);
+        System.out.println(reportList);
+        System.out.println(" ===============================================");
+        Assertions.assertTrue(reportList.size() > 0 );
+    }
+
+    @DisplayName("외부조인을 이용한 조회")
+    @Test
+    public void testSelectByOuterJoin() {
+        //given
+        //when
+        List<Object[]> reportList = service.selectByOuterJoin();
+        //then
+        Assertions.assertNotNull(reportList);
+        reportList.forEach(row -> {
+            for (Object col : row) {
+                System.out.print(col + " ");
+            }
+            System.out.println();
+        });
+    }
+    @DisplayName("신고분류, 상품정보 조회")
+    @Test
+    public void reportCategoryProductJoin (){
+        //given
+        //when
+        List<Object[]> categoryList = service.selectByReportProduct();
+
+        //then
+        Assertions.assertNotNull(categoryList);
+        categoryList.forEach(row -> {
+            for (Object col : row){
+                System.out.print(col + " ");
+            }
+            System.out.println();
+        });
+    }
+
+    @DisplayName("신고처리 : 신고분류, 판매게시글, 신고사유 조회")
+    @Test
+    public void reportProcess() {
+        //given
+        //when
+        List<Object[]> reportList = service.selectByReportProcess();
+
+        //then
+        Assertions.assertNotNull(reportList);
+        reportList.forEach(row -> {
+            for (Object col : row){
+                System.out.print(col + " ");
+            }
+            System.out.println();
+        });
+    }
+    @DisplayName("신고 관리페이지 - 신고번호, 판매자ID(닉네임 X), 판매글, 신고분류, 처리완료 조회")
+    @Test
+    public void reportManagementPage () {
+        //given
+        //when
+        List<Object[]> management = service.selectByReportManagement();
+        //then
+        Assertions.assertNotNull(management);
+        System.out.println("=======================================");
+        management.forEach(row -> {
+            for (Object col : row) {
+                System.out.print(col + " : ");
+            }
+            System.out.println();
+        });
+    }
+
+    @DisplayName("신고처리상세 - 신고번호, 접수일시, 신고분류, 판매글, 처리일시, 신고처리 결과, 신고사유, 신고처리내용 조회")
+    @Test
+    public void processDetail() {
+        //given
+        //when
+        List<Object[]> processDetail = service.selectByProcessDetail();
+
+        //then
+        Assertions.assertNotNull(processDetail);
+        System.out.println("================================");
+        processDetail.forEach(row -> {
+            for (Object col : row) {
+                System.out.print(col + " : ");
+            }
+            System.out.println();
+        });
+
+    }
+   /* @DisplayName("컬렉션 조인 조회")
+    @Test
+    public void testSelectByCollectionJoin() {
+        //gvien
+        //when
+        List<Object[]> categoryList = service.selectByCollectionJoun();
+        //then
+        Assertions.assertNotNull(categoryList);
+        categoryList.forEach(row -> {
+            for (Object col : row) {
+                System.out.print(col + " ");
+            }
+            System.out.println();
+        });
+    }*/
+
 }
