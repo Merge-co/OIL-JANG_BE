@@ -38,7 +38,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProImageRepository proImageRepository;
     private final WishListRepository wishListRepository;
-    private final UserProfileRepository userProfileRepository;
+//    private final UserProfileRepository userProfileRepository;
 
     @Autowired
     public ProductService(EntityManager entityManager, ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository, WishListRepository wishListRepository, UserProfileRepository userProfileRepository) {
@@ -48,7 +48,7 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
         this.proImageRepository = proImageRepository;
         this.wishListRepository = wishListRepository;
-        this.userProfileRepository = userProfileRepository;
+//        this.userProfileRepository = userProfileRepository;
     }
 
     public ProductDTO addProduct(ProductDTO productDTO) {
