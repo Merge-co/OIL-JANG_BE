@@ -1,5 +1,8 @@
 package com.mergeco.oiljang.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -9,6 +12,8 @@ public class ProductDTO {
     private int productPrice;
     private String productDesc;
     private String wishPlaceTrade;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime enrollDateTime;
     private int viewCount;
     private UUID refUserCode;

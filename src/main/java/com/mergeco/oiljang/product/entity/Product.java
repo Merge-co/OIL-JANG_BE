@@ -1,5 +1,8 @@
 package com.mergeco.oiljang.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -25,6 +28,8 @@ public class Product {
     @Column(name = "wish_place_to_trade")
     private String wishPlaceTrade;
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "enroll_datetime")
     private LocalDateTime enrollDateTime;
 
