@@ -37,7 +37,6 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProImageRepository proImageRepository;
     private final WishListRepository wishListRepository;
-//    private final UserProfileRepository userProfileRepository;
 
     @Autowired
     public ProductService(EntityManager entityManager, ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository, WishListRepository wishListRepository) {
