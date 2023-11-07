@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +32,8 @@ public class WishListControllerTests {
 
     // 값이 있을 경우에 제대로 작동 한다.
     @Test
+    @Transactional
     void deleteWishList() {
-        wishListService.deleteWishList(21);
+        wishListService.deleteWishList(26);
     }
 }
