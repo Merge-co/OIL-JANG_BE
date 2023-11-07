@@ -11,7 +11,6 @@ import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.repository.CategoryRepository;
-import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
@@ -41,14 +40,13 @@ public class ProductService {
 //    private final UserProfileRepository userProfileRepository;
 
     @Autowired
-    public ProductService(EntityManager entityManager, ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository, WishListRepository wishListRepository, UserProfileRepository userProfileRepository) {
+    public ProductService(EntityManager entityManager, ProductRepository productRepository, ModelMapper modelMapper, CategoryRepository categoryRepository, ProImageRepository proImageRepository, WishListRepository wishListRepository) {
         this.entityManager = entityManager;
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.categoryRepository = categoryRepository;
         this.proImageRepository = proImageRepository;
         this.wishListRepository = wishListRepository;
-//        this.userProfileRepository = userProfileRepository;
     }
 
     public ProductDTO addProduct(ProductDTO productDTO) {
