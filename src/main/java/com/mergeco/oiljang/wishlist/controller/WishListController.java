@@ -56,7 +56,7 @@ public class WishListController {
         @ApiResponse(code = 204, message = "관심 상품 삭제 성공"),
         @ApiResponse(code = 404, message = "파라미터 값 입력이 잘못됨")
     })
-    @DeleteMapping("wishList/{wishCode}")
+    @DeleteMapping("wishLists/{wishCode}")
     public ResponseEntity<ResponseMessage> deleteWishList(@PathVariable int wishCode) {
 
         HttpHeaders headers = new HttpHeaders();
