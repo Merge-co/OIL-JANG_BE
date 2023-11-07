@@ -1,6 +1,5 @@
 package com.mergeco.oiljang.wishlist;
 
-import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
 import com.mergeco.oiljang.wishlist.service.WishListService;
 import org.junit.jupiter.api.Assertions;
