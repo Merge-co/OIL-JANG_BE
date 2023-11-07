@@ -140,6 +140,7 @@ public class ProductService {
         return wishCode;
     }
 
+    @Transactional
     public void updateViewCount(int productCode) {
         Product product = productRepository.findById(productCode).orElseThrow(IllegalArgumentException::new);
         Product productSave = product.viewCount(product.getViewCount() + 1).builder();
