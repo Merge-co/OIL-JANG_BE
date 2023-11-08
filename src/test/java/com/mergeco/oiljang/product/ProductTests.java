@@ -53,7 +53,7 @@ public class ProductTests {
     @Transactional
     void insertProduct() {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductThumbAddr("11111");
+        productDTO.setProductThumbAddr("한성");
         productDTO.setRefCategoryCode(1);
         productDTO.setEnrollDateTime(LocalDateTime.now());
         productDTO.setProductDesc("1");
@@ -101,10 +101,11 @@ public class ProductTests {
         productService.updateViewCount(5);
     }
 
-    @Test
-    @Transactional
-    void updateTest() {
-        productService.updateTest();
-    }
+
+//    @Test
+//    void updateTest() {
+//        productService.updateTest();
+//    }
+
 
 }

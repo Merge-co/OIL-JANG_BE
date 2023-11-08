@@ -68,4 +68,5 @@ public class ProImageInfoDTO {
                 ", proImageOriginAddr='" + proImageOriginAddr + '\'' +
                 '}';
     }
+
 }

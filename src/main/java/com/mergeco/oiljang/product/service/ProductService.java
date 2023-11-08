@@ -1,12 +1,10 @@
 package com.mergeco.oiljang.product.service;
 
 
-import com.mergeco.oiljang.product.dto.CategoryDTO;
-import com.mergeco.oiljang.product.dto.ProductDTO;
+import com.mergeco.oiljang.product.dto.*;
 
-import com.mergeco.oiljang.product.dto.ProductDetailDTO;
-import com.mergeco.oiljang.product.dto.ProductListDTO;
 import com.mergeco.oiljang.product.entity.Category;
+import com.mergeco.oiljang.product.entity.ProImageInfo;
 import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
@@ -17,11 +15,16 @@ import com.mergeco.oiljang.wishlist.repository.WishListRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,10 +169,44 @@ public class ProductService {
         wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
     }
 
-    public void updateTest() {
-        Product product = productRepository.findById(6).orElseThrow(IllegalArgumentException::new);
-        Product productSave = product.category(20);
-        productRepository.save(productSave);
+//    public void updateTest() {
+//        Product product = productRepository.findById(6).orElseThrow(IllegalArgumentException::new);
+//        Product productSave = product.category(20);
+//        productRepository.save(productSave);
+//    }
+
+    public void addProductImage(int productCode, List<MultipartFile> imageFiles) {
+        if(imageFiles != null && imageFiles.size() <= 5) {
+            for (MultipartFile imageFile : imageFiles) {
+                //이미지 업로드 및 정보 저장
+                String imageAddress = saveImage(imageFile);
+                ProImageInfoDTO imageInfo = new ProImageInfoDTO();
+                imageInfo.setRefProductCode(productCode);
+                imageInfo.setProImageOriginName(imageFile.getOriginalFilename());
+                imageInfo.setProImageDbName(imageAddress);
+                imageInfo.setProImageOriginAddr(imageAddress);
+                // 이미지 정보를 데이터베이스에 저장
+                addProImageInfo(imageInfo);
+            }
+        }
+    }
+    public String saveImage(MultipartFile imageFile) {
+        // 이미지 파일을 서버에 저장하고 파일 주소를 변환
+        // 실제 파일 저장 및 주소 생성 로직을 구현
+        try {
+            byte[] bytes = imageFile.getBytes();
+            String fileName = imageFile.getOriginalFilename(); // 사용자가 업로드한 파일명
+            String filePath = "/path/to/actual/image/directory/" + fileName; // 실제 이미지를 저장할 경로
+            Path path = Paths.get(filePath);
+            Files.write(path, bytes);
+            return filePath; // 저장된 이미지 파일 경로 반환
+        } catch (IOException e) {
+            //오륲 처리
+            e.printStackTrace();
+            return null;
+        }
     }
 
+    public void addProImageInfo(ProImageInfoDTO imageInfo) {
+    }
 }
