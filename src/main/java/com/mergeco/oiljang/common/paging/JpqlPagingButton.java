@@ -1,10 +1,10 @@
 package com.mergeco.oiljang.common.paging;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JpqlPagingButton {
-    public static List<String> JpqlPagingNumCount(int page, int totalPage) {
+    public static Map<String, Integer> JpqlPagingNumCount(int page, int totalPage) {
         int pageBtn = 5;
 
         int FIRST_PAGE = 1;
@@ -12,7 +12,7 @@ public class JpqlPagingButton {
 
         int after = 0;
         if(before + pageBtn + 1 > totalPage) {
-            after = 0;
+            after = totalPage;
         } else {
             after = before + pageBtn + 1;
         }
@@ -24,20 +24,23 @@ public class JpqlPagingButton {
             lastButton = before + pageBtn;
         }
 
-        List<String> pageNo = new ArrayList<>();
-        pageNo.add("firstPage : " + FIRST_PAGE);
-        pageNo.add("before : " + before);
+        Map<String, Integer> pageNo = new HashMap<>();
+        pageNo.put("firstPage", FIRST_PAGE);
+        pageNo.put("before", before);
+        if(before == 0) {
+            pageNo.put("before", 1);
+        }
 
-        for(int i = before + 1; i <= lastButton; i++) {
+        for(int i = before + 1, j = 1; i <= lastButton; i++, j++) {
             if(i == page) {
-                pageNo.add("current : " + i);
+                pageNo.put("numBtn" + String.valueOf(j) + ", current", i);
             } else {
-                pageNo.add("numButton : " + i);
+                pageNo.put("numBtn" + String.valueOf(j), i);
             }
         }
 
-        pageNo.add("after : " + after);
-        pageNo.add("lastPage : " + totalPage);
+        pageNo.put("after", after);
+        pageNo.put("lastPage", totalPage);
         return pageNo;
     }
 }

@@ -79,7 +79,7 @@ public class ProductController {
             page = 1;
         }
 
-        List<String> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
 
 
         Map<String, Object> responseMap = new HashMap<>();
