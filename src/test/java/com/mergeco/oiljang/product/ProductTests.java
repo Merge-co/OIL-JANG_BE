@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -73,6 +74,7 @@ public class ProductTests {
     }
 
     @Test
+    @Transactional
     void insertWishList() {
         UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         WishListDTO wishListDTO = new WishListDTO();
@@ -82,10 +84,9 @@ public class ProductTests {
     }
 
     @Test
+    @Transactional
     void updateViewCount() {
-        for(int i = 0; i < 10; i++) {
-            productService.updateViewCount(5);
-        }
+        productService.updateViewCount(5);
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.mergeco.oiljang.common.paging;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class JpqlPagingButton {
     public static List<String> JpqlPagingNumCount(int page, int totalPage) {
@@ -12,17 +11,17 @@ public class JpqlPagingButton {
         int before = (page - 1) / pageBtn * pageBtn;
 
         int after = 0;
-        if(before + 6 > totalPage) {
+        if(before + pageBtn + 1 > totalPage) {
             after = 0;
         } else {
-            after = before + 6;
+            after = before + pageBtn + 1;
         }
 
         int lastButton = 0;
         if(before + 5 >= totalPage) {
             lastButton = totalPage;
         } else {
-            lastButton = before + 5;
+            lastButton = before + pageBtn;
         }
 
         List<String> pageNo = new ArrayList<>();
@@ -31,7 +30,7 @@ public class JpqlPagingButton {
 
         for(int i = before + 1; i <= lastButton; i++) {
             if(i == page) {
-                pageNo.add("numButton : " + 0);
+                pageNo.add("current : " + i);
             } else {
                 pageNo.add("numButton : " + i);
             }

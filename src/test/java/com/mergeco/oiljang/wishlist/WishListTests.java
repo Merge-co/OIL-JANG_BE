@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.wishlist;
 
+import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
 import com.mergeco.oiljang.wishlist.service.WishListService;
 import org.junit.jupiter.api.Assertions;
@@ -34,5 +35,13 @@ public class WishListTests {
     @Transactional
     void deleteWishList() {
         wishListService.deleteWishList(1);
+    }
+
+    @Test
+    void pagingTest() {
+        List<String> pageNo = JpqlPagingButton.JpqlPagingNumCount(20, 20);
+        for(String a : pageNo) {
+            System.out.println(a);
+        }
     }
 }
