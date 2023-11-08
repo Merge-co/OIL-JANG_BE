@@ -39,7 +39,7 @@ public class Message {
     @Column(name = "receiver_code")
     private UUID receiverCode;
 
-    @JoinColumn(name = "msg_delete_code")
+    @JoinColumn(name = "msg_delete_code", insertable = false, updatable = false)
     @ManyToOne
     private MsgDeleteInfo msgDeleteInfo;
 

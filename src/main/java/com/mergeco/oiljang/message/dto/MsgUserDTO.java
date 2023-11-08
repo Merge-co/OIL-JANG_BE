@@ -11,6 +11,10 @@ import java.util.UUID;
 @ToString
 public class MsgUserDTO {
     private int msgCode;
+    private UUID userCode;
     private UUID senderCode;
     private UUID receiverCode;
+    private String id;
+    private String name;
+    private String token;
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @ToString
 public class MsgInsertDTO {
-    private Integer msgCode;
+    private int msgCode;
     private String msgContent;
     private String msgStatus;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
