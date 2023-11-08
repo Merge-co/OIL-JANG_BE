@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public class ProductDTO {
     private int productCode;
+    private String productThumbAddr;
     private String productName;
     private int productPrice;
     private String productDesc;
@@ -23,8 +24,9 @@ public class ProductDTO {
     public ProductDTO() {
     }
 
-    public ProductDTO(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int refCategoryCode, String sellStatusCode) {
+    public ProductDTO(int productCode, String productThumbAddr, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int refCategoryCode, String sellStatusCode) {
         this.productCode = productCode;
+        this.productThumbAddr = productThumbAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.productDesc = productDesc;
@@ -42,6 +44,14 @@ public class ProductDTO {
 
     public void setProductCode(int productCode) {
         this.productCode = productCode;
+    }
+
+    public String getProductThumbAddr() {
+        return productThumbAddr;
+    }
+
+    public void setProductThumbAddr(String productThumbAddr) {
+        this.productThumbAddr = productThumbAddr;
     }
 
     public String getProductName() {
@@ -120,6 +130,7 @@ public class ProductDTO {
     public String toString() {
         return "ProductDTO{" +
                 "productCode=" + productCode +
+                ", productThumbAddr='" + productThumbAddr + '\'' +
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", productDesc='" + productDesc + '\'' +
@@ -128,7 +139,7 @@ public class ProductDTO {
                 ", viewCount=" + viewCount +
                 ", refUserCode=" + refUserCode +
                 ", refCategoryCode=" + refCategoryCode +
-                ", productSellStatus='" + sellStatusCode + '\'' +
+                ", sellStatusCode='" + sellStatusCode + '\'' +
                 '}';
     }
 }

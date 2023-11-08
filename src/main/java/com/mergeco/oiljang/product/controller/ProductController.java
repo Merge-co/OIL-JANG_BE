@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -117,5 +118,19 @@ public class ProductController {
 
         return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
     }
+
+    @PostMapping("/products/{productCode}/images")
+    public ResponseEntity<ResponseMessage> addProductImages (
+            @PathVariable int productCode,
+            @RequestParam("imagesFiles") List<MultipartFile> imageFiles
+    ) {
+        //이미지 업로드 및 정보 저장 메서드 호출
+        productService.addProductImage(productCode, imageFiles);
+        // 필요한 응답 메시지 생성
+        ResponseMessage responseMessage = new ResponseMessage(200, "이미지 추가 완료!", null);
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
+
+
 
 }
