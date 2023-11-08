@@ -1,30 +1,33 @@
 package com.mergeco.oiljang.report.service;
 
+import com.mergeco.oiljang.product.dto.ProductDTO;
+import com.mergeco.oiljang.product.entity.Product;
+import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.report.entity.Report;
+import com.mergeco.oiljang.report.model.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import java.text.BreakIterator;
+import javax.persistence.*;
 import java.util.List;
 
 @Service
+
 public class ReportService {
 
     @PersistenceContext
     private final EntityManager manager;
     private final ReportRepository reportRepository;
+    private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ReportService(EntityManager manager, ReportRepository reportRepository, ModelMapper modelMapper) {
+    public ReportService(EntityManager manager, ReportRepository reportRepository, ProductRepository productRepository, ModelMapper modelMapper) {
         this.manager = manager;
         this.reportRepository = reportRepository;
+        this.productRepository = productRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -118,8 +121,8 @@ public class ReportService {
                 "FROM tbl_report m " +
                 "WHERE m.reportCategory.reportCategoryNo = :categoryCode";
 
-         Long countOfReport = manager.createQuery(jpql, Long.class)
-                .setParameter("categoryCode" , categoryCode)
+        Long countOfReport = manager.createQuery(jpql, Long.class)
+                .setParameter("categoryCode", categoryCode)
                 .getSingleResult();
         return countOfReport;
     }
@@ -177,6 +180,28 @@ public class ReportService {
 
         return process;
     }
+
+    public List<Report> selectWithSubQuery(String categoryName) {
+
+        String jpql = "SELECT m.product.SellStatus.sellStatusCode " +
+                "FROM tbl_report m " +
+                "WHERE m.product.SellStatus.sellStatusCode " +
+                "   =(SELECT c.sellStatusCode " +
+                "       FROM SellStatus c " +
+                "       WHERE c.sellStatusCode = :categoryName)";
+
+        List<Report> reportList = manager.createQuery(jpql, Report.class)
+                .setParameter("categoryName", categoryName)
+                .getResultList();
+
+        return reportList;
+    }
+
+    public void registReport(ReportDTO reportInfo) {
+        System.out.println("서비스에서 받았니 ? : " + reportInfo);
+        reportRepository.save(modelMapper.map(reportInfo, Report.class));
+    }
+
 
 
 
