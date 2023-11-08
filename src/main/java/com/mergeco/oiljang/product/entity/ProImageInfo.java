@@ -20,6 +20,8 @@ public class ProImageInfo {
     @Column(name = "pro_image_db_name")
     private String proImageDbName;
 
+    @Column(name = "pro_image_origin_addr")
+    private String proImageOriginAddr;
 
     public ProImageInfo proImageCode(int val) {
         proImageCode = val;
@@ -38,6 +40,11 @@ public class ProImageInfo {
 
     public ProImageInfo proImageDbName(String val) {
         proImageDbName = val;
+        return this;
+    }
+
+    public ProImageInfo proImageOriginAddr(String val) {
+        proImageOriginAddr = val;
         return this;
     }
 
@@ -65,6 +72,10 @@ public class ProImageInfo {
 
     public String getProImageDbName() {
         return proImageDbName;
+    }
+
+    public String getProImageOriginAddr() {
+        return proImageOriginAddr;
     }
 
     @Override

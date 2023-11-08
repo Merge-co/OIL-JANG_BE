@@ -5,15 +5,18 @@ public class ProImageInfoDTO {
     private int refProductCode;
     private String proImageOriginName;
     private String proImageDbName;
+    private String proImageOriginAddr;
+
 
     public ProImageInfoDTO() {
     }
 
-    public ProImageInfoDTO(int proImageCode, int refProductCode, String proImageOriginName, String proImageDbName) {
+    public ProImageInfoDTO(int proImageCode, int refProductCode, String proImageOriginName, String proImageDbName, String proImageOriginAddr) {
         this.proImageCode = proImageCode;
         this.refProductCode = refProductCode;
         this.proImageOriginName = proImageOriginName;
         this.proImageDbName = proImageDbName;
+        this.proImageOriginAddr = proImageOriginAddr;
     }
 
     public int getProImageCode() {
@@ -47,6 +50,13 @@ public class ProImageInfoDTO {
     public void setProImageDbName(String proImageDbName) {
         this.proImageDbName = proImageDbName;
     }
+    public String getProImageOriginAddr() {
+        return proImageOriginAddr;
+    }
+
+    public void setProImageOriginAddr(String proImageOriginAddr) {
+        this.proImageOriginAddr = proImageOriginAddr;
+    }
 
     @Override
     public String toString() {
@@ -55,6 +65,7 @@ public class ProImageInfoDTO {
                 ", refProductCode=" + refProductCode +
                 ", proImageOriginName='" + proImageOriginName + '\'' +
                 ", proImageDbName='" + proImageDbName + '\'' +
+                ", proImageOriginAddr='" + proImageOriginAddr + '\'' +
                 '}';
     }
 }
