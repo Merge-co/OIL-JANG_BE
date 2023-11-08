@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,8 +19,8 @@ public class UserProfile {
     private int profileCode;
 
     @OneToOne
-    @JoinColumn(name = "ref_user_code", referencedColumnName = "user_Code")
-    private User user;
+    @JoinColumn(name = "ref_user_code", referencedColumnName = "user_code")
+    private User refUserCode;
 
     @Column(name = "user_image_origin_name")
     private String userImageOriginName;
@@ -33,5 +34,8 @@ public class UserProfile {
     @Column(name = "user_image_thumb_addr")
     private String userImageThumbAddr;
 
+    public void setRefUserCode(User user) {
+        this.refUserCode = user;
+    }
 
 }

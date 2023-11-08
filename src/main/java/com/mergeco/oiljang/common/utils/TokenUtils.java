@@ -80,7 +80,7 @@ public class TokenUtils {
         JwtBuilder builder = Jwts.builder()
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
-                .setSubject("oiljang token : " + user.getUserId())
+                .setSubject("oiljang token : " + user.getUserCode())
                 .signWith(SignatureAlgorithm.HS256, createSignature())
                 .setExpiration(expireTime);
         return builder.compact();
