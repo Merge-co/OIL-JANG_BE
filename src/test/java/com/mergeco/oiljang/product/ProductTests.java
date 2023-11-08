@@ -48,6 +48,7 @@ public class ProductTests {
     }
 
     @Test
+    @Transactional
     void insertProduct() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setRefCategoryCode(1);
@@ -70,6 +71,14 @@ public class ProductTests {
         List<ProductDetailDTO> productDetailDTOS = productService.selectProductDetail(5);
         for(ProductDetailDTO productDetailDTO : productDetailDTOS) {
             System.out.println(productDetailDTO);
+        }
+    }
+
+    @Test
+    void selectProductDetailImg() {
+        List<String> selectedProductDetailImg = productService.selectProductDetailImg(5);
+        for(String a : selectedProductDetailImg) {
+            System.out.println(a);
         }
     }
 

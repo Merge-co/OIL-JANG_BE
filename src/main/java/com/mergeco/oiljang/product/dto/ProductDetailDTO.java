@@ -7,9 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ProductDetailDTO {
-    //    SELECT m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode) as upperCategoryCode, m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.refProductCode = :productCode) as wishCount, m.refUserCode, m.productDesc, m.wishPlaceTrade FROM Product m WHERE m.productCode = :productCode;
     private int productCode;
-    private String proImageOriginAddr;
     private String productName;
     private int productPrice;
     private String categoryName;
@@ -29,9 +27,8 @@ public class ProductDetailDTO {
     public ProductDetailDTO() {
     }
 
-    public ProductDetailDTO(int productCode, String proImageOriginAddr, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade, String sellStatus) {
+    public ProductDetailDTO(int productCode, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade, String sellStatus) {
         this.productCode = productCode;
-        this.proImageOriginAddr = proImageOriginAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.categoryName = categoryName;
@@ -53,14 +50,6 @@ public class ProductDetailDTO {
 
     public void setProductCode(int productCode) {
         this.productCode = productCode;
-    }
-
-    public String getProImageOriginAddr() {
-        return proImageOriginAddr;
-    }
-
-    public void setProImageOriginAddr(String proImageOriginAddr) {
-        this.proImageOriginAddr = proImageOriginAddr;
     }
 
     public String getProductName() {
@@ -169,9 +158,8 @@ public class ProductDetailDTO {
 
     @Override
     public String toString() {
-        return "ProductDetail{" +
+        return "ProductDetailDTO{" +
                 "productCode=" + productCode +
-                ", proImageOriginAddr='" + proImageOriginAddr + '\'' +
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", categoryName='" + categoryName + '\'' +

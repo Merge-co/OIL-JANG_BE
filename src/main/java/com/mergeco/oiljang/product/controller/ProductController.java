@@ -102,11 +102,14 @@ public class ProductController {
         // 임시 번호 발급
         UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
-        productService.selectWishCode(uuid, productCode);
+        List<Integer> selectedWishCode = productService.selectWishCode(uuid, productCode);
         productService.updateViewCount(productCode);
+        List<String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productDetailDTOList);
+        responseMap.put("selectedWishCode", selectedWishCode);
+        responseMap.put("selectedProductDetailImg", selectedProductDetailImg);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 상세", responseMap);
 
