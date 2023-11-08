@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.wishlist;
 
+import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
 import com.mergeco.oiljang.wishlist.service.WishListService;
 import org.junit.jupiter.api.Assertions;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -34,5 +36,49 @@ public class WishListTests {
     @Transactional
     void deleteWishList() {
         wishListService.deleteWishList(1);
+    }
+
+    @Test
+    void pagingTest() {
+        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(4, 20);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+        System.out.println();
+        pageNo = JpqlPagingButton.JpqlPagingNumCount(1, 20);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+        System.out.println();
+        pageNo = JpqlPagingButton.JpqlPagingNumCount(5, 20);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+        System.out.println();
+        pageNo = JpqlPagingButton.JpqlPagingNumCount(6, 20);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+        System.out.println();
+        pageNo = JpqlPagingButton.JpqlPagingNumCount(15, 20);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+        System.out.println();
+        pageNo = JpqlPagingButton.JpqlPagingNumCount(16, 20);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+        System.out.println();
+        pageNo = JpqlPagingButton.JpqlPagingNumCount(20, 20);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+        System.out.println();
+        pageNo = JpqlPagingButton.JpqlPagingNumCount(20, 21);
+        for(String key : pageNo.keySet()) {
+            System.out.println(key + " : " + pageNo.get(key));
+        }
+
     }
 }

@@ -36,23 +36,25 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.csrf().disable()
+        http.httpBasic().disable().csrf().disable()
                 .headers(header -> header.frameOptions().sameOrigin())
                 .authorizeRequests()
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
-                .antMatchers("/users").permitAll()
-                .anyRequest().authenticated()
+//                .antMatchers("/users").permitAll()
+                .anyRequest().permitAll()
+//                .antMatchers("/messages/**").permitAll()
+//                .anyRequest().authenticated()
                 .and()
                /* .oauth2Login()
                 .successHandler(oAuth2LoginSuccessHandler())
                 .failureHandler(oAuth2LoginFailureHandler())
                 .userInfoEndpoint().userService(customOAuth2UserService)
                 .and()*/
-                .addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class)
+              //  .addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable()
-                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+             //   .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic().disable();
 
         return http.build();

@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -77,9 +79,13 @@ public class ProductService {
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
     }
+    public Long countProductList() {
+        Long countPage = productRepository.count();
+        return countPage;
+    }
 
     public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
                 " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
 
         if(minPrice >= 0) {
@@ -126,10 +132,21 @@ public class ProductService {
 
     // refUserCode 나중에 판매자 이름 추츨 해야 한다.
     public List<ProductDetailDTO> selectProductDetail(int productCode) {
-        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, (SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userId = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
+        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.user.userId = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userId = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
                 " FROM Product m JOIN m.SellStatus s WHERE m.productCode = :productCode";
         List<ProductDetailDTO> productDetailDTOS = entityManager.createQuery(jpql, ProductDetailDTO.class).setParameter("productCode", productCode).getResultList();
         return productDetailDTOS;
+    }
+    public Map<String, String> selectProductDetailImg(int productCode) {
+        String jpql = "SELECT p.proImageOriginName FROM ProImageInfo p WHERE p.refProductCode = :productCode";
+        List<String> selectProductDetailImgAddr = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
+        Map<String, String> selectProductDetailImg = new HashMap<>();
+        int detailImgOrder = 1;
+        for(String imgAddr : selectProductDetailImgAddr) {
+            selectProductDetailImg.put("detailImg" + detailImgOrder, imgAddr);
+            detailImgOrder++;
+        }
+        return selectProductDetailImg;
     }
     public List<Integer> selectWishCode(UUID refUserCode, int productCode) {
         String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND w.product.productCode = :productCode";

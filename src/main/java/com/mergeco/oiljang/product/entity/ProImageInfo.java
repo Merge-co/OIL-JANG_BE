@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity(name = "ProImageInfo")
 @Table(name = "pro_image_info")
 public class ProImageInfo {
-
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pro_image_code")
@@ -20,6 +20,8 @@ public class ProImageInfo {
     @Column(name = "pro_image_db_name")
     private String proImageDbName;
 
+    @Column(name = "pro_image_origin_addr")
+    private String proImageOriginAddr;
 
     public ProImageInfo proImageCode(int val) {
         proImageCode = val;
@@ -41,9 +43,13 @@ public class ProImageInfo {
         return this;
     }
 
-    protected ProImageInfo() {
+    public ProImageInfo proImageOriginAddr(String val) {
+        proImageOriginAddr = val;
+        return this;
     }
 
+    protected ProImageInfo() {
+    }
 
     public ProImageInfo(int proImageCode, int refProductCode, String proImageOriginName, String proImageDbName) {
         this.proImageCode = proImageCode;
@@ -66,6 +72,10 @@ public class ProImageInfo {
 
     public String getProImageDbName() {
         return proImageDbName;
+    }
+
+    public String getProImageOriginAddr() {
+        return proImageOriginAddr;
     }
 
     @Override

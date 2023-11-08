@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.wishlist.controller;
 
+import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
 import com.mergeco.oiljang.wishlist.service.WishListService;
@@ -33,7 +34,7 @@ public class WishListController {
 
     @ApiOperation("사용자의 관심 목록 조회")
     @GetMapping("users/{userCode}/wishLists")
-    public ResponseEntity<ResponseMessage> selectWishList(@RequestParam int offset, @RequestParam int limit) {
+    public ResponseEntity<ResponseMessage> selectWishList(@RequestParam int page) {
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -41,10 +42,26 @@ public class WishListController {
 
         // 임시 번호 발급
         UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
+
+        int limit = 3;
+
+        int offset = limit * (page - 1);
         List<WishListInfoDTO> wishListInfoDTOList = wishListService.selectWishList(offset, limit, uuid);
+
+        double totalItem = Long.valueOf(wishListService.countProductList()).doubleValue();
+        int totalPage = (int) Math.ceil(totalItem / limit);
+
+        if(page >= totalPage) {
+            page = totalPage;
+        } else if( page < 1) {
+            page = 1;
+        }
+
+        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("wishList", wishListInfoDTOList);
+        responseMap.put("pageNo", pageNo);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록", responseMap);
 

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public class ProductListDTO {
     private int productCode;
-    private String proImageThumbAddr;
+    private String productThumbAddr;
     private String productName;
     private int productPrice;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
@@ -18,9 +18,9 @@ public class ProductListDTO {
     public ProductListDTO() {
     }
 
-    public ProductListDTO(int productCode, String proImageThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus) {
+    public ProductListDTO(int productCode, String productThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus) {
         this.productCode = productCode;
-        this.proImageThumbAddr = proImageThumbAddr;
+        this.productThumbAddr = productThumbAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.enrollDateTime = enrollDateTime;
@@ -35,12 +35,12 @@ public class ProductListDTO {
         this.productCode = productCode;
     }
 
-    public String getProImageThumbAddr() {
-        return proImageThumbAddr;
+    public String getProductThumbAddr() {
+        return productThumbAddr;
     }
 
-    public void setProImageThumbAddr(String proImageThumbAddr) {
-        this.proImageThumbAddr = proImageThumbAddr;
+    public void setProductThumbAddr(String productThumbAddr) {
+        this.productThumbAddr = productThumbAddr;
     }
 
     public String getProductName() {
@@ -77,9 +77,9 @@ public class ProductListDTO {
 
     @Override
     public String toString() {
-        return "ProductList{" +
+        return "ProductListDTO{" +
                 "productCode=" + productCode +
-                ", proImageThumbAddr='" + proImageThumbAddr + '\'' +
+                ", productThumbAddr='" + productThumbAddr + '\'' +
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", enrollDateTime=" + enrollDateTime +

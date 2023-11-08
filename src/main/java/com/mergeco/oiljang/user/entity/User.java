@@ -22,10 +22,9 @@ import java.util.*;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_code", columnDefinition = "BINARY(16)")
-    private UUID userId;
+    private UUID userCode;
 
     @Column(name = "nickname")
     private String nickname;
@@ -72,11 +71,19 @@ public class User {
     @DateTimeFormat(pattern = "YYYY-MM-DD hh:mm:ss")
     private LocalDateTime enrollDate;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "refUserCode", cascade = CascadeType.ALL)
     private UserProfile userProfile;
 
     @Column(name = "profile_Image_Url")
     private String profileImageUrl;
+
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
+        if (userProfile != null) {
+            userProfile.setRefUserCode(this);
+        }
+    }
 
     public void authorizeUser() {
         this.role = UserRole.USER;
