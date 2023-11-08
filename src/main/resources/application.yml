@@ -21,6 +21,13 @@ spring:
     username: ohgiraffers
     password: ohgiraffers
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+
+
 
 #  security:
 #    oauth2:
@@ -58,3 +65,7 @@ jwt:
 #  refresh:
 #    expiration: 1209600000
 #    header: Authorization-refresh
+
+
+file:
+  upload-dir: C:\Users\User\Desktop\dir\upload

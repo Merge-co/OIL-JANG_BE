@@ -41,7 +41,7 @@ public class DetailsUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserId().toString();
+        return user.getUserCode().toString();
     }
 
     @Override
