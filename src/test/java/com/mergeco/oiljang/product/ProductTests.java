@@ -102,6 +102,7 @@ public class ProductTests {
     }
 
     @Test
+    @Transactional
     void updateTest() {
         productService.updateTest();
     }
