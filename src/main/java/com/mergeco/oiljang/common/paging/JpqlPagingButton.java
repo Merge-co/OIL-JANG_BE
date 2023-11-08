@@ -10,19 +10,9 @@ public class JpqlPagingButton {
         int FIRST_PAGE = 1;
         int before = (page - 1) / pageBtn * pageBtn;
 
-        int after = 0;
-        if(before + pageBtn + 1 > totalPage) {
-            after = totalPage;
-        } else {
-            after = before + pageBtn + 1;
-        }
+        int after = Math.min(before + pageBtn + 1, totalPage);
 
-        int lastButton = 0;
-        if(before + pageBtn >= totalPage) {
-            lastButton = totalPage;
-        } else {
-            lastButton = before + pageBtn;
-        }
+        int lastButton = Math.min(before + pageBtn, totalPage);
 
         Map<String, Integer> pageNo = new HashMap<>();
         pageNo.put("current", page);
@@ -33,7 +23,7 @@ public class JpqlPagingButton {
         }
 
         for(int i = before + 1, j = 1; i <= lastButton; i++, j++) {
-            pageNo.put("numBtn" + String.valueOf(j), i);
+            pageNo.put("numBtn" + j, i);
         }
 
         pageNo.put("after", after);

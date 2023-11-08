@@ -22,7 +22,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -132,9 +134,15 @@ public class ProductService {
         List<ProductDetailDTO> productDetailDTOS = entityManager.createQuery(jpql, ProductDetailDTO.class).setParameter("productCode", productCode).getResultList();
         return productDetailDTOS;
     }
-    public List<String> selectProductDetailImg(int productCode) {
+    public Map<String, String> selectProductDetailImg(int productCode) {
         String jpql = "SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = :productCode";
-        List<String> selectProductDetailImg = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
+        List<String> selectProductDetailImgAddr = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
+        Map<String, String> selectProductDetailImg = new HashMap<>();
+        int detailImgOrder = 1;
+        for(String imgAddr : selectProductDetailImgAddr) {
+            selectProductDetailImg.put("detailImg" + detailImgOrder, imgAddr);
+            detailImgOrder++;
+        }
         return selectProductDetailImg;
     }
     public List<Integer> selectWishCode(UUID refUserCode, int productCode) {

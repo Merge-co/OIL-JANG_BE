@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @SpringBootTest
@@ -76,9 +78,9 @@ public class ProductTests {
 
     @Test
     void selectProductDetailImg() {
-        List<String> selectedProductDetailImg = productService.selectProductDetailImg(5);
-        for(String a : selectedProductDetailImg) {
-            System.out.println(a);
+        Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(5);
+        for(String key : selectedProductDetailImg.keySet()) {
+            System.out.println(key + " : " + selectedProductDetailImg.get(key));
         }
     }
 

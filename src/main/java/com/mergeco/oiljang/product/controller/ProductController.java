@@ -104,7 +104,7 @@ public class ProductController {
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
         List<Integer> selectedWishCode = productService.selectWishCode(uuid, productCode);
         productService.updateViewCount(productCode);
-        List<String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
+        Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productDetailDTOList);
