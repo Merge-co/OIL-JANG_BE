@@ -10,9 +10,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @SpringBootTest
@@ -34,6 +37,11 @@ public class ProductTests {
     }
 
     @Test
+    void countProductList() {
+        System.out.println(productService.countProductList());
+    }
+
+    @Test
     void selectProductList() {
         List<ProductListDTO> productListDTO = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
         for(ProductListDTO product : productListDTO) {
@@ -42,8 +50,10 @@ public class ProductTests {
     }
 
     @Test
+    @Transactional
     void insertProduct() {
         ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductThumbAddr("11111");
         productDTO.setRefCategoryCode(1);
         productDTO.setEnrollDateTime(LocalDateTime.now());
         productDTO.setProductDesc("1");
@@ -68,6 +78,15 @@ public class ProductTests {
     }
 
     @Test
+    void selectProductDetailImg() {
+        Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(5);
+        for(String key : selectedProductDetailImg.keySet()) {
+            System.out.println(key + " : " + selectedProductDetailImg.get(key));
+        }
+    }
+
+    @Test
+    @Transactional
     void insertWishList() {
         UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         WishListDTO wishListDTO = new WishListDTO();
@@ -77,13 +96,13 @@ public class ProductTests {
     }
 
     @Test
+    @Transactional
     void updateViewCount() {
-        for(int i = 0; i < 10; i++) {
-            productService.updateViewCount(5);
-        }
+        productService.updateViewCount(5);
     }
 
     @Test
+    @Transactional
     void updateTest() {
         productService.updateTest();
     }

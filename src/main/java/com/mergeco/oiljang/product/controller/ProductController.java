@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.product.controller;
 
+import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
@@ -18,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Api(tags = "중고 상품 관련")
@@ -55,16 +53,38 @@ public class ProductController {
 
     @ApiOperation(value = "중고 상품 목록 조회")
     @GetMapping("/products")
-    public ResponseEntity<ResponseMessage> selectProductList(@RequestParam int offset, @RequestParam int limit, @RequestParam int categoryCode, @RequestParam String sortCondition, @RequestParam int minPrice, @RequestParam int maxPrice) {
+    public ResponseEntity<ResponseMessage> selectProductList(@RequestParam int page, @RequestParam String pageKind, @RequestParam int categoryCode, @RequestParam String sortCondition, @RequestParam int minPrice, @RequestParam int maxPrice) {
 
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        int limit = 0;
+        switch (pageKind) {
+            case "merge":
+                limit = 6;
+            case "list":
+                limit = 8;
+        }
+
+        int offset = limit * (page - 1);
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
+
+        double totalItem = Long.valueOf(productService.countProductList()).doubleValue();
+        int totalPage = (int) Math.ceil(totalItem / limit);
+
+        if(page >= totalPage) {
+            page = totalPage;
+        } else if( page < 1) {
+            page = 1;
+        }
+
+        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productListDTOList);
+        responseMap.put("pageNo", pageNo);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 목록", responseMap);
 
@@ -82,11 +102,14 @@ public class ProductController {
         // 임시 번호 발급
         UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
-        productService.selectWishCode(uuid, productCode);
+        List<Integer> selectedWishCode = productService.selectWishCode(uuid, productCode);
         productService.updateViewCount(productCode);
+        Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productDetailDTOList);
+        responseMap.put("selectedWishCode", selectedWishCode);
+        responseMap.put("selectedProductDetailImg", selectedProductDetailImg);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 상세", responseMap);
 

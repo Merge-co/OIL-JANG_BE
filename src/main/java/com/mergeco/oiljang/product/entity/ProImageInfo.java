@@ -20,9 +20,6 @@ public class ProImageInfo {
     @Column(name = "pro_image_db_name")
     private String proImageDbName;
 
-    @Column(name = "pro_image_thumb_addr")
-    private String proImageThumbAddr;
-
     @Column(name = "pro_image_origin_addr")
     private String proImageOriginAddr;
 
@@ -46,25 +43,19 @@ public class ProImageInfo {
         return this;
     }
 
-    public ProImageInfo proImageThumbAddr(String val) {
-        proImageThumbAddr = val;
-        return this;
-    }
-
     public ProImageInfo proImageOriginAddr(String val) {
         proImageOriginAddr = val;
         return this;
     }
+
     protected ProImageInfo() {
     }
 
-    public ProImageInfo(int proImageCode, int refProductCode, String proImageOriginName, String proImageDbName, String proImageThumbAddr, String proImageOriginAddr) {
+    public ProImageInfo(int proImageCode, int refProductCode, String proImageOriginName, String proImageDbName) {
         this.proImageCode = proImageCode;
         this.refProductCode = refProductCode;
         this.proImageOriginName = proImageOriginName;
         this.proImageDbName = proImageDbName;
-        this.proImageThumbAddr = proImageThumbAddr;
-        this.proImageOriginAddr = proImageOriginAddr;
     }
 
     public int getProImageCode() {
@@ -83,10 +74,6 @@ public class ProImageInfo {
         return proImageDbName;
     }
 
-    public String getProImageThumbAddr() {
-        return proImageThumbAddr;
-    }
-
     public String getProImageOriginAddr() {
         return proImageOriginAddr;
     }
@@ -98,8 +85,6 @@ public class ProImageInfo {
                 ", refProductCode=" + refProductCode +
                 ", proImageOriginName='" + proImageOriginName + '\'' +
                 ", proImageDbName='" + proImageDbName + '\'' +
-                ", proImageThumbAddr='" + proImageThumbAddr + '\'' +
-                ", proImageOriginAddr='" + proImageOriginAddr + '\'' +
                 '}';
     }
 }
