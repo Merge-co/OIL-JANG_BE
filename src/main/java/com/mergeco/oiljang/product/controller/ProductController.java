@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.product.controller;
 
+import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
@@ -66,42 +67,20 @@ public class ProductController {
                 limit = 8;
         }
 
-        int totalPage = Long.valueOf(productService.countProductList()).intValue();
+        int offset = limit * (page - 1);
+        List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
+
+        int totalItem = Long.valueOf(productService.countProductList()).intValue();
+        int totalPage = (int) Math.ceil(totalItem / limit);
+
         if(page >= totalPage) {
             page = totalPage;
+        } else if( page < 1) {
+            page = 1;
         }
 
-        int offset = limit * (page - 1);
+        List<String> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
 
-        int FIRST_PAGE = 1;
-        int before = (page - 1) / 5 * 5;
-        int after = 0;
-
-        if((page - 1) / 5 * 5 + 6 > totalPage) {
-            after = 0;
-        } else {
-            after = (page - 1) / 5 * 5 + 6;
-        }
-
-        int lastButton = 0;
-        if(before + 4 >= totalPage) {
-            lastButton = totalPage;
-        } else {
-            lastButton = before + 4;
-        }
-
-        List<String> pageNo = new ArrayList<>();
-        pageNo.add("firstPage : " + FIRST_PAGE);
-        pageNo.add("before : " + before);
-
-        for(int i = before; i <= lastButton; i++) {
-            pageNo.add(1 + " : " + lastButton);
-        }
-
-        pageNo.add("after : " + after);
-        pageNo.add("lastPage : " + totalPage);
-
-        List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productListDTOList);

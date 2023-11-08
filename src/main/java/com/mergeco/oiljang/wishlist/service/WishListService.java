@@ -33,6 +33,11 @@ public class WishListService {
         this.proImageRepository = proImageRepository;
     }
 
+    public long countProductList() {
+        Long countPage = wishListRepository.count();
+        return countPage;
+    }
+
     public List<WishListInfoDTO> selectWishList(int offset, int limit, UUID refUserCode) {
         String jpql = "SELECT new com.mergeco.oiljang.wishlist.dto.WishListInfoDTO(w.wishCode, (SELECT pi.proImageThumbAddr FROM ProImageInfo pi WHERE pi.refProductCode = w.product.productCode), p.SellStatus.sellStatus, p.productName, p.productPrice, p.productDesc)" +
                 " FROM WishList w JOIN w.product p WHERE w.refUserCode = :refUserCode ORDER BY w.wishCode DESC";
@@ -48,5 +53,4 @@ public class WishListService {
     public void deleteWishList(int wishListCode) {
         wishListRepository.deleteById(wishListCode);
     }
-
 }
