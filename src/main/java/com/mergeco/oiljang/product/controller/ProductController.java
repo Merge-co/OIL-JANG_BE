@@ -130,7 +130,4 @@ public class ProductController {
         ResponseMessage responseMessage = new ResponseMessage(200, "이미지 추가 완료!", null);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
-
-
-
 }
