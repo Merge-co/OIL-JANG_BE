@@ -82,7 +82,7 @@ public class ProductService {
     }
 
     public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, (SELECT p.proImageThumbAddr FROM ProImageInfo p WHERE p.refProductCode = m.productCode), m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
                 " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
 
         if(minPrice >= 0) {
@@ -135,7 +135,7 @@ public class ProductService {
         return productDetailDTOS;
     }
     public Map<String, String> selectProductDetailImg(int productCode) {
-        String jpql = "SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = :productCode";
+        String jpql = "SELECT p.proImageOriginName FROM ProImageInfo p WHERE p.refProductCode = :productCode";
         List<String> selectProductDetailImgAddr = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
         Map<String, String> selectProductDetailImg = new HashMap<>();
         int detailImgOrder = 1;

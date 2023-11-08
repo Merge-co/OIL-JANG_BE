@@ -16,6 +16,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productCode;
 
+    @Column(name = "product_thumb_addr")
+    private String productThumbAddr;
+
     @Column(name = "product_name")
     private String productName;
 
@@ -47,6 +50,11 @@ public class Product {
 
     public Product productCode(int val) {
         productCode = val;
+        return this;
+    }
+
+    public Product productThumbAddr(String val) {
+        productThumbAddr = val;
         return this;
     }
 
@@ -96,14 +104,15 @@ public class Product {
     }
 
     public Product builder() {
-        return new Product(productCode, productName, productPrice, productDesc, wishPlaceTrade, enrollDateTime, viewCount, refUserCode, SellStatus, Category);
+        return new Product(productCode, productThumbAddr, productName, productPrice, productDesc, wishPlaceTrade, enrollDateTime, viewCount, refUserCode, SellStatus, Category);
     }
 
     protected Product() {
     }
 
-    public Product(int productCode, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, SellStatus sellStatus, Category category) {
+    public Product(int productCode, String productThumbAddr, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, com.mergeco.oiljang.product.entity.SellStatus sellStatus, com.mergeco.oiljang.product.entity.Category category) {
         this.productCode = productCode;
+        this.productThumbAddr = productThumbAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.productDesc = productDesc;
@@ -117,6 +126,10 @@ public class Product {
 
     public int getProductCode() {
         return productCode;
+    }
+
+    public String getProductThumbAddr() {
+        return productThumbAddr;
     }
 
     public String getProductName() {
@@ -147,12 +160,11 @@ public class Product {
         return refUserCode;
     }
 
-
-
     @Override
     public String toString() {
         return "Product{" +
                 "productCode=" + productCode +
+                ", productThumbAddr='" + productThumbAddr + '\'' +
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", productDesc='" + productDesc + '\'' +

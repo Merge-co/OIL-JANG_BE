@@ -53,6 +53,7 @@ public class ProductTests {
     @Transactional
     void insertProduct() {
         ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductThumbAddr("11111");
         productDTO.setRefCategoryCode(1);
         productDTO.setEnrollDateTime(LocalDateTime.now());
         productDTO.setProductDesc("1");
