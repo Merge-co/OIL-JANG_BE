@@ -48,7 +48,7 @@ public class WishListController {
         int offset = limit * (page - 1);
         List<WishListInfoDTO> wishListInfoDTOList = wishListService.selectWishList(offset, limit, uuid);
 
-        int totalItem = Long.valueOf(wishListService.countProductList()).intValue();
+        double totalItem = Long.valueOf(wishListService.countProductList()).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
         if(page >= totalPage) {
