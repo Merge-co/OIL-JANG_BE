@@ -1,29 +1,29 @@
 package com.mergeco.oiljang.report;
 
-import com.mergeco.oiljang.report.entity.ReportCategory;
+import com.mergeco.oiljang.product.dto.ProductDTO;
+import com.mergeco.oiljang.product.dto.SellStatusDTO;
 import com.mergeco.oiljang.report.model.dto.ReportCategoryDTO;
 import com.mergeco.oiljang.report.model.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
 import com.mergeco.oiljang.report.service.ReportService;
-import org.aspectj.weaver.patterns.ReferencePointcut;
-import org.hibernate.engine.transaction.jta.platform.internal.OC4JJtaPlatform;
-import org.junit.Assert;
+import lombok.ToString;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.*;
 
 import com.mergeco.oiljang.report.entity.Report;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 @SpringBootTest
 
@@ -195,7 +195,7 @@ public class ReportTests {
 
     @DisplayName("특정 카테고리에 등록된 메뉴 수 조회")
     @Test
-    public void testCountReportOfCategory () {
+    public void testCountReportOfCategory() {
         //given
         int categoryCode = 3;
         //when
@@ -207,7 +207,7 @@ public class ReportTests {
 
     @DisplayName("내부조인을 이용한 조회")
     @Test
-    public void testSelectByInnerJoin(){
+    public void testSelectByInnerJoin() {
 
         //given
         //when
@@ -216,7 +216,7 @@ public class ReportTests {
         Assertions.assertNotNull(reportList);
         System.out.println(reportList);
         System.out.println(" ===============================================");
-        Assertions.assertTrue(reportList.size() > 0 );
+        Assertions.assertTrue(reportList.size() > 0);
     }
 
     @DisplayName("외부조인을 이용한 조회")
@@ -234,9 +234,10 @@ public class ReportTests {
             System.out.println();
         });
     }
+
     @DisplayName("신고분류, 상품정보 조회")
     @Test
-    public void reportCategoryProductJoin (){
+    public void reportCategoryProductJoin() {
         //given
         //when
         List<Object[]> categoryList = service.selectByReportProduct();
@@ -244,7 +245,7 @@ public class ReportTests {
         //then
         Assertions.assertNotNull(categoryList);
         categoryList.forEach(row -> {
-            for (Object col : row){
+            for (Object col : row) {
                 System.out.print(col + " ");
             }
             System.out.println();
@@ -261,15 +262,16 @@ public class ReportTests {
         //then
         Assertions.assertNotNull(reportList);
         reportList.forEach(row -> {
-            for (Object col : row){
+            for (Object col : row) {
                 System.out.print(col + " ");
             }
             System.out.println();
         });
     }
+
     @DisplayName("신고 관리페이지 - 신고번호, 판매자ID(닉네임 X), 판매글, 신고분류, 처리완료 조회")
     @Test
-    public void reportManagementPage () {
+    public void reportManagementPage() {
         //given
         //when
         List<Object[]> management = service.selectByReportManagement();
@@ -293,6 +295,7 @@ public class ReportTests {
 
         //then
         Assertions.assertNotNull(processDetail);
+        System.out.println(processDetail);
         System.out.println("================================");
         processDetail.forEach(row -> {
             for (Object col : row) {
@@ -300,22 +303,93 @@ public class ReportTests {
             }
             System.out.println();
         });
+    }
+
+    @DisplayName("처리 미처리 선택 조회")
+    @Test
+    public void selectWithSubQuery() { // 미완료상태
+        //given
+        String categoryName = "삭제";
+        //when
+        List<Report> reportList = service.selectWithSubQuery(categoryName);
+        //then
+        Assertions.assertNotNull(reportList);
+        reportList.forEach(System.out::println);
+    }
+
+
+/*    @DisplayName("신고하기 insert")
+    @ParameterizedTest
+    void reportInset () {
+
+        //given
+        ReportDTO report = new ReportDTO();
+        report.setReportUserNick("윤진쌤");
+        report.setReportComment("퇴실 찍으세요 여러분 ~~~/");
+        report.setReportDate(LocalDateTime.now());
+        report.setProductName("상품이름");
+        report.setSellStateus("판매중");
+        report.setReportCategoryNo(1);
+        System.out.println("신고하기 테스트 : " + report);
+        //when
+        //then
+        Assertions.assertDoesNotThrow(
+                () -> service.registReport(report)
+        );
+    }*/
+
+
+
+
+
+
+
+
+
+        /* ==================================================================================== */
+
+
+    private static Stream<Arguments> getReportInfos() {
+        return Stream.of(
+                Arguments.of(
+                        "윤진쌤",
+                        "퇴실찍으세요 여러분 ~~",
+                        LocalDateTime.now(),
+                        "판매게시글",
+                        "판매중(판매상태)",
+                        1
+                )
+        );
+    }
+
+    @DisplayName("신고하기 insert")
+    @ParameterizedTest
+    @MethodSource("getReportInfos")
+    void reportInsertTest(
+            String reportUserNick,
+            String reportComment,
+            LocalDateTime reportDate,
+            String productName,
+            String sellStatus,
+            int reportCategoryNo) {
+        //given
+        ReportDTO reportInsert = new ReportDTO(
+                reportUserNick,
+                reportComment,
+                reportDate,
+                productName,
+                sellStatus,
+                reportCategoryNo
+        );
+        //when
+        System.out.println("===========================================");
+        System.out.println(reportUserNick);
+        System.out.println("방금이랑 똑같이 작성함 담겼냐 ? ; " + reportInsert);
+        //then
+        Assertions.assertDoesNotThrow(
+                () -> service.registReport(reportInsert)
+        );
 
     }
-   /* @DisplayName("컬렉션 조인 조회")
-    @Test
-    public void testSelectByCollectionJoin() {
-        //gvien
-        //when
-        List<Object[]> categoryList = service.selectByCollectionJoun();
-        //then
-        Assertions.assertNotNull(categoryList);
-        categoryList.forEach(row -> {
-            for (Object col : row) {
-                System.out.print(col + " ");
-            }
-            System.out.println();
-        });
-    }*/
 
 }
