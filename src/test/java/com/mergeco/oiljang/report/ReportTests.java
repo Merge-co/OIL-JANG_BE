@@ -1,12 +1,9 @@
 package com.mergeco.oiljang.report;
 
-import com.mergeco.oiljang.product.dto.ProductDTO;
-import com.mergeco.oiljang.product.dto.SellStatusDTO;
 import com.mergeco.oiljang.report.model.dto.ReportCategoryDTO;
 import com.mergeco.oiljang.report.model.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
 import com.mergeco.oiljang.report.service.ReportService;
-import lombok.ToString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 
 import com.mergeco.oiljang.report.entity.Report;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @SpringBootTest
@@ -30,10 +27,15 @@ import java.util.stream.Stream;
 public class ReportTests {
 
 
-    @Autowired
+
     private ReportRepository repository;
     @Autowired
     private ReportService service;
+
+    @Autowired
+    public ReportTests(ReportRepository repository) {
+        this.repository = repository;
+    }
 
     @DisplayName("Proxy 주소 값 조회")
     @Test
@@ -173,7 +175,7 @@ public class ReportTests {
         //when
         List<Report> reportList = service.selectReportByBindingPosition(distincation);
         //then
-        Assertions.assertEquals(distincation, reportList.get(0).getProcessDistincation());
+        Assertions.assertEquals(distincation, reportList.get(0).getProcessDistinction());
         System.out.println("==========================================================");
         reportList.forEach(System.out::println);
     }
@@ -338,26 +340,20 @@ public class ReportTests {
         );
     }*/
 
-
-
-
-
-
-
-
-
-        /* ==================================================================================== */
+    /* ==================================================================================== */
 
 
     private static Stream<Arguments> getReportInfos() {
         return Stream.of(
                 Arguments.of(
-                        "윤진쌤",
-                        "퇴실찍으세요 여러분 ~~",
-                        LocalDateTime.now(),
-                        "판매게시글",
-                        "판매중(판매상태)",
-                        1
+                        1, // 신고번호
+                        "윤진쌤", // 신고자
+                        "퇴실찍으세요 여러분 ~~", // 신고 내용
+                        LocalDateTime.now(), // 신고 일시
+                        1, //상품코드
+                        1, //판매상태코드
+                        1,  // 분류 코드
+                        "광고성 게시글" // 신고분류
                 )
         );
     }
@@ -366,30 +362,50 @@ public class ReportTests {
     @ParameterizedTest
     @MethodSource("getReportInfos")
     void reportInsertTest(
-            String reportUserNick,
-            String reportComment,
-            LocalDateTime reportDate,
-            String productName,
-            String sellStatus,
-            int reportCategoryNo) {
+            int reportNo,
+            String reportUserNick, // 신고자
+            String reportComment, // 신고내용
+            LocalDateTime reportDate, // 신고일시
+            int product, //상품코드
+            int sellStatus, //판매상태코드
+            int reportCategoryNo, // 신고분류
+            String reportCategoryCode
+    ) {
         //given
         ReportDTO reportInsert = new ReportDTO(
+                reportNo,
                 reportUserNick,
                 reportComment,
                 reportDate,
-                productName,
+                product,
                 sellStatus,
-                reportCategoryNo
+                new ReportCategoryDTO(reportCategoryNo, reportCategoryCode),
+                null,
+                null,
+                null
         );
         //when
         System.out.println("===========================================");
-        System.out.println(reportUserNick);
-        System.out.println("방금이랑 똑같이 작성함 담겼냐 ? ; " + reportInsert);
+        System.out.println("담겼냐 ? ; " + reportInsert);
         //then
         Assertions.assertDoesNotThrow(
                 () -> service.registReport(reportInsert)
         );
-
     }
 
+    @DisplayName("처리하기 update")
+    @Test
+    @Transactional
+    void processInsertTest() {
+        //given
+        Optional<Report> report = repository.findById(1);
+        //when
+        report.ifPresent(modify -> {
+            modify.processDistinction("수정하기 테스트");
+            modify.processComment("수정하기 테스트 comment입니다.");
+            modify.processDate(LocalDateTime.now());
+            repository.save(modify);
+        });
+        //then
+    }
 }
