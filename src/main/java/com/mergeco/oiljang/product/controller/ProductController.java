@@ -80,12 +80,12 @@ public class ProductController {
             page = 1;
         }
 
-        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
 
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productListDTOList);
-        responseMap.put("pageNo", pageNo);
+        responseMap.put("pagingBtn", pagingBtn);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 목록", responseMap);
 

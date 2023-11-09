@@ -57,11 +57,11 @@ public class WishListController {
             page = 1;
         }
 
-        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("wishList", wishListInfoDTOList);
-        responseMap.put("pageNo", pageNo);
+        responseMap.put("pagingBtn", pagingBtn);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록", responseMap);
 
