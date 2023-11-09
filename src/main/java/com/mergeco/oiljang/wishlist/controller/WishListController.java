@@ -34,7 +34,11 @@ public class WishListController {
 
     @ApiOperation("사용자의 관심 목록 조회")
     @GetMapping("users/{userCode}/wishLists")
-    public ResponseEntity<ResponseMessage> selectWishList(@RequestParam int page) {
+    public ResponseEntity<ResponseMessage> selectWishList(@PathVariable UUID userCode, @RequestParam(required = false) Integer page) {
+
+        if(page == null) {
+            page = 1;
+        }
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -57,11 +61,11 @@ public class WishListController {
             page = 1;
         }
 
-        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("wishList", wishListInfoDTOList);
-        responseMap.put("pageNo", pageNo);
+        responseMap.put("pagingBtn", pagingBtn);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록", responseMap);
 

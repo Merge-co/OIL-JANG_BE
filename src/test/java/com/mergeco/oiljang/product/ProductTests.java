@@ -49,6 +49,7 @@ public class ProductTests {
         }
     }
 
+
     @Test
     @Transactional
     void insertProduct() {

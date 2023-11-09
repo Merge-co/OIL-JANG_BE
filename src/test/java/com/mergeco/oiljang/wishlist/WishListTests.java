@@ -40,44 +40,44 @@ public class WishListTests {
 
     @Test
     void pagingTest() {
-        Map<String, Integer> pageNo = JpqlPagingButton.JpqlPagingNumCount(4, 20);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(4, 20);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
         System.out.println();
-        pageNo = JpqlPagingButton.JpqlPagingNumCount(1, 20);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        pagingBtn = JpqlPagingButton.JpqlPagingNumCount(1, 20);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
         System.out.println();
-        pageNo = JpqlPagingButton.JpqlPagingNumCount(5, 20);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        pagingBtn = JpqlPagingButton.JpqlPagingNumCount(5, 20);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
         System.out.println();
-        pageNo = JpqlPagingButton.JpqlPagingNumCount(6, 20);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        pagingBtn = JpqlPagingButton.JpqlPagingNumCount(6, 20);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
         System.out.println();
-        pageNo = JpqlPagingButton.JpqlPagingNumCount(15, 20);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        pagingBtn = JpqlPagingButton.JpqlPagingNumCount(15, 20);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
         System.out.println();
-        pageNo = JpqlPagingButton.JpqlPagingNumCount(16, 20);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        pagingBtn = JpqlPagingButton.JpqlPagingNumCount(16, 20);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
         System.out.println();
-        pageNo = JpqlPagingButton.JpqlPagingNumCount(20, 20);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        pagingBtn = JpqlPagingButton.JpqlPagingNumCount(20, 20);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
         System.out.println();
-        pageNo = JpqlPagingButton.JpqlPagingNumCount(20, 21);
-        for(String key : pageNo.keySet()) {
-            System.out.println(key + " : " + pageNo.get(key));
+        pagingBtn = JpqlPagingButton.JpqlPagingNumCount(20, 21);
+        for(String key : pagingBtn.keySet()) {
+            System.out.println(key + " : " + pagingBtn.get(key));
         }
 
     }
