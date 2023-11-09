@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -108,43 +109,100 @@ public class MessageTests {
     }
 
 
+//    @Test
+//    @DisplayName("sender와 receiver 조회 테스트")
+//    public void selectSenderReceiver() {
+//
+//       int msgCode = 2;
+//       UUID userCode = UUID.fromString("00000000-3132-3132-0000-000000000000");
+//
+//        List<MsgUserDTO> senderReceiver = msgService.selectSenderReceiver(msgCode, userCode);
+//
+//
+//        Assertions.assertFalse(senderReceiver.isEmpty());
+//        senderReceiver.forEach(row -> {
+//            for(MsgUserDTO msgUserDTO : senderReceiver) {
+//                System.out.println("msgCode: " + msgUserDTO.getMsgCode());
+//                System.out.println("userCode : " + msgUserDTO.getUserCode());
+//                System.out.println("senderCode : " + msgUserDTO.getSenderCode());
+//                System.out.println("receiverCode : " + msgUserDTO.getReceiverCode());
+//                System.out.println("id : " + msgUserDTO.getId());
+//                System.out.println("name : " + msgUserDTO.getName());
+//            }
+//            System.out.println();
+//        });
+//    }
+
+
     @Test
-    @DisplayName("sender와 receiver 조회 테스트")
-    public void selectSenderReceiver() {
+    @DisplayName("쪽지 모달 receiver 조회 테스트")
+    public void selectReceiver(){
 
-       int msgCode = 1;
-       String token = "dfdfdssdf";
-       UUID userCode = UUID.fromString("00000000-3132-3132-0000-000000000000");
+        List<MsgReceiverDTO> receiver = msgService.selectReceiver();
 
-        List<MsgUserDTO> senderReceiver = msgService.selectSenderReceiver(msgCode, token, userCode);
-
-
-        Assertions.assertNotNull(senderReceiver);
-        senderReceiver.forEach(row -> {
-            for(MsgUserDTO msgUserDTO : senderReceiver) {
-                System.out.println("msgCode: " + msgUserDTO.getMsgCode());
-                System.out.println("userCode : " + msgUserDTO.getUserCode());
-                System.out.println("senderCode : " + msgUserDTO.getSenderCode());
-                System.out.println("receiverCode : " + msgUserDTO.getReceiverCode());
-                System.out.println("id : " + msgUserDTO.getId());
-                System.out.println("name : " + msgUserDTO.getName());
-                System.out.println("token : " + msgUserDTO.getToken());
+        Assertions.assertFalse(receiver.isEmpty());
+        receiver.forEach(row -> {
+            for(MsgReceiverDTO msgReceiverDTO : receiver){
+                System.out.println("msgCode : " + msgReceiverDTO.getMsgCode());
+                System.out.println("receiverCode : " + msgReceiverDTO.getReceiverCode());
+                System.out.println("productCode : " + msgReceiverDTO.getProductCode());
+                System.out.println("userCode : " + msgReceiverDTO.getUserCode());
+                System.out.println("userName : " + msgReceiverDTO.getName());
+                System.out.println("id : " + msgReceiverDTO.getId());
             }
-            System.out.println();
         });
+
     }
 
 
+    @Test
+    @DisplayName("쪽지 내용 상세 조회")
+    public void selectMsgDetail(){
 
-//    @Test
-//    @DisplayName("쪽지 내용 상세 조회")
-//    public void selectMsgDetail(){
+        int msgCode = 2;
+
+        List<MsgProUserInfoDTO> msgDetail = msgService.selectMsgDetail(msgCode);
+        System.out.println("test: " + msgDetail);
+        Assertions.assertFalse(msgDetail.isEmpty());
+        msgDetail.forEach(detail -> {
+            System.out.println("msgCode: " + detail.getMsgCode());
+            System.out.println("msgContent: " + detail.getMsgContent());
+            System.out.println("msgStatus : " + detail.getMsgStatus());
+            System.out.println("msgTime : " + detail.getMsgTime());
+            System.out.println("senderCode: " + detail.getSenderCode());
+            System.out.println("receiverCode : " + detail.getReceiverCode());
+            System.out.println("id : " + detail.getId());
+            System.out.println("name : " + detail.getName());
+            System.out.println("productCode: " + detail.getProductCode());
+            System.out.println("productName : " + detail.getProductName());
+            System.out.println("productDesc : " + detail.getProductDesc());
+            System.out.println("msgDeleteInfoMsgDeleteDTO : " + detail.getMsgDeleteCode());
+            System.out.println("msgDeleteInfoMsgDeleteDTO : " + detail.getMsgDeleteStatus());
+        });
+    }
+    @Test
+    @DisplayName("쪽지함 조회")
+    public void selectMsgList(){
+
+        UUID userCode = UUID.fromString("00000000-3132-3132-0000-000000000000");
+        int offset = 1;
+        int limit = 5;
+        boolean isReceived = true;
+
+
 //
-//        int msgCode = 1;
-//
-//        List<MsgProUserInfoDTO> msgDetail = msgService.selectMsgDetail(msgCode);
-//        for(MsgProUserInfoDTO msgProUserInfoDTO : msgDetail){
-//            System.out.println(msgProUserInfoDTO);
-//        }
-//    }
+//        private UUID userCode;
+//        private String senderOrReceiver;
+//        private String msgContent;
+//        private String msgStatus;
+//        @DateTimeFormat(pattern = "yyyy-MM-dd")
+//        private LocalDate msgTime;
+//        private boolean isReceived;
+
+
+        List<MsgListDTO> msgList = msgService.selectMsgList(userCode, offset, limit, isReceived);
+        for(MsgListDTO msgListDTO : msgList){
+            System.out.println(msgListDTO);
+        }
+    }
 }
