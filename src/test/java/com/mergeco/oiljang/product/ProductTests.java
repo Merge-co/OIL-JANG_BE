@@ -1,28 +1,48 @@
 package com.mergeco.oiljang.product;
 
+import com.mergeco.oiljang.product.controller.ProductController;
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
 import com.mergeco.oiljang.product.dto.ProductDetailDTO;
 import com.mergeco.oiljang.product.dto.ProductListDTO;
+import com.mergeco.oiljang.product.entity.Product;
+import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
+@AutoConfigureMockMvc
 public class ProductTests {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductController productController;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     void printService() {
@@ -48,6 +68,7 @@ public class ProductTests {
             System.out.println(product);
         }
     }
+
 
     @Test
     @Transactional
@@ -108,4 +129,34 @@ public class ProductTests {
 //    }
 
 
-}
+    @BeforeEach
+    public void init() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testUploadFileWithValidFile() throws IOException {
+
+        MockMultipartFile fakeFile = new MockMultipartFile("userUploadedFile", "test-file.txt", "text/plain", "Hello, HanSung~!".getBytes());
+
+        ResponseEntity<String> responseEntity = productController.uploadFile(fakeFile);
+
+        //응답 확인
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(responseEntity.getBody(), "File uploaded successfully!");
+    }
+
+    @Test
+    public void testUploadFileWithEmptyFile() throws IOException {
+        MockMultipartFile emptyFile = new MockMultipartFile("userUploadedFile", new byte[1000]);
+        ResponseEntity<String> responseEntity = productController.uploadFile(emptyFile);
+        System.out.println(responseEntity);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(responseEntity.getBody(), "File uploaded successfully!");
+    }
+
+    private static final String TEMP_IMAGE_DIR = "temp_images";
+    }
+
+
+
