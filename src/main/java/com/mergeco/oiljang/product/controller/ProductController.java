@@ -159,6 +159,27 @@ public class ProductController {
         return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
     }
 
+    public ResponseEntity<String> uploadFile(@RequestParam("userUploadedFile")MultipartFile userUploadedFile) {
+        if (userUploadedFile.isEmpty()) {
+            return new ResponseEntity<>("No file uploaded.", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            // 업로드된 파일 처리 로직
+            String fileName = userUploadedFile.getName();
+            System.out.println(fileName);
+            byte[] bytes = userUploadedFile.getBytes();
+            System.out.println(bytes);
+            System.out.println(11111);
+            String a = productService.saveImage(userUploadedFile);
+            System.out.println(a);
+            return new ResponseEntity<>("File uploaded successfully!", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/products/{productCode}/images")
     public ResponseEntity<ResponseMessage> addProductImages (
             @PathVariable int productCode,
@@ -170,4 +191,70 @@ public class ProductController {
         ResponseMessage responseMessage = new ResponseMessage(200, "이미지 추가 완료!", null);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
+
+    //상품 수정 API
+
+    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody ProductDTO updatedProductDTO) {
+        try {
+            // 상품 수정 메서드를 ProductService에서 호출
+            productService.updateProductInfo(productCode, updatedProductDTO);
+            return new ResponseEntity<>("상품 수정이 완료되었습니다.", HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>("상품 수정에 실패했습니다. 상품을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+        }
+    }
+//    @ApiOperation(value = "판매 중인 중고 상품 목록 조회")
+//    @GetMapping("/products/selling")
+//    public ResponseEntity<ResponseMessage> selectSellingProductList(
+//            @RequestParam(required = false) Integer page,
+//            @RequestParam(required = false, defaultValue = "latest") String sortCondition,
+//            @RequestParam(required = false) Integer categoryCode,
+//            @RequestParam(required = false) Integer minPrice,
+//            @RequestParam(required = false) Integer maxPrice) {
+//
+//        if (page == null) {
+//            page = 1;
+//        }
+//
+//        if (categoryCode == null) {
+//            categoryCode = 1; // 기본 카테고리 코드 설정
+//        }
+//
+//        if (minPrice == null) {
+//            minPrice = -1; // 최소 가격 필터링 기본값 설정
+//        }
+//
+//        if (maxPrice == null) {
+//            maxPrice = -1; // 최대 가격 필터링 기본값 설정
+//        }
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//
+//        int limit = 8; // 페이지당 상품 수
+//        int offset = limit * (page - 1);
+//
+//        List<ProductListDTO> productListDTOList = productService.selectSellingProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
+//
+//        double totalItem = Long.valueOf(productService.countSellingProductList()).doubleValue();
+//        int totalPage = (int) Math.ceil(totalItem / limit);
+//
+//        if (page >= totalPage) {
+//            page = totalPage;
+//        } else if (page < 1) {
+//            page = 1;
+//        }
+//
+//        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+//
+//        Map<String, Object> responseMap = new HashMap<>();
+//        responseMap.put("productList", productListDTOList);
+//        responseMap.put("pagingBtn", pagingBtn);
+//
+//        ResponseMessage responseMessage = new ResponseMessage(200, "판매 중인 중고 상품 목록", responseMap);
+//
+//        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+//    }
+
+
 }
