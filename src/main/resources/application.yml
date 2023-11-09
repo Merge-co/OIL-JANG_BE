@@ -25,7 +25,7 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-
+      enabled: true # 멀티파트 처리 활성화
 
 
 
@@ -68,4 +68,4 @@ jwt:
 
 
 file:
-  upload-dir: C:\Users\User\Desktop\dir\upload
+  upload-dir: "C:\\Users\\User\\Desktop\\dir\\upload\\"

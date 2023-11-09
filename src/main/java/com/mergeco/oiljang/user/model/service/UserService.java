@@ -8,6 +8,7 @@ import com.mergeco.oiljang.user.entity.EnrollType;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.entity.UserProfile;
 import com.mergeco.oiljang.user.model.dto.UserProfileDTO;
+import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
 /*import lombok.RequiredArgsConstructor;*/
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;*/
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 /*import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +24,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;*/
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /*import java.util.HashMap;
 import java.util.Map;*/
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,10 +52,13 @@ public class UserService {
     private String uploadDir;
 
     private final UserRepository userRepository;
+
+    private final UserProfileRepository userProfileRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserProfileRepository userProfileRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userProfileRepository = userProfileRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -60,9 +68,10 @@ public class UserService {
         return user;
     }
 
-    public User join(JoinDTO joinDTO, UserProfileDTO profileDTO, MultipartFile file) throws IOException {
+    @Transactional
+    public User join(JoinDTO joinDTO,MultipartFile imageFile) throws IOException {
 
-        //중복 유저 존재 여부 체크
+        /*//중복 유저 존재 여부 체크
         Optional<User> existingUser = userRepository.findById(joinDTO.getId());
         if (existingUser.isPresent()) {
             // 중복 사용자 처리
@@ -73,25 +82,26 @@ public class UserService {
         if (existingUserByNickname.isPresent()) {
             // 중복 닉네임 처리
             throw new UserException(UserErrorResult.DUPLICATED_NICKNAME_REGISTER);
-        }
+        }*/
 
 
-        // 파일 업로드 처리
-        String originalFileName = null;
-        String thumbnailFileName = null;
+        // 파일 업로드 및 경로 저장
+        String originalFileName = joinDTO.getId() + "-original-" + imageFile.getOriginalFilename();
+        String thumbnailFileName = joinDTO.getId() + "-thumbnail-" + imageFile.getOriginalFilename();
 
-        if (file != null && !file.isEmpty()) {
-            originalFileName = joinDTO.getId() + "-original-" + file.getOriginalFilename();
-            thumbnailFileName = joinDTO.getId() + "-thumbnail-" + file.getOriginalFilename();
-            saveProfileImage(file, originalFileName, thumbnailFileName);
-        }
+        saveProfileImage(imageFile, originalFileName, thumbnailFileName);
+
+        // UserProfile 경로 설정
+        String userProfileOriginPath = Paths.get(uploadDir, originalFileName).toString();
+        String userProfileThumbPath = Paths.get(uploadDir, thumbnailFileName).toString();
+
 
         //UserProfile 생성
         UserProfile userProfile = UserProfile.builder()
-                .userImageOriginName(profileDTO.getUserImageOriginName())
-                .userImageName(profileDTO.getUserImageOriginName())
-                .userImageOriginAddr(profileDTO.getUserImageOriginName())
-                .userImageThumbAddr(profileDTO.getUserImageOriginName())
+                .userImageOriginName(originalFileName)
+                .userImageName(thumbnailFileName)
+                .userImageOriginAddr(userProfileOriginPath)
+                .userImageThumbAddr(userProfileThumbPath)
                 .build();
 
         //User 생성
@@ -105,18 +115,27 @@ public class UserService {
                 .enrollType(EnrollType.NORMAL)
                 .role(UserRole.USER)
                 .phone(joinDTO.getPhone())
-                .profileImageUrl(profileDTO.getUserImageOriginName())
                 .verifyStatus("Y")
                 .withdrawStatus("N")
+                .email(joinDTO.getEmail())
                 .enrollDate(LocalDateTime.now())
+                .profileImageUrl(userProfileThumbPath)
                 .build();
 
-        userProfile.setRefUserCode(user); // userProfile에서 refUserCode 설정
-        user.setUserProfile(userProfile); // user에서 userProfile 설정
-
+        user.setUserProfile(userProfile);
         user.passwordEncode(passwordEncoder);
 
         User joinUser = userRepository.save(user);
+
+        System.out.println(joinUser);
+
+        userProfile.setRefUserCode(joinUser); // userProfile에서 refUserCode 설정
+
+        System.out.println(userProfile);
+
+
+        userProfileRepository.save(userProfile);
+
         return joinUser;
     }
 
@@ -124,20 +143,30 @@ public class UserService {
         // 파일 업로드 경로 설정
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         File uploadDir = new File(uploadPath.toString());
-        if(!uploadDir.exists()){
+        File originDir = new File(uploadPath.resolve("origin").toString());
+        File thumbnailDir = new File(uploadPath.resolve("thumbnail").toString());
+
+        if (!uploadDir.exists()) {
             uploadDir.mkdirs();
+        }
+        if (!originDir.exists()) {
+            originDir.mkdirs();
+        }
+        if (!thumbnailDir.exists()) {
+            thumbnailDir.mkdirs();
         }
 
         // 파일 저장 경로 설정
-        Path originalFilePath = uploadPath.resolve(originalFilename).normalize();
+        Path originalFilePath = originDir.toPath().resolve(originalFilename).normalize();
+        Path thumbnailFilePath = thumbnailDir.toPath().resolve(thumbnailFilename).normalize();
+
         file.transferTo(originalFilePath.toFile());
 
-        File thumbnailFile = new File(uploadPath.resolve(thumbnailFilename).toUri());
 
         // Thumbnails 라이브러리를 사용하여 썸네일 생성 및 저장
         Thumbnails.of(originalFilePath.toFile())
                 .size(100, 100)
-                .toFile(thumbnailFilename);
+                .toFile(thumbnailFilePath.toFile());
     }
 
     public User login(LoginDTO loginDTO) {
