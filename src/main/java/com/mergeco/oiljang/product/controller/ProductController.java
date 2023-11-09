@@ -54,7 +54,24 @@ public class ProductController {
 
     @ApiOperation(value = "중고 상품 목록 조회")
     @GetMapping("/products")
-    public ResponseEntity<ResponseMessage> selectProductList(@RequestParam int page, @RequestParam String pageKind, @RequestParam int categoryCode, @RequestParam String sortCondition, @RequestParam int minPrice, @RequestParam int maxPrice) {
+    public ResponseEntity<ResponseMessage> selectProductList(@RequestParam(required = false) Integer page, @RequestParam String pageKind, @RequestParam(required = false) Integer categoryCode, @RequestParam(required = false, defaultValue = "latest") String sortCondition, @RequestParam(required = false) Integer minPrice, @RequestParam(required = false) Integer maxPrice) {
+
+        if(page == null) {
+            page = 1;
+        }
+
+        if(categoryCode == null) {
+            categoryCode = 1;
+        }
+
+        if(minPrice == null) {
+            minPrice = -1;
+        }
+
+        if(maxPrice == null) {
+            maxPrice = -1;
+        }
+
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -108,7 +125,7 @@ public class ProductController {
         Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
         Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("productList", productDetailDTOList);
+        responseMap.put("productDetail", productDetailDTOList);
         responseMap.put("selectedWishCode", selectedWishCode);
         responseMap.put("selectedProductDetailImg", selectedProductDetailImg);
 

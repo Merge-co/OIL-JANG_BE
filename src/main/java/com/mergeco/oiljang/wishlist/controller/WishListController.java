@@ -33,8 +33,12 @@ public class WishListController {
     }
 
     @ApiOperation("사용자의 관심 목록 조회")
-    @GetMapping("users/{userCode}/wishLists")
-    public ResponseEntity<ResponseMessage> selectWishList(@RequestParam int page) {
+    @GetMapping("users/{userCode}/wishLists") // 강사님 userCode가 UUID인데 이렇게 해도 되나요?
+    public ResponseEntity<ResponseMessage> selectWishList(@RequestParam(required = false) Integer page) {
+
+        if(page == null) {
+            page = 1;
+        }
 
         HttpHeaders headers = new HttpHeaders();
 
