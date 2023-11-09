@@ -50,7 +50,7 @@ public class WishListService {
     }
 
     @Transactional
-    public void deleteWishList(int wishListCode) {
-        wishListRepository.deleteById(wishListCode);
+    public void deleteWishList(int wishCode) {
+        wishListRepository.deleteById(wishCode);
     }
 }
