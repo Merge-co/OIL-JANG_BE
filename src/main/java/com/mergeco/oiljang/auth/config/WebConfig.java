@@ -1,9 +1,9 @@
 package com.mergeco.oiljang.auth.config;
 
 import com.mergeco.oiljang.auth.filter.HeaderFilter;
-import com.mergeco.oiljang.auth.interceptor.JwtTokenInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -18,6 +18,13 @@ public class WebConfig implements WebMvcConfigurer {
             "classpath:/META-INF/resources/", "classpath:/META-INF/resources/webjars/"
     };
 
+    private final HeaderFilter headerFilter;
+
+    public WebConfig(HeaderFilter headerFilter) {
+        this.headerFilter = headerFilter;
+    }
+
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
        registry.addResourceHandler("**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
@@ -28,26 +35,16 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/thumbPath/**")
                 .addResourceLocations("file:///C:/Users/User/dir/upload/thumbnail/");
         registry.addResourceHandler("/imagePath/**")
-                .addResourceLocations("file:///C:/Users/User/dir/upload/original/");
+                .addResourceLocations("file:///C:/Users/User/dir/upload/origin/");
 
     }
 
     @Bean
     public FilterRegistrationBean<HeaderFilter> getFilterRegistrationBean() {
         FilterRegistrationBean<HeaderFilter> registrationBean
-                = new FilterRegistrationBean<>(createHeaderFilter());
+                = new FilterRegistrationBean<>(headerFilter);
         registrationBean.setOrder(Integer.MIN_VALUE);
         registrationBean.addUrlPatterns("/*");
         return registrationBean;
-    }
-
-    @Bean
-    public HeaderFilter createHeaderFilter() {
-        return new HeaderFilter();
-    }
-
-    @Bean
-    public JwtTokenInterceptor jwtTokenInterceptor() {
-        return new JwtTokenInterceptor();
     }
 }

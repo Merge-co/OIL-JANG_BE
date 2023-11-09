@@ -65,13 +65,13 @@ public class UserTests {
 
     private static Stream<Arguments> joinData() throws IOException {
         JoinDTO joinDTO = new JoinDTO();
-        joinDTO.setNickname("newuser10");
+        joinDTO.setNickname("newuser20");
         joinDTO.setName("New User");
-        joinDTO.setId("newuser10");
+        joinDTO.setId("newuser20");
         joinDTO.setPwd("newpassword");
         joinDTO.setBirthDate("2000-01-03");
         joinDTO.setGender("Male");
-        joinDTO.setPhone("1151522114");
+        joinDTO.setPhone("1151512114");
         joinDTO.setEmail("newuser@example.com");
 
 

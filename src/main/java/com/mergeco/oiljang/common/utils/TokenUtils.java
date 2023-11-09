@@ -2,19 +2,21 @@ package com.mergeco.oiljang.common.utils;
 
 /*import com.auth0.jwt.JWT;
 import com.mergeco.oiljang.common.AuthConstants;*/
+import com.mergeco.oiljang.auth.model.DetailsUser;
+import com.mergeco.oiljang.common.exception.TokenException;
 import com.mergeco.oiljang.user.entity.User;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
+@Slf4j
 public class TokenUtils {
 
     private static String jwtSecretKey;
@@ -55,32 +57,41 @@ public class TokenUtils {
             return true;
 
         } catch(ExpiredJwtException e) {
-            e.printStackTrace();
-            return false;
+            log.info("[TokenProvider] 만료된 JWT 토큰입니다.");
+            throw new TokenException("만료된 JWT 토큰입니다.");
 
-        } catch (JwtException e) {
-            e.printStackTrace();
-            return false;
+        } catch (UnsupportedJwtException e) {
+            log.info("[TokenProvider] 지원되지 않는 JWT 토큰입니다.");
+            throw new TokenException("지원되지 않는 JWT 토큰입니다.");
 
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return false;
+        } catch (IllegalArgumentException e) {
+            log.info("[TokenProvider] JWT 토큰이 잘못되었습니다.");
+            throw new TokenException("JWT 토큰이 잘못되었습니다.");
+        } catch (SecurityException e){
+            log.info("[TokenProvider] 잘못된 JWT 서명입니다.");
+            throw new TokenException("잘못된 JWT 서명입니다.");
         }
     }
 
 
     public static Claims getClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(jwtSecretKey))
-                .parseClaimsJws(token).getBody();
+        try {
+            return Jwts
+                    .parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(jwtSecretKey))
+                    .parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e){
+            return e.getClaims(); // 토큰이 만료되어 예외가 발생하더라도 클레임 값들을 뽑을 수 있다.
+        }
     }
 
 
-    public static String generateJwtToken(User user) {
+    public static String generateJwtToken(DetailsUser user) {
         Date expireTime = new Date(System.currentTimeMillis() + tokenValidateTime);
         JwtBuilder builder = Jwts.builder()
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
-                .setSubject("oiljang token : " + user.getUserCode())
+                .setSubject("oiljang token : " + user.getUser().getUserCode())
                 .signWith(SignatureAlgorithm.HS256, createSignature())
                 .setExpiration(expireTime);
         return builder.compact();
@@ -98,12 +109,11 @@ public class TokenUtils {
     }
 
 
-    private static Map<String, Object> createClaims(User user) {
+    private static Map<String, Object> createClaims(DetailsUser user) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("userName", user.getName());
-        claims.put("Role", user.getRole());
-        claims.put("userEmail", user.getEmail());
+        claims.put("userName", user.getUser().getName());
+        claims.put("Role", user.getUser().getRole());
 
         return claims;
     }
