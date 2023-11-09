@@ -4,15 +4,16 @@ import lombok.*;
 
 import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class MsgUserDTO {
+public class MsgReceiverDTO {
     private int msgCode;
-    private UUID userCode;
     private UUID receiverCode;
-    private String id;
+    private int productCode;
+    private UUID userCode;
     private String name;
+    private String id;
 }

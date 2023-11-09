@@ -19,9 +19,9 @@ public class MsgProUserInfoDTO {
     private LocalDate msgTime;
     private UUID senderCode;
     private UUID receiverCode;
+    private UUID userCode;
     private String id;
     private String name;
-    private String token;
     private int productCode;
     private String productName;
     private String productDesc;

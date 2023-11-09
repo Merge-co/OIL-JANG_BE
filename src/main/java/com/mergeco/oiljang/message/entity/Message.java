@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.message.entity;
 
+import com.mergeco.oiljang.message.dto.MsgReceiverDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,6 +15,20 @@ import java.util.UUID;
 @Getter
 @ToString
 @AllArgsConstructor
+//@SqlResultSetMapping(
+//        name = "MsgReceiverDTOMapping",
+//        classes = @ConstructorResult(
+//                targetClass = MsgReceiverDTO.class,
+//                columns = {
+//                        @ColumnResult(name = "msg_code", type = Integer.class),
+//                        @ColumnResult(name = "receiver_code", type = UUID.class),
+//                        @ColumnResult(name = "product_code", type = Integer.class),
+//                        @ColumnResult(name = "user_code", type = UUID.class),
+//                        @ColumnResult(name = "name", type = String.class),
+//                        @ColumnResult(name = "id", type = String.class)
+//                }
+//        )
+//)
 public class Message {
     @Id
     @Column(name = "msg_code")
