@@ -22,9 +22,9 @@ import java.util.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_code", columnDefinition = "BINARY(16)")
-    private UUID userCode;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_code")
+    private int userCode;
 
     @Column(name = "nickname")
     private String nickname;
