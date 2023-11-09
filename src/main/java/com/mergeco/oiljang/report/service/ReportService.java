@@ -1,7 +1,5 @@
 package com.mergeco.oiljang.report.service;
 
-import com.mergeco.oiljang.product.dto.ProductDTO;
-import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.report.entity.Report;
 import com.mergeco.oiljang.report.model.dto.ReportDTO;
@@ -9,8 +7,10 @@ import com.mergeco.oiljang.report.repository.ReportRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -45,7 +45,7 @@ public class ReportService {
 
 
     public Object selectSingleDistincationQuery() {
-        String jpql = "SELECT n.processDistincation FROM tbl_report as n WHERE n.reportNo = 1";
+        String jpql = "SELECT n.processDistinction FROM tbl_report as n WHERE n.reportNo = 1";
         Query query = manager.createQuery(jpql);
         Object result = query.getSingleResult();
 
@@ -99,7 +99,7 @@ public class ReportService {
     }
 
     public List<Report> selectReportByBindingPosition(String distincation) {
-        String jpql = "SELECT m FROM tbl_report m WHERE m.processDistincation = ?1";
+        String jpql = "SELECT m FROM tbl_report m WHERE m.processDistinction = ?1";
         List<Report> foundReportList = manager.createQuery(jpql, Report.class)
                 .setParameter(1, distincation)
                 .getResultList();
@@ -197,20 +197,22 @@ public class ReportService {
         return reportList;
     }
 
+    @Transactional
     public void registReport(ReportDTO reportInfo) {
         System.out.println("서비스에서 받았니 ? : " + reportInfo);
         reportRepository.save(modelMapper.map(reportInfo, Report.class));
     }
 
 
-
-
-   /* public List<Object[]> selectByCollectionJoun() {
-        String jpql = "SELECT c.reportCategoryNo, p.productCode " +
-                "FROM ReportCategory c " +
-                "LEFT JOIN c.product p ";
-        List<Object[]> caterogyList = manager.createQuery(jpql).getResultList();
-        return caterogyList;
-    }*/
-
+    @Transactional
+    public void modifyReport(int reportNo) {
+        Report report = reportRepository.findById(reportNo).orElseThrow(IllegalArgumentException::new);
+        System.out.println("==================================================");
+        System.out.println("데이터 있니 ? : " + report);
+        Report reportModify = report
+                .processDistinction("처리 부분 테스트Distinction "  )
+                .processComment("테스트진행중 Comment 입니다,")
+                .processDate(LocalDateTime.now());
+        reportRepository.save(reportModify);
+    }
 }

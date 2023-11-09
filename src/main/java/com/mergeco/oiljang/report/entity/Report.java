@@ -2,9 +2,7 @@ package com.mergeco.oiljang.report.entity;
 
 import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.entity.SellStatus;
-import com.mergeco.oiljang.user.entity.User;
 import lombok.*;
-import net.bytebuddy.build.ToStringPlugin;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,8 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "report")
 @AllArgsConstructor
 @ToString
-@Builder
 @Getter
+
 public class Report {
 
     @Id
@@ -37,8 +35,8 @@ public class Report {
     @ManyToOne
     private SellStatus sellStatus; // 판매상태코드
 
-    @Column(name = "process_distincation")
-    private String processDistincation; // 처리분류
+    @Column(name = "process_distinction")
+    private String processDistinction; // 처리분류
     @Column(name = "process_comment")
     private String processComment; // 처리 내용
     @Column(name = "process_date")
@@ -47,7 +45,6 @@ public class Report {
     @JoinColumn(name = "ref_report_category_no")
     @ManyToOne
     private ReportCategory reportCategory;// 신고분류 코드 FK
-
 
 
     public Report reportNo(int val) {
@@ -64,6 +61,10 @@ public class Report {
     }
     public Report reportDate(LocalDateTime val) {
         reportDate = val;
+        return this;
+    }
+    public Report processDistinction(String val){
+        processDistinction = val;
         return this;
     }
     public Report processComment(String val){
@@ -93,8 +94,8 @@ public class Report {
         return reportDate;
     }
 
-    public String getProcessDistincation() {
-        return processDistincation;
+    public String getProcessDistinction() {
+        return processDistinction;
     }
 
     public String getProcessComment() {

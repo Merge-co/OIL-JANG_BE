@@ -1,7 +1,9 @@
 package com.mergeco.oiljang.report.entity;
 
 
+import com.mergeco.oiljang.report.model.dto.ReportCategoryDTO;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -11,6 +13,7 @@ import javax.persistence.*;
 @Table(name = "report_category")
 @Getter
 @ToString
+@Builder
 @AllArgsConstructor
 public class ReportCategory {
 
@@ -23,5 +26,6 @@ public class ReportCategory {
 
     protected ReportCategory() {
     }
+
 }
 
