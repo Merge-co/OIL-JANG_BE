@@ -2,6 +2,7 @@ package com.mergeco.oiljang.user.entity;
 
 import com.mergeco.oiljang.common.UserRole;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -52,6 +53,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "enroll_type")
+    @ColumnDefault("NORMAL")
     private EnrollType enrollType;
 
     @Column(name = "token")
@@ -59,6 +61,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "auth_name")
+    @ColumnDefault("ROLE_USER")
     private UserRole role;
 
     @Column(name = "verify_status")

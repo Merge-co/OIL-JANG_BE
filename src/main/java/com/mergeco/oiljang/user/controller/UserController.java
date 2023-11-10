@@ -2,6 +2,7 @@ package com.mergeco.oiljang.user.controller;
 
 
 import com.mergeco.oiljang.auth.model.dto.JoinDTO;
+import com.mergeco.oiljang.auth.model.dto.LoginDTO;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.model.dto.UserProfileDTO;
@@ -14,9 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
@@ -29,9 +28,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private CommonsMultipartResolver resolver;
-
-    @ApiOperation(value = "신규 회원 추가")
+    @ApiOperation(value = "회원가입")
     @PostMapping(value = "/users")
     public ResponseEntity<ResponseMessage> join(@ModelAttribute JoinDTO joinDTO, @RequestPart MultipartFile imageFile) throws Exception {
 
@@ -47,4 +44,5 @@ public class UserController {
             return ResponseEntity.ok().build();
         }
     }
+
 }
