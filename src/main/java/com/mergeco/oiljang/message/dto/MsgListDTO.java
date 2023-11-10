@@ -12,8 +12,9 @@ import java.util.UUID;
 @Setter
 @ToString
 public class MsgListDTO {
-    private UUID userCode;
-    private String senderOrReceiver;
+    private int userCode;
+    private int senderCode;
+    private int receiverCode;
     private String msgContent;
     private String msgStatus;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

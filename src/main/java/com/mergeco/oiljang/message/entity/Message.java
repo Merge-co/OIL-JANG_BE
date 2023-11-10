@@ -49,10 +49,10 @@ public class Message {
     private int refProductCode;
 
     @Column(name = "sender_code")
-    private UUID senderCode;
+    private int senderCode;
 
     @Column(name = "receiver_code")
-    private UUID receiverCode;
+    private int receiverCode;
 
     @JoinColumn(name = "msg_delete_code", insertable = false, updatable = false)
     @ManyToOne
@@ -82,11 +82,11 @@ public class Message {
         refProductCode = val;
         return this;
     }
-    public Message senderCode(UUID val){
+    public Message senderCode(int val){
         senderCode = val;
         return this;
     }
-    public Message receiverCode(UUID val){
+    public Message receiverCode(int val){
         receiverCode = val;
         return this;
     }

@@ -4,6 +4,7 @@ import com.mergeco.oiljang.message.dto.*;
 import com.mergeco.oiljang.message.entity.Message;
 import com.mergeco.oiljang.message.repository.MsgDeleteRepository;
 import com.mergeco.oiljang.message.repository.MsgRepository;
+import io.swagger.models.auth.In;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -72,18 +73,18 @@ public class MsgService {
         for(Object[] result : resultList){
             MsgReceiverDTO dto = new MsgReceiverDTO();
             dto.setMsgCode((Integer) result[0]);
-            dto.setReceiverCode((UUID) result[1]);
+            dto.setReceiverCode((Integer) result[1]);
             dto.setProductCode((Integer) result[2]);
-            dto.setUserCode((UUID) result[3]);
+            dto.setUserCode((Integer) result[3]);
             dto.setName((String) result[4]);
             dto.setId((String) result[5]);
 
-//            System.out.println("result[0] : " + result[0]);
-//            System.out.println("result[1] : " + result[1]);
-//            System.out.println("result[2] : " + result[2]);
-//            System.out.println("result[3] : " + result[3]);
-//            System.out.println("result[4] : " + result[4]);
-//            System.out.println("result[5] : " + result[5]);
+            System.out.println("result[0] : " + result[0]);
+            System.out.println("result[1] : " + result[1]);
+            System.out.println("result[2] : " + result[2]);
+            System.out.println("result[3] : " + result[3]);
+            System.out.println("result[4] : " + result[4]);
+            System.out.println("result[5] : " + result[5]);
 
 //            dto.setMsgCode(dto.getMsgCode());
 //            dto.setReceiverCode(dto.getReceiverCode());
@@ -122,8 +123,9 @@ public class MsgService {
     }
 
 
-//    public List<MsgListDTO> selectMsgList(UUID userCode, int offset, int limit, boolean isReceived) {
 
 
+//    public List<MsgListDTO> getMessages(int userCode, int offset, int limit, Boolean isReceived) {
+//        return msgRepository.findMessages(userCode, offset, limit, isReceived);
 //    }
 }

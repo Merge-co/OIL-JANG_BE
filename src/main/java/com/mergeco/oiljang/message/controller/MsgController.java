@@ -1,20 +1,14 @@
 package com.mergeco.oiljang.message.controller;
 
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
-import com.mergeco.oiljang.message.dto.MsgInsertDTO;
-import com.mergeco.oiljang.message.dto.MsgProUserInfoDTO;
-import com.mergeco.oiljang.message.dto.MsgReceiverDTO;
-import com.mergeco.oiljang.message.dto.MsgUserDTO;
+import com.mergeco.oiljang.message.dto.*;
 import com.mergeco.oiljang.message.service.MsgService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -22,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@RestController
 public class MsgController {
 
     public final MsgService msgService;
@@ -35,17 +29,16 @@ public class MsgController {
 //    public void registPage(){}
 
     @PostMapping("/messages")
-    public ResponseEntity<String> msgAnswer(@RequestBody MsgInsertDTO msgInfo){
-        try{
+    public ResponseEntity<String> msgAnswer(@RequestBody MsgInsertDTO msgInfo) {
+        try {
             msgService.insertMsg(msgInfo);
             System.out.println("controller : " + msgInfo);
             return ResponseEntity.status(HttpStatus.CREATED).body("Message created successfully");
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating message: " + e.getMessage());
         }
 
     }
-
 
 
 //    @GetMapping("/messages/{msgCode}/{userCode}")
@@ -67,7 +60,7 @@ public class MsgController {
 //    }
 
     @GetMapping("/message")
-    public ResponseEntity<ResponseMessage> selectReceiver(@RequestBody MsgReceiverDTO msgReceiverDTO){
+    public ResponseEntity<ResponseMessage> selectReceiver(@RequestBody MsgReceiverDTO msgReceiverDTO) {
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -86,7 +79,7 @@ public class MsgController {
     }
 
     @GetMapping("/messages/{msgCode}")
-    public ResponseEntity<ResponseMessage> selectMsgDetail(@PathVariable int msgCode){
+    public ResponseEntity<ResponseMessage> selectMsgDetail(@PathVariable int msgCode) {
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -97,8 +90,22 @@ public class MsgController {
         Map<String, Object> responesMap = new HashMap<>();
         responesMap.put("msgProUserList", msgProUserInfoDTOList);
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 상세 조회" , responesMap);
+        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 상세 조회", responesMap);
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
+
+//    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isRecevied={isRecevied}")
+//    public ResponseEntity<List<MsgListDTO>> getMessages(
+//            @PathVariable int userCode,
+//            @RequestParam int offset,
+//            @RequestParam int limit,
+//            @RequestParam(required = false) Boolean isReceived) {
+//
+//
+//        List<MsgListDTO> msgListDTOList = msgService.getMessages(userCode, offset, limit, isReceived);
+//        return new ResponseEntity<>(msgListDTOList, HttpStatus.OK);
+//    }
+
+
 }
