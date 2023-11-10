@@ -17,7 +17,7 @@ public class ProductDetailDTO {
     private LocalDateTime enrollDateTime;
     private int viewCount;
     private Long wishCount;
-    private UUID refUserCode;
+    private int refUserCode;
     private String userImageThumbAddr;
     private String nickName;
     private String productDesc;
@@ -27,7 +27,7 @@ public class ProductDetailDTO {
     public ProductDetailDTO() {
     }
 
-    public ProductDetailDTO(int productCode, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, UUID refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade, String sellStatus) {
+    public ProductDetailDTO(int productCode, String productName, int productPrice, String categoryName, String upperCategoryName, LocalDateTime enrollDateTime, int viewCount, Long wishCount, int refUserCode, String userImageThumbAddr, String nickName, String productDesc, String wishPlaceTrade, String sellStatus) {
         this.productCode = productCode;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -108,11 +108,11 @@ public class ProductDetailDTO {
         this.wishCount = wishCount;
     }
 
-    public UUID getRefUserCode() {
+    public int getRefUserCode() {
         return refUserCode;
     }
 
-    public void setRefUserCode(UUID refUserCode) {
+    public void setRefUserCode(int refUserCode) {
         this.refUserCode = refUserCode;
     }
 

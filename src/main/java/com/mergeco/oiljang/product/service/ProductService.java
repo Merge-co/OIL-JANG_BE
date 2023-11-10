@@ -136,7 +136,7 @@ public class ProductService {
 
     // refUserCode 나중에 판매자 이름 추츨 해야 한다.
     public List<ProductDetailDTO> selectProductDetail(int productCode) {
-        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
+        String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode.userCode = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
                 " FROM Product m JOIN m.SellStatus s WHERE m.productCode = :productCode";
         List<ProductDetailDTO> productDetailDTOS = entityManager.createQuery(jpql, ProductDetailDTO.class).setParameter("productCode", productCode).getResultList();
         return productDetailDTOS;
@@ -152,7 +152,7 @@ public class ProductService {
         }
         return selectProductDetailImg;
     }
-    public List<Integer> selectWishCode(UUID refUserCode, int productCode) {
+    public List<Integer> selectWishCode(int refUserCode, int productCode) {
         String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND w.product.productCode = :productCode";
         List<Integer> wishCode = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
@@ -169,8 +169,11 @@ public class ProductService {
     }
 
     @Transactional
-    public void insertWishList(WishListDTO wishListDTO) {
+    public String  insertWishList(WishListDTO wishListDTO) {
+        String result = "관심 목록 등록 실패";
         wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
+        result = "관심 목록 등록 성공";
+        return result;
     }
 
 //    public void updateTest() {
@@ -200,9 +203,11 @@ public class ProductService {
         try {
             System.out.println(22222);
             byte[] bytes = imageFile.getBytes();
-            String fileName = imageFile.getName(); // 사용자가 업로드한 파일명
-            String dbname = UUID.randomUUID().toString();
-            String filePath = "/Users/minbumkim/Desktop/test/" + dbname; // 실제 이미지를 저장할 경로
+
+            String getName = imageFile.getName(); // 사용자가 업로드한 파일명
+            String dbFileName = UUID.randomUUID().toString();
+            String filePath = "C:/images/" + dbFileName; // 실제 이미지를 저장할 경로
+
             Path path = Paths.get(filePath);
             Files.write(path, bytes);
             System.out.println(22222);
@@ -217,7 +222,7 @@ public class ProductService {
 
     public void addProImageInfo(ProImageInfoDTO imageInfo) {
         proImageRepository.save(modelMapper.map(imageInfo, ProImageInfo.class));
-        //DB에 저상하는 로직 레포지토리에서 세이브를 해라
+
     }
 
     /*민범님*/

@@ -37,8 +37,8 @@ public class Product {
     @Column(name = "view_count")
     private int viewCount;
 
-    @Column(columnDefinition = "BINARY(16)", name = "ref_user_code")
-    private UUID refUserCode;
+    @Column(name = "ref_user_code")
+    private int refUserCode;
 
     @ManyToOne
     @JoinColumn(name = "sell_status_code")
@@ -88,7 +88,7 @@ public class Product {
         return this;
     }
 
-    public Product refUserCode(UUID val) {
+    public Product refUserCode(int val) {
         refUserCode = val;
         return this;
     }
@@ -110,7 +110,7 @@ public class Product {
     protected Product() {
     }
 
-    public Product(int productCode, String productThumbAddr, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, com.mergeco.oiljang.product.entity.SellStatus sellStatus, com.mergeco.oiljang.product.entity.Category category) {
+    public Product(int productCode, String productThumbAddr, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, int refUserCode, com.mergeco.oiljang.product.entity.SellStatus sellStatus, com.mergeco.oiljang.product.entity.Category category) {
         this.productCode = productCode;
         this.productThumbAddr = productThumbAddr;
         this.productName = productName;
@@ -156,7 +156,7 @@ public class Product {
         return viewCount;
     }
 
-    public UUID getRefUserCode() {
+    public int getRefUserCode() {
         return refUserCode;
     }
 

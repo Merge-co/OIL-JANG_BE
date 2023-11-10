@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class WishListService {
@@ -21,16 +20,12 @@ public class WishListService {
     private final EntityManager entityManager;
     private final ModelMapper modelMapper;
     private final WishListRepository wishListRepository;
-    private final ProductRepository productRepository;
-    private final ProImageRepository proImageRepository;
 
     @Autowired
-    public WishListService(EntityManager entityManager, ModelMapper modelMapper, WishListRepository wishListRepository, ProductRepository productRepository, ProImageRepository proImageRepository) {
+    public WishListService(EntityManager entityManager, ModelMapper modelMapper, WishListRepository wishListRepository) {
         this.entityManager = entityManager;
         this.modelMapper = modelMapper;
         this.wishListRepository = wishListRepository;
-        this.productRepository = productRepository;
-        this.proImageRepository = proImageRepository;
     }
 
     public long countProductList() {
@@ -38,7 +33,7 @@ public class WishListService {
         return countPage;
     }
 
-    public List<WishListInfoDTO> selectWishList(int offset, int limit, UUID refUserCode) {
+    public List<WishListInfoDTO> selectWishList(int offset, int limit, int refUserCode) {
         String jpql = "SELECT new com.mergeco.oiljang.wishlist.dto.WishListInfoDTO(w.wishCode, p.productThumbAddr, p.SellStatus.sellStatus, p.productName, p.productPrice, p.productDesc)" +
                 " FROM WishList w JOIN w.product p WHERE w.refUserCode = :refUserCode ORDER BY w.wishCode DESC";
         List<WishListInfoDTO> wishList = entityManager.createQuery(jpql)
@@ -50,7 +45,10 @@ public class WishListService {
     }
 
     @Transactional
-    public void deleteWishList(int wishCode) {
+    public String deleteWishList(int wishCode) {
+        String result = "관심 목록에서 찜 삭제 실패";
         wishListRepository.deleteById(wishCode);
+        result = "관심 목록에서 찜 삭제 성공";
+        return result;
     }
 }
