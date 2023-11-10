@@ -2,10 +2,7 @@ package com.mergeco.oiljang.product.controller;
 
 import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
-import com.mergeco.oiljang.product.dto.CategoryDTO;
-import com.mergeco.oiljang.product.dto.ProductDTO;
-import com.mergeco.oiljang.product.dto.ProductDetailDTO;
-import com.mergeco.oiljang.product.dto.ProductListDTO;
+import com.mergeco.oiljang.product.dto.*;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import io.swagger.annotations.Api;
@@ -56,19 +53,19 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<ResponseMessage> selectProductList(@RequestParam(required = false) Integer page, @RequestParam String pageKind, @RequestParam(required = false) Integer categoryCode, @RequestParam(required = false, defaultValue = "latest") String sortCondition, @RequestParam(required = false) Integer minPrice, @RequestParam(required = false) Integer maxPrice) {
 
-        if(page == null) {
+        if (page == null) {
             page = 1;
         }
 
-        if(categoryCode == null) {
+        if (categoryCode == null) {
             categoryCode = 1;
         }
 
-        if(minPrice == null) {
+        if (minPrice == null) {
             minPrice = -1;
         }
 
-        if(maxPrice == null) {
+        if (maxPrice == null) {
             maxPrice = -1;
         }
 
@@ -91,9 +88,9 @@ public class ProductController {
         double totalItem = Long.valueOf(productService.countProductList()).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
-        if(page >= totalPage) {
+        if (page >= totalPage) {
             page = totalPage;
-        } else if( page < 1) {
+        } else if (page < 1) {
             page = 1;
         }
 
@@ -168,7 +165,7 @@ public class ProductController {
         return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> uploadFile(@RequestParam("userUploadedFile")MultipartFile userUploadedFile) {
+    public ResponseEntity<String> uploadFile(@RequestParam("userUploadedFile") MultipartFile userUploadedFile) {
         if (userUploadedFile.isEmpty()) {
             return new ResponseEntity<>("No file uploaded.", HttpStatus.BAD_REQUEST);
         }
@@ -190,7 +187,7 @@ public class ProductController {
     }
 
     @PostMapping("/products/{productCode}/images")
-    public ResponseEntity<ResponseMessage> addProductImages (
+    public ResponseEntity<ResponseMessage> addProductImages(
             @PathVariable int productCode,
             @RequestParam("imagesFiles") List<MultipartFile> imageFiles
     ) {
@@ -212,58 +209,23 @@ public class ProductController {
             return new ResponseEntity<>("상품 수정에 실패했습니다. 상품을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
         }
     }
-//    @ApiOperation(value = "판매 중인 중고 상품 목록 조회")
-//    @GetMapping("/products/selling")
-//    public ResponseEntity<ResponseMessage> selectSellingProductList(
-//            @RequestParam(required = false) Integer page,
-//            @RequestParam(required = false, defaultValue = "latest") String sortCondition,
-//            @RequestParam(required = false) Integer categoryCode,
-//            @RequestParam(required = false) Integer minPrice,
-//            @RequestParam(required = false) Integer maxPrice) {
-//
-//        if (page == null) {
-//            page = 1;
-//        }
-//
-//        if (categoryCode == null) {
-//            categoryCode = 1; // 기본 카테고리 코드 설정
-//        }
-//
-//        if (minPrice == null) {
-//            minPrice = -1; // 최소 가격 필터링 기본값 설정
-//        }
-//
-//        if (maxPrice == null) {
-//            maxPrice = -1; // 최대 가격 필터링 기본값 설정
-//        }
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-//
-//        int limit = 8; // 페이지당 상품 수
-//        int offset = limit * (page - 1);
-//
-//        List<ProductListDTO> productListDTOList = productService.selectSellingProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
-//
-//        double totalItem = Long.valueOf(productService.countSellingProductList()).doubleValue();
-//        int totalPage = (int) Math.ceil(totalItem / limit);
-//
-//        if (page >= totalPage) {
-//            page = totalPage;
-//        } else if (page < 1) {
-//            page = 1;
-//        }
-//
-//        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
-//
-//        Map<String, Object> responseMap = new HashMap<>();
-//        responseMap.put("productList", productListDTOList);
-//        responseMap.put("pagingBtn", pagingBtn);
-//
-//        ResponseMessage responseMessage = new ResponseMessage(200, "판매 중인 중고 상품 목록", responseMap);
-//
-//        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
-//    }
+
+    // 내 판매목록 조회
+    @GetMapping("users/{userCode}/products")
+    public ResponseEntity<ResponseMessage> selectSellingProduct(@PathVariable int userCode, @RequestParam(required = false) Integer page) {
+        if (page == null) {
+            page = 1;
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        int limit = 3;
+        int offset = limit * (page - 1);
 
 
+//        productService.selectSellingList();
+        return null;
+    }
 }
