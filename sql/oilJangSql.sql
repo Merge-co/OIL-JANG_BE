@@ -162,70 +162,70 @@ CREATE TABLE `wish_list`
     PRIMARY KEY ( `wish_code` )
 );
 
--- ALTER TABLE `inquiry`
---     ADD CONSTRAINT `inquiry_FK` FOREIGN KEY ( `ref_inq_cate_code` )
---         REFERENCES `inq_category` (`inq_cate_code` );
---
--- ALTER TABLE `inquiry`
---     ADD CONSTRAINT `inquiry_FK1` FOREIGN KEY ( `ref_user_code` )
---         REFERENCES `user_info` (`user_code` );
---
--- ALTER TABLE `message`
---     ADD CONSTRAINT `message_FK2` FOREIGN KEY ( `ref_product_code` )
---         REFERENCES `product_info` (`product_code` );
---
--- ALTER TABLE `message`
---     ADD CONSTRAINT `message_FK1` FOREIGN KEY ( `sender_code` )
---         REFERENCES `user_info` (`user_code` );
---
--- ALTER TABLE `message`
---     ADD CONSTRAINT `message_FK` FOREIGN KEY ( `msg_delete_code` )
---         REFERENCES `msg_delete_info` (`msg_delete_code` );
---
--- ALTER TABLE `message`
---     ADD CONSTRAINT `message_FK3` FOREIGN KEY ( `receiver_code` )
---         REFERENCES `user_info` (`user_code` );
---
--- ALTER TABLE `pro_image_info`
---     ADD CONSTRAINT `pro_image_info_FK` FOREIGN KEY ( `ref_product_code` )
---         REFERENCES `product_info` (`product_code` );
---
--- ALTER TABLE `product_info`
---     ADD CONSTRAINT `product_info_FK` FOREIGN KEY ( `ref_USER_CODE` )
---         REFERENCES `user_info` (`user_code` );
---
--- ALTER TABLE `product_info`
---     ADD CONSTRAINT `product_info_FK1` FOREIGN KEY ( `ref_category_code` )
---         REFERENCES `category_info` (`category_code` );
---
--- ALTER TABLE `product_info`
---     ADD CONSTRAINT `product_info_FK2` FOREIGN KEY ( `sell_status_code` )
---         REFERENCES `sell_status_info` (`sell_status_code` );
---
--- ALTER TABLE `report`
---     ADD CONSTRAINT `report_FK1` FOREIGN KEY ( `ref_report_category_no` )
---         REFERENCES `report_category` (`report_category_no` );
---
--- ALTER TABLE `report`
---     ADD CONSTRAINT `report_FK` FOREIGN KEY ( `product_code` )
---         REFERENCES `product_info` (`product_code` );
---
--- ALTER TABLE `report`
---     ADD CONSTRAINT `report_FK2` FOREIGN KEY ( `sell_status_code` )
---         REFERENCES `sell_status_info` (`sell_status_code` );
---
--- ALTER TABLE `user_profile`
---     ADD CONSTRAINT `user_profile_FK` FOREIGN KEY ( `ref_user_code` )
---         REFERENCES `user_info` (`user_code` );
---
---
--- ALTER TABLE `wish_list`
---     ADD CONSTRAINT `wish_list_FK` FOREIGN KEY ( `ref_product_code` )
---         REFERENCES `product_info` (`product_code` );
---
--- ALTER TABLE `wish_list`
---     ADD CONSTRAINT `wish_list_FK1` FOREIGN KEY ( `ref_user_code` )
---         REFERENCES `user_info` (`user_code` );
+ALTER TABLE `inquiry`
+     ADD CONSTRAINT `inquiry_FK` FOREIGN KEY ( `ref_inq_cate_code` )
+         REFERENCES `inq_category` (`inq_cate_code` );
+
+ ALTER TABLE `inquiry`
+     ADD CONSTRAINT `inquiry_FK1` FOREIGN KEY ( `ref_user_code` )
+         REFERENCES `user_info` (`user_code` );
+
+ ALTER TABLE `message`
+     ADD CONSTRAINT `message_FK2` FOREIGN KEY ( `ref_product_code` )
+         REFERENCES `product_info` (`product_code` );
+
+ ALTER TABLE `message`
+     ADD CONSTRAINT `message_FK1` FOREIGN KEY ( `sender_code` )
+         REFERENCES `user_info` (`user_code` );
+
+ ALTER TABLE `message`
+     ADD CONSTRAINT `message_FK` FOREIGN KEY ( `msg_delete_code` )
+         REFERENCES `msg_delete_info` (`msg_delete_code` );
+
+ ALTER TABLE `message`
+     ADD CONSTRAINT `message_FK3` FOREIGN KEY ( `receiver_code` )
+         REFERENCES `user_info` (`user_code` );
+
+ ALTER TABLE `pro_image_info`
+     ADD CONSTRAINT `pro_image_info_FK` FOREIGN KEY ( `ref_product_code` )
+         REFERENCES `product_info` (`product_code` );
+
+ ALTER TABLE `product_info`
+     ADD CONSTRAINT `product_info_FK` FOREIGN KEY ( `ref_USER_CODE` )
+         REFERENCES `user_info` (`user_code` );
+
+ ALTER TABLE `product_info`
+     ADD CONSTRAINT `product_info_FK1` FOREIGN KEY ( `ref_category_code` )
+         REFERENCES `category_info` (`category_code` );
+
+ ALTER TABLE `product_info`
+     ADD CONSTRAINT `product_info_FK2` FOREIGN KEY ( `sell_status_code` )
+         REFERENCES `sell_status_info` (`sell_status_code` );
+
+ ALTER TABLE `report`
+     ADD CONSTRAINT `report_FK1` FOREIGN KEY ( `ref_report_category_no` )
+         REFERENCES `report_category` (`report_category_no` );
+
+ ALTER TABLE `report`
+     ADD CONSTRAINT `report_FK` FOREIGN KEY ( `product_code` )
+         REFERENCES `product_info` (`product_code` );
+
+ ALTER TABLE `report`
+     ADD CONSTRAINT `report_FK2` FOREIGN KEY ( `sell_status_code` )
+         REFERENCES `sell_status_info` (`sell_status_code` );
+
+ ALTER TABLE `user_profile`
+     ADD CONSTRAINT `user_profile_FK` FOREIGN KEY ( `ref_user_code` )
+         REFERENCES `user_info` (`user_code` );
+
+
+ ALTER TABLE `wish_list`
+     ADD CONSTRAINT `wish_list_FK` FOREIGN KEY ( `ref_product_code` )
+         REFERENCES `product_info` (`product_code` );
+
+ ALTER TABLE `wish_list`
+     ADD CONSTRAINT `wish_list_FK1` FOREIGN KEY ( `ref_user_code` )
+         REFERENCES `user_info` (`user_code` );
 
 
 INSERT INTO category_info (category_name, upper_category_code) VALUES ('상의', null);
