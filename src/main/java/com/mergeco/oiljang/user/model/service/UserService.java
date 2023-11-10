@@ -2,12 +2,9 @@ package com.mergeco.oiljang.user.model.service;
 
 import com.mergeco.oiljang.auth.model.dto.*;
 import com.mergeco.oiljang.common.UserRole;
-import com.mergeco.oiljang.common.exception.UserErrorResult;
-import com.mergeco.oiljang.common.exception.UserException;
 import com.mergeco.oiljang.user.entity.EnrollType;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.entity.UserProfile;
-import com.mergeco.oiljang.user.model.dto.UserProfileDTO;
 import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
 /*import lombok.RequiredArgsConstructor;*/
@@ -26,12 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;*/
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
-/*import java.util.HashMap;
-import java.util.Map;*/
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,7 +63,7 @@ public class UserService {
     @Transactional
     public User join(JoinDTO joinDTO,MultipartFile imageFile) throws IOException {
 
-        //중복 유저 존재 여부 체크
+/*        //중복 유저 존재 여부 체크
         Optional<User> existingUser = userRepository.findById(joinDTO.getId());
         if (existingUser.isPresent()) {
             // 중복 사용자 처리
@@ -82,7 +74,7 @@ public class UserService {
         if (existingUserByNickname.isPresent()) {
             // 중복 닉네임 처리
             throw new UserException(UserErrorResult.DUPLICATED_NICKNAME_REGISTER);
-        }
+        }*/
 
 
         // 파일 업로드 및 경로 저장
@@ -127,12 +119,7 @@ public class UserService {
 
         User joinUser = userRepository.save(user);
 
-        System.out.println(joinUser);
-
         userProfile.setRefUserCode(joinUser); // userProfile에서 refUserCode 설정
-
-        System.out.println(userProfile);
-
 
         userProfileRepository.save(userProfile);
 
@@ -169,13 +156,23 @@ public class UserService {
                 .toFile(thumbnailFilePath.toFile());
     }
 
-    public User login(LoginDTO loginDTO) {
-        return null;
+    public boolean checkUserIdExist(String id) {
+        User user = userRepository.checkUserIdExist(id);
+
+        log.info(String.valueOf(user));
+        System.out.println(user);
+
+        if (user != null){
+            return false;
+        }else
+            return true;
     }
 
-    public boolean checkUserIdExist(String userId) {
 
-        return true;
+
+
+    public User login(LoginDTO loginDTO) {
+        return null;
     }
 
 

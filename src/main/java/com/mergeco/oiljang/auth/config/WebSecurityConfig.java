@@ -62,7 +62,7 @@ public class WebSecurityConfig {
                 .antMatchers("/").authenticated()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/swagger-ui/index.html","/swagger-ui.html", "/swagger-ui/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security").permitAll()
-                .antMatchers("/users/**","/reports/**","/messages/**","/product/**","/categories/**","/wishLists/**").permitAll()
+                .antMatchers("/users/**","/reports/**","/messages/**","/products/**","/categories/**","/wishLists/**").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/**").hasAnyRole("USER","ADMIN","ALL")
                 //.anyRequest().permitAll()
@@ -84,7 +84,7 @@ public class WebSecurityConfig {
 
                 .and()
                 .formLogin().disable()
-                .addFilterBefore(customAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+               // .addFilterBefore(customAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic().disable();
 
         return http.build();

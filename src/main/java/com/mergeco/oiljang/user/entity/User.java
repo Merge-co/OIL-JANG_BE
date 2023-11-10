@@ -2,6 +2,7 @@ package com.mergeco.oiljang.user.entity;
 
 import com.mergeco.oiljang.common.UserRole;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -74,6 +75,7 @@ public class User {
     @DateTimeFormat(pattern = "YYYY-MM-DD hh:mm:ss")
     private LocalDateTime enrollDate;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "refUserCode", cascade = CascadeType.ALL)
     private UserProfile userProfile;
 
