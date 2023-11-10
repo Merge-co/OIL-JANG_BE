@@ -1,15 +1,12 @@
 package com.mergeco.oiljang.user;
 
 import com.mergeco.oiljang.auth.model.dto.JoinDTO;
-import com.mergeco.oiljang.auth.model.dto.LoginDTO;
-import com.mergeco.oiljang.common.UserRole;
-import com.mergeco.oiljang.user.entity.EnrollType;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.entity.UserProfile;
-import com.mergeco.oiljang.user.model.dto.UserProfileDTO;
 import com.mergeco.oiljang.user.model.service.UserService;
 import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 /*import org.junit.jupiter.params.provider.Arguments;*/
@@ -17,8 +14,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 /*
@@ -27,10 +22,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 
@@ -41,9 +33,9 @@ import java.util.stream.Stream;
 */
 
 @SpringBootTest
+@Slf4j
 public class UserTests {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(UserTests.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -96,30 +88,30 @@ public class UserTests {
 
 
         // Then
-        /*User savedUser = userRepository.findById("newUser").orElse(null);
-        Assertions.assertNotNull(savedUser);
-        Assertions.assertEquals("newUser", savedUser.getId());*/
 
-        // Verify the user profile
         UserProfile userProfile = newUser.getUserProfile();
         Assertions.assertNotNull(userProfile);
-        /*Assertions.assertEquals("newuser5-original-image.jpg", userProfile.getUserImageOriginName());*/
 
     }
 
 
     @DisplayName("중복확인 테스트")
     @Test
-    public void testduplicate() {
+    public void testduplicateId() {
 
         //given
-        String id = "duplicateId";
-        String nickname = "uniqueNickname";
+        String id1 = "newuser20"; //중복일 경우
+        String id2 = "user1011110"; //중복이 아닐 경우
 
         //when
+        boolean result1 = userService.checkUserIdExist(id1); //중복일 경우
+        System.out.println(result1);
+        boolean result2 = userService.checkUserIdExist(id2); //중복이 아닐 경우
+        System.out.println(result2);
 
         //then
-
+        Assertions.assertFalse(result1);
+        Assertions.assertTrue(result2);
 
     }
 

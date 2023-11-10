@@ -19,11 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 @Api(tags = "회원")
 
 @RestController
@@ -35,41 +30,38 @@ public class UserController {
 
     @ApiOperation(value = "회원가입")
     @PostMapping(value = "/users")
-    public ResponseEntity<ResponseMessage> join(@ModelAttribute JoinDTO joinDTO, @RequestPart MultipartFile imageFile) throws Exception {
+    public ResponseEntity<ResponseMessage> join(@ModelAttribute JoinDTO joinDTO, @RequestPart MultipartFile imageFile) {
 
-        User value = userService.join(joinDTO,imageFile);
+        try {
+            userService.join(joinDTO, imageFile);
 
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        HashMap<String, Object> responseResult = new HashMap<>();
-        responseResult.put("joinData", value);
-
-        ResponseMessage responseMessage = new ResponseMessage(200, "회원 가입 정보", responseResult);
-
-
-        if(Objects.isNull(value)){
-            return new ResponseEntity<>(responseMessage, headers, HttpStatus.BAD_REQUEST);
-        }else {
-            return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+            return ResponseEntity
+                    .ok()
+                    .body(new ResponseMessage(200, "회원 가입 정보", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseMessage(500, "서버 오류", null));
         }
+
     }
+    @ApiOperation(value = "아이디 중복 체크")
+    @GetMapping("/users")
+    public ResponseEntity<ResponseMessage> checkUserIdExist(@RequestParam String id) {
 
-    public ResponseEntity<ResponseMessage> checkUserIdExist(@PathVariable String userId){
-        boolean check = userService.checkUserIdExist(userId);
+        try {
+        boolean check = userService.checkUserIdExist(id);
+            if (check) {
+                // 사용 가능
+                return ResponseEntity.ok().body(new ResponseMessage(200, "사용 가능한 ID입니다.", null));
+            } else {
 
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-
-
-        if(check == true){
-            throw new UserException(UserErrorResult.DUPLICATED_MEMBER_REGISTER);
-        }else {
-            throw new UserException(UserErrorResult.DUPLICATED_MEMBER_REGISTER);
-
+                //중복된 경우
+                return ResponseEntity.ok().body(new ResponseMessage(200,"중복된 ID입니다.",null));
+            }
+        }catch (UserException e){
+            // 예외가 발생한 경우
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseMessage(500,"서버 오류",null));
         }
 
     }
