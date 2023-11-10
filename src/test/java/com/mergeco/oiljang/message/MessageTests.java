@@ -195,7 +195,7 @@ public class MessageTests {
 
         List<MsgListDTO> msgList = msgService.getMessages(userCode, offset, limit, true);
 
-        Assertions.assertFalse(msgList.isEmpty());
+        Assertions.assertNotEquals(msgList, msgService.getMessages(userCode, offset, limit, true));
         for (MsgListDTO msgListDTO : msgList) {
             System.out.println(msgListDTO);
         }
