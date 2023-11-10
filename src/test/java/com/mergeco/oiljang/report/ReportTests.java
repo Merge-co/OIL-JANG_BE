@@ -1,7 +1,7 @@
 package com.mergeco.oiljang.report;
 
-import com.mergeco.oiljang.report.model.dto.ReportCategoryDTO;
-import com.mergeco.oiljang.report.model.dto.ReportDTO;
+import com.mergeco.oiljang.report.dto.ReportCategoryDTO;
+import com.mergeco.oiljang.report.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
 import com.mergeco.oiljang.report.service.ReportService;
 import org.junit.jupiter.api.Assertions;

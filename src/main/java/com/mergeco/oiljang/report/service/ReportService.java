@@ -1,20 +1,27 @@
 package com.mergeco.oiljang.report.service;
 
+import com.mergeco.oiljang.common.restApi.ResponseMessage;
+import com.mergeco.oiljang.product.dto.ProductDTO;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.report.entity.Report;
-import com.mergeco.oiljang.report.model.dto.ReportDTO;
+import com.mergeco.oiljang.report.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
+import com.mergeco.oiljang.user.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-
+@Slf4j
 public class ReportService {
 
     @PersistenceContext
@@ -145,7 +152,7 @@ public class ReportService {
     }
 
     public List<Object[]> selectByReportProduct() {
-        String jpql = "SELECT r.reportCategory.reportCategoryNo, r.product.productCode " +
+        String jpql = "SELECT r.reportCategory.reportCategoryCode, r.product.productName " +
                 "FROM tbl_report r " +
                 "LEFT JOIN r.reportCategory c";
         List<Object[]> categoryList = manager.createQuery(jpql).getResultList();
@@ -200,6 +207,7 @@ public class ReportService {
     @Transactional
     public void registReport(ReportDTO reportInfo) {
         System.out.println("서비스에서 받았니 ? : " + reportInfo);
+
         reportRepository.save(modelMapper.map(reportInfo, Report.class));
     }
 
@@ -210,9 +218,26 @@ public class ReportService {
         System.out.println("==================================================");
         System.out.println("데이터 있니 ? : " + report);
         Report reportModify = report
-                .processDistinction("처리 부분 테스트Distinction "  )
+                .processDistinction("처리 부분 테스트Distinction ")
                 .processComment("테스트진행중 Comment 입니다,")
                 .processDate(LocalDateTime.now());
         reportRepository.save(reportModify);
     }
+
+  /*  @Transactional
+    public ResponseEntity<ResponseMessage> insertReport(@PathVariable int productCode) {
+        log.info("[ReportService] registReport Start ==============================");
+        log.info("[ReportService] ReportDTO : " + productCode);
+
+
+        //신고자 가져오기;
+        ProductDTO productDTO = new ProductDTO();
+
+        //insert
+        ReportDTO reportDTO = new ReportDTO();
+
+        String reportComment = "";
+
+    }*/
+
 }
