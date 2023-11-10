@@ -16,9 +16,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT up FROM User up WHERE up.nickname = :nickname")
     Optional<User> findByNickname(String nickname);
 
-   /* default void clearStore() {
-        EntityManager store = null;
-        store.clear();
-    }*/
-
 }

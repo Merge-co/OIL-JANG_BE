@@ -62,9 +62,8 @@ public class WebSecurityConfig {
                 .antMatchers("/").authenticated()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/swagger-ui/index.html","/swagger-ui.html", "/swagger-ui/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security").permitAll()
-                .antMatchers("/users/**").permitAll()
+                .antMatchers("/users/**","/reports/**","/messages/**","/product/**","/categories/**","/wishLists/**").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/messages/**").permitAll()
                 .antMatchers("/**").hasAnyRole("USER","ADMIN","ALL")
                 //.anyRequest().permitAll()
 
