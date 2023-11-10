@@ -6,10 +6,12 @@ import com.mergeco.oiljang.product.dto.*;
 import com.mergeco.oiljang.product.entity.Category;
 import com.mergeco.oiljang.product.entity.ProImageInfo;
 import com.mergeco.oiljang.product.entity.Product;
+import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.repository.CategoryRepository;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
+import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
 import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
 import org.modelmapper.ModelMapper;
@@ -201,9 +203,11 @@ public class ProductService {
         try {
             System.out.println(22222);
             byte[] bytes = imageFile.getBytes();
+
             String getName = imageFile.getName(); // 사용자가 업로드한 파일명
             String dbFileName = UUID.randomUUID().toString();
             String filePath = "C:/images/" + dbFileName; // 실제 이미지를 저장할 경로
+
             Path path = Paths.get(filePath);
             Files.write(path, bytes);
             System.out.println(22222);
@@ -218,6 +222,7 @@ public class ProductService {
 
     public void addProImageInfo(ProImageInfoDTO imageInfo) {
         proImageRepository.save(modelMapper.map(imageInfo, ProImageInfo.class));
+
     }
 
     /*민범님*/
@@ -282,76 +287,15 @@ public class ProductService {
         }
     }
 
-//    public List<ProductListDTO> selectSellingProductList(int offset, int limit, Integer categoryCode, String sortCondition, Integer minPrice, Integer maxPrice) {
-//
-//        String jpql = "SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(p.productCode, p.productName, p.productPrice, p.productThumbAddr) " +
-//                "FROM Product p " +
-//                "JOIN p.Category c " +
-//                "JOIN p.SellStatus s " + // Added a space before "WHERE"
-//                "WHERE c.categoryCode = :categoryCode " + // Added a space before "AND"
-//                "AND s.sellStatusCode = 1";
-//
-//        if(minPrice >= 0) {
-//            jpql += " AND p.productPrice >= :minPrice"; // Added a space before "AND"
-//        }
-//
-//        if (maxPrice >= 0) {
-//            jpql += " AND p.productPrice <= :maxPrice"; // Added a space before "AND"
-//        }
-//
-//        if ("latest".equals(sortCondition)) {
-//            jpql += " ORDER BY p.enrollDateTime DESC";
-//        } else if ("minPrice".equals(sortCondition)) {
-//            jpql += " ORDER BY p.productPrice DESC";
-//        }
-//
-//        TypedQuery<ProductListDTO> query = entityManager.createQuery(jpql, ProductListDTO.class)
-//                .setParameter("categoryCode", categoryCode);
-//
-//        if (minPrice >= 0) {
-//            query.setParameter("minPrice", minPrice);
-//        }
-//
-//        if (maxPrice >= 0) {
-//            query.setParameter("maxPrice", maxPrice);
-//        }
-//
-//        List<ProductListDTO> totalSellingProducts = query.getResultList(); // Changed from getSingleResult to getResultList
-//
-//        return totalSellingProducts;
-//    }
+    public List<SellingListDTO> selectSellingList(int offset, int limit, int refUserCode) {
+        String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), p.SellStatus.sellStatus)" +
+                " FROM WishList w JOIN w.product p WHERE w.refUserCode = :refUserCode ORDER BY w.wishCode DESC";
+        List<SellingListDTO> wishList = entityManager.createQuery(jpql)
+                .setParameter("refUserCode", refUserCode)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+        return wishList;
+    }
 
-
-//    public long countSellingProductList() {
-//    // 판매 중인 상품 수 조회 쿼리
-//        String jpql = "SELECT COUNT(p.productCode) " +
-//                "FROM Product p " +
-//                "JOIN p.Category c " +
-//                "JOIN p.SellStatus s " +
-//                "WHERE c.categoryCode = :categoryCode " +
-//                "AND s.sellStatusCode = 1";
-//        int minPrice;
-//        if (minPrice >= 0) {
-//            jpql += " AND p.productPrice >= :minPrice";
-//        }
-//
-//        if (maxPrice >= 0) {
-//            jpql += " AND p.productPrice <= :maxPrice";
-//        }
-//
-//        TypedQuery<Long> query = entityManager.createQuery(jpql, Long.class)
-//                .setParameter("categoryCode", categoryCode);
-//
-//        if (minPrice >= 0) {
-//            query.setParameter("minPrice", minPrice);
-//        }
-//
-//        if (maxPrice >= 0) {
-//            query.setParameter("maxPrice", maxPrice);
-//        }
-//
-//        Long totalSellingProducts = query.getSingleResult();
-//
-//        return totalSellingProducts;
-//    }
 }

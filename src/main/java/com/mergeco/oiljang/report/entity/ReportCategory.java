@@ -1,7 +1,6 @@
 package com.mergeco.oiljang.report.entity;
 
 
-import com.mergeco.oiljang.report.model.dto.ReportCategoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
