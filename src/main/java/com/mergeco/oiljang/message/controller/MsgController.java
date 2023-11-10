@@ -101,4 +101,17 @@ public class MsgController {
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
+
+
+    //    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isRecevied={isRecevied}")
+//    public ResponseEntity<List<MsgListDTO>> getMessages(
+//            @PathVariable int userCode,
+//            @RequestParam int offset,
+//            @RequestParam int limit,
+//            @RequestParam(required = false) Boolean isReceived) {
+//
+//
+//        List<MsgListDTO> msgListDTOList = msgService.getMessages(userCode, offset, limit, isReceived);
+//        return new ResponseEntity<>(msgListDTOList, HttpStatus.OK);
+//    }
 }

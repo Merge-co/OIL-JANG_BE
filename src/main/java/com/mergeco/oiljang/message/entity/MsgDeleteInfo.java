@@ -40,4 +40,5 @@ public class MsgDeleteInfo {
         return new MsgDeleteInfo(msgDeleteCode, msgDeleteStatus);
     }
 
+
 }
