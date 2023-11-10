@@ -7,13 +7,16 @@ import com.mergeco.oiljang.message.repository.MsgRepository;
 import io.swagger.models.auth.In;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -125,7 +128,31 @@ public class MsgService {
 
 
 
-//    public List<MsgListDTO> getMessages(int userCode, int offset, int limit, Boolean isReceived) {
-//        return msgRepository.findMessages(userCode, offset, limit, isReceived);
-//    }
+    public List<MsgListDTO> getMessages(int userCode, int offset, int limit, Boolean isReceived) {
+        String jpql;
+        if (isReceived != null && isReceived) {
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                    + "FROM message_and_delete m "
+                    + "LEFT JOIN User u ON m.receiverCode = :userCode "
+                    + "LEFT JOIN m.msgDeleteInfo md "
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2)";
+        } else {
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                    + "FROM message_and_delete m "
+                    + "LEFT JOIN User u ON m.senderCode = :userCode "
+                    + "LEFT JOIN m.msgDeleteInfo md "
+                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2)";
+        }
+
+        TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
+        query.setParameter("userCode", userCode);
+
+        return query.getResultList();
+    }
+
+
+    public Long countMsgList() {
+        Long countPage = msgRepository.count();
+        return countPage;
+    }
 }

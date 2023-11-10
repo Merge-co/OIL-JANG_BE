@@ -1,12 +1,18 @@
 package com.mergeco.oiljang.message.controller;
 
+import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.message.dto.*;
 import com.mergeco.oiljang.message.service.MsgService;
+import com.mergeco.oiljang.product.dto.ProductListDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@Api(tags = "쪽지 컨트롤러")
 public class MsgController {
 
     public final MsgService msgService;
@@ -28,16 +35,20 @@ public class MsgController {
 //    @GetMapping("/regist")
 //    public void registPage(){}
 
+    @ApiOperation(value = "쪽지 등록")
     @PostMapping("/messages")
-    public ResponseEntity<String> msgAnswer(@RequestBody MsgInsertDTO msgInfo) {
-        try {
+    public ResponseEntity<ResponseMessage> msgAnswer(@RequestBody MsgInsertDTO msgInfo) {
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
             msgService.insertMsg(msgInfo);
             System.out.println("controller : " + msgInfo);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Message created successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating message: " + e.getMessage());
-        }
+            Map<String, Object> responseMap = new HashMap<>();
 
+            ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 등록 성공", responseMap);
+            return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
 
@@ -59,7 +70,8 @@ public class MsgController {
 //            return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
 //    }
 
-    @GetMapping("/message")
+    @ApiOperation(value = "쪽지 모달 조회")
+    @GetMapping("/messages")
     public ResponseEntity<ResponseMessage> selectReceiver(@RequestBody MsgReceiverDTO msgReceiverDTO) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -78,6 +90,7 @@ public class MsgController {
 
     }
 
+    @ApiOperation(value = "쪽지 상세 조회")
     @GetMapping("/messages/{msgCode}")
     public ResponseEntity<ResponseMessage> selectMsgDetail(@PathVariable int msgCode) {
         HttpHeaders headers = new HttpHeaders();
@@ -96,17 +109,54 @@ public class MsgController {
     }
 
 
-//    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isRecevied={isRecevied}")
-//    public ResponseEntity<List<MsgListDTO>> getMessages(
-//            @PathVariable int userCode,
-//            @RequestParam int offset,
-//            @RequestParam int limit,
-//            @RequestParam(required = false) Boolean isReceived) {
-//
-//
-//        List<MsgListDTO> msgListDTOList = msgService.getMessages(userCode, offset, limit, isReceived);
-//        return new ResponseEntity<>(msgListDTOList, HttpStatus.OK);
-//    }
+    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isRecevied={isRecevied}")
+    public ResponseEntity<List<MsgListDTO>> getMessages(
+            @RequestParam(required = false) Integer page,
+            @RequestParam String pageKind,
+            @PathVariable int userCode,
+            @RequestParam int offset,
+            @RequestParam int limit,
+            @RequestParam Boolean isReceived) {
+
+
+        if(page == null){
+            page = 1;
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        limit = 0;
+        switch (pageKind){
+            case "merge":
+                limit = 6;
+            case "list":
+                limit = 8;
+        }
+
+        offset = limit * (page -1);
+
+        List<MsgListDTO> msgListDTOList = msgService.getMessages(userCode, offset, limit, isReceived);
+        double totalMsg = Long.valueOf(msgService.countMsgList()).doubleValue();
+        int totalPage = (int) Math.ceil(totalMsg / limit);
+
+        if(page >= totalPage){
+            page = totalPage;
+        }else if(page < 1){
+            page = 1;
+        }
+
+        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("msgListDTOList", msgListDTOList);
+        responseMap.put("pageingBtn", pagingBtn);
+
+        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 리스트 조회 성공", responseMap);
+
+        return new ResponseEntity<>(msgListDTOList, HttpStatus.OK);
+    }
 
 }
 

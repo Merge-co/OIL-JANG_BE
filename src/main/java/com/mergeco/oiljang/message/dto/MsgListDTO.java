@@ -19,5 +19,6 @@ public class MsgListDTO {
     private String msgStatus;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate msgTime;
-    private boolean isReceived;
+    private int msgDeleteCode;
+//    private boolean isReceived;
 }
