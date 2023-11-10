@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class WishListService {
@@ -34,7 +33,7 @@ public class WishListService {
         return countPage;
     }
 
-    public List<WishListInfoDTO> selectWishList(int offset, int limit, UUID refUserCode) {
+    public List<WishListInfoDTO> selectWishList(int offset, int limit, int refUserCode) {
         String jpql = "SELECT new com.mergeco.oiljang.wishlist.dto.WishListInfoDTO(w.wishCode, p.productThumbAddr, p.SellStatus.sellStatus, p.productName, p.productPrice, p.productDesc)" +
                 " FROM WishList w JOIN w.product p WHERE w.refUserCode = :refUserCode ORDER BY w.wishCode DESC";
         List<WishListInfoDTO> wishList = entityManager.createQuery(jpql)

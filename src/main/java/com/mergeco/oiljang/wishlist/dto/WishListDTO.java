@@ -5,13 +5,13 @@ import java.util.UUID;
 public class WishListDTO {
     private int wishCode;
     private int refProductCode;
-    private UUID refUserCode;
+    private int refUserCode;
 
 
     public WishListDTO() {
     }
 
-    public WishListDTO(int wishCode, int refProductCode, UUID refUserCode) {
+    public WishListDTO(int wishCode, int refProductCode, int refUserCode) {
         this.wishCode = wishCode;
         this.refProductCode = refProductCode;
         this.refUserCode = refUserCode;
@@ -33,11 +33,11 @@ public class WishListDTO {
         this.refProductCode = refProductCode;
     }
 
-    public UUID getRefUserCode() {
+    public int getRefUserCode() {
         return refUserCode;
     }
 
-    public void setRefUserCode(UUID refUserCode) {
+    public void setRefUserCode(int refUserCode) {
         this.refUserCode = refUserCode;
     }
 

@@ -18,14 +18,14 @@ public class ProductDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime enrollDateTime;
     private int viewCount;
-    private UUID refUserCode;
+    private int refUserCode;
     private int refCategoryCode;
     private String sellStatusCode;
 
     public ProductDTO() {
     }
 
-    public ProductDTO(int productCode, String productThumbAddr, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, UUID refUserCode, int refCategoryCode, String sellStatusCode) {
+    public ProductDTO(int productCode, String productThumbAddr, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, int refUserCode, int refCategoryCode, String sellStatusCode) {
         this.productCode = productCode;
         this.productThumbAddr = productThumbAddr;
         this.productName = productName;
@@ -103,11 +103,11 @@ public class ProductDTO {
         this.viewCount = viewCount;
     }
 
-    public UUID getRefUserCode() {
+    public int getRefUserCode() {
         return refUserCode;
     }
 
-    public void setRefUserCode(UUID refUserCode) {
+    public void setRefUserCode(int refUserCode) {
         this.refUserCode = refUserCode;
     }
 

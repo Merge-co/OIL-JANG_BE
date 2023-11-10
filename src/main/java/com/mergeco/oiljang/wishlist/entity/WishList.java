@@ -18,13 +18,13 @@ public class WishList {
     @JoinColumn(name = "ref_product_code")
     private Product product;
 
-    @Column(columnDefinition = "BINARY(16)", name = "ref_user_code")
-    private UUID refUserCode;
+    @Column(name = "ref_user_code")
+    private int refUserCode;
 
     protected WishList() {
     }
 
-    public WishList(int wishCode, Product product, UUID refUserCode) {
+    public WishList(int wishCode, Product product, int refUserCode) {
         this.wishCode = wishCode;
         this.product = product;
         this.refUserCode = refUserCode;
@@ -38,7 +38,7 @@ public class WishList {
         return product;
     }
 
-    public UUID getRefUserCode() {
+    public int getRefUserCode() {
         return refUserCode;
     }
 

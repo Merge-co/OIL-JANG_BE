@@ -34,7 +34,7 @@ public class WishListController {
 
     @ApiOperation("사용자의 관심 목록 조회")
     @GetMapping("users/{userCode}/wishLists")
-    public ResponseEntity<ResponseMessage> selectWishList(@PathVariable UUID userCode, @RequestParam(required = false) Integer page) {
+    public ResponseEntity<ResponseMessage> selectWishList(@PathVariable int userCode, @RequestParam(required = false) Integer page) {
 
         if(page == null) {
             page = 1;
@@ -44,13 +44,10 @@ public class WishListController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        // 임시 번호 발급
-        UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
-
         int limit = 3;
 
         int offset = limit * (page - 1);
-        List<WishListInfoDTO> wishListInfoDTOList = wishListService.selectWishList(offset, limit, uuid);
+        List<WishListInfoDTO> wishListInfoDTOList = wishListService.selectWishList(offset, limit, userCode);
 
         double totalItem = Long.valueOf(wishListService.countProductList()).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
