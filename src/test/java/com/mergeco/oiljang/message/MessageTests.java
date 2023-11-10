@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -74,7 +75,7 @@ public class MessageTests {
 
 
         return Stream.of(Arguments.of("맥북 사고싶어요", "N", msgTime, 1,
-                2, 2, 1, "N")
+                1, 2, 1, "N")
         );
     }
 
@@ -101,9 +102,9 @@ public class MessageTests {
 
 
 
-//        Assertions.assertDoesNotThrow(
-//                () -> msgService.insertMsg(msgInfo)
-//       );
+        Assertions.assertDoesNotThrow(
+                () -> msgService.insertMsg(msgInfo)
+       );
 
 
     }
@@ -157,12 +158,14 @@ public class MessageTests {
 
     @Test
     @DisplayName("쪽지 내용 상세 조회")
+    @Transactional
     public void selectMsgDetail(){
 
         int msgCode = 2;
 
         List<MsgProUserInfoDTO> msgDetail = msgService.selectMsgDetail(msgCode);
         System.out.println("test: " + msgDetail);
+
         Assertions.assertFalse(msgDetail.isEmpty());
         msgDetail.forEach(detail -> {
             System.out.println("msgCode: " + detail.getMsgCode());
@@ -181,8 +184,9 @@ public class MessageTests {
         });
     }
 
-
-
+    @Test
+    @Transactional
+    void updateMsgStatus(){msgService.updateMsgStatus(1);}
 
 
     @Test
@@ -195,9 +199,17 @@ public class MessageTests {
 
         List<MsgListDTO> msgList = msgService.getMessages(userCode, offset, limit, true);
 
-        Assertions.assertNotEquals(msgList, msgService.getMessages(userCode, offset, limit, true));
+        Assertions.assertEquals(msgList, msgService.getMessages(userCode, offset, limit, true));
         for (MsgListDTO msgListDTO : msgList) {
             System.out.println(msgListDTO);
         }
+    }
+
+
+    @Test
+    @DisplayName("쪽지 삭제에 따른 상태값 변경 테스트")
+    @Transactional
+    public void deleteMsg(){
+        msgService.updateDeleteCode(1);
     }
 }

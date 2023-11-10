@@ -107,6 +107,7 @@ public class MsgService {
 
 
     //내 이름.아이디는 토큰에서 가져오기
+    @Transactional
     public List<MsgProUserInfoDTO> selectMsgDetail(int msgCode) {
         String jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgProUserInfoDTO(m.msgCode, m.msgContent, m.msgStatus, m.msgTime, m.senderCode, m.receiverCode, u.userCode, u.id, u.name, p.productCode, p.productName, p.productDesc, md.msgDeleteCode, md.msgDeleteStatus) "
                 + "FROM message_and_delete m "
@@ -120,12 +121,21 @@ public class MsgService {
                 .setParameter("msgCode", msgCode)
                 .getResultList();
 
+
         System.out.println("service : " + msgProUserList);
+
 
         return msgProUserList;
     }
 
+    @Transactional
+    public void updateMsgStatus(int msgCode) {
+        Message message = msgRepository.findById(msgCode).orElseThrow(IllegalArgumentException::new);
 
+        message = message.msgStatus("Y").builder();
+        msgRepository.save(message);
+        System.out.println(message);
+    }
 
 
     public List<MsgListDTO> getMessages(int userCode, int offset, int limit, Boolean isReceived) {
@@ -135,13 +145,13 @@ public class MsgService {
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.receiverCode = :userCode "
                     + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2)";
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 4) AND m.senderCode <> :userCode";
         } else {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.senderCode = :userCode "
                     + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2)";
+                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (3, 4)";
         }
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
@@ -154,5 +164,10 @@ public class MsgService {
     public Long countMsgList() {
         Long countPage = msgRepository.count();
         return countPage;
+    }
+
+
+    @Transactional
+    public void updateDeleteCode(int i) {
     }
 }

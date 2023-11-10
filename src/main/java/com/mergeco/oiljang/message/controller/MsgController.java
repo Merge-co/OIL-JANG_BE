@@ -99,6 +99,7 @@ public class MsgController {
 
         List<MsgProUserInfoDTO> msgProUserInfoDTOList = msgService.selectMsgDetail(msgCode);
         System.out.println("controller: " + msgProUserInfoDTOList);
+        msgService.updateMsgStatus(msgCode);
 
         Map<String, Object> responesMap = new HashMap<>();
         responesMap.put("msgProUserList", msgProUserInfoDTOList);
