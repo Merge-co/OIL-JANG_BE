@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 @SpringBootTest
@@ -33,8 +32,7 @@ public class WishListTests {
 
     @Test
     void selectWishList() {
-        UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
-        List<WishListInfoDTO> wishList = wishListService.selectWishList(0, 3, uuid);
+        List<WishListInfoDTO> wishList = wishListService.selectWishList(0, 3, 1);
         System.out.println(wishList);
     }
 
@@ -95,8 +93,7 @@ public class WishListTests {
 
     @Test
     void controllerSelectWishList() {
-        UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
-        ResponseEntity<ResponseMessage> result = wishListController.selectWishList(uuid, 1);
+        ResponseEntity<ResponseMessage> result = wishListController.selectWishList(1, 1);
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
         Assertions.assertEquals(result.getBody().getMessage(), "관심 목록 조회 성공");
         Assertions.assertTrue(result.getBody().getResults().size() > 0);

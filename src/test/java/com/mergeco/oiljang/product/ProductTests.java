@@ -6,7 +6,6 @@ import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
 import com.mergeco.oiljang.product.dto.ProductDetailDTO;
 import com.mergeco.oiljang.product.dto.ProductListDTO;
-import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
@@ -22,14 +21,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -83,8 +80,7 @@ public class ProductTests {
         productDTO.setSellStatusCode("1");
         productDTO.setProductName("1");
         productDTO.setProductPrice(111);
-        UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
-        productDTO.setRefUserCode(uuid);
+        productDTO.setRefUserCode(1);
         productDTO.setWishPlaceTrade("1");
         productDTO.setRefCategoryCode(1);
         System.out.println(productDTO);
@@ -111,10 +107,9 @@ public class ProductTests {
     @Test
     @Transactional
     void insertWishList() {
-        UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(5);
-        wishListDTO.setRefUserCode(uuid);
+        wishListDTO.setRefUserCode(1);
         productService.insertWishList(wishListDTO);
     }
 
