@@ -1,4 +1,4 @@
-package com.mergeco.oiljang.report.model.dto;
+package com.mergeco.oiljang.report.dto;
 
 import lombok.*;
 
