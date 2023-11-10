@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.product;
 
+import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.product.controller.ProductController;
 import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -156,7 +158,42 @@ public class ProductTests {
     }
 
     private static final String TEMP_IMAGE_DIR = "temp_images";
+    @Test
+    void printProductController() {
+        Assertions.assertNotNull(productController);
     }
 
+    @Test
+    void controllerSelectCategory() {
+        ResponseEntity<ResponseMessage> result = productController.selectCategoryList();
+        Assertions.assertEquals(result.getBody().getHttpStatusCode(), 200);
+        Assertions.assertEquals(result.getBody().getMessage(), "카테고리 정보 조회 성공");
+        Assertions.assertTrue(result.getBody().getResults().size() > 0);
+    }
 
+    @Test
+    void controllerProductList() {
+        ResponseEntity<ResponseMessage> result = productController.selectProductList(1, "list", 1, "latest", -1, -1);
+        Assertions.assertEquals(result.getStatusCodeValue(), 200);
+        Assertions.assertEquals(result.getBody().getMessage(), "중고 상품 목록 조회 성공");
+        Assertions.assertTrue(result.getBody().getResults().size() > 0);
+    }
+
+    @Test
+    void controllerProductDetail() {
+        ResponseEntity<ResponseMessage> result = productController.selectProductInfo(1);
+        Assertions.assertEquals(result.getStatusCodeValue(), 200);
+        Assertions.assertEquals(result.getBody().getMessage(), "중고 상품 상세 조회 성공");
+        Assertions.assertTrue(result.getBody().getResults().size() > 0);
+    }
+
+    @Test
+    void controllerRegistWishList() {
+        ResponseEntity<?> result = productController.registWishlist(1);
+        Assertions.assertEquals(result.getStatusCodeValue(), 200);
+//        Assertions.assertEquals(result.getBody().getMessage(), "중고 상품 상세");
+//        Assertions.assertTrue(result.getBody().getResults().size() > 0);
+    }
+
+}
 
