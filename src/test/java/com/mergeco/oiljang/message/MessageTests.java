@@ -82,8 +82,6 @@ public class MessageTests {
     @DisplayName("쪽지 등록 테스트")
     @ParameterizedTest
     @MethodSource("getMsgInfos")
-
-=======
    void msgInsertTest(String msgContent, String msgStatus,
                       LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
 
@@ -187,19 +185,19 @@ public class MessageTests {
 
 
 
-//    @Test
-//    @DisplayName("쪽지함 조회")
-//    public void selectMsgList(){
-//        int userCode = 1;
-//        int offset = 0;
-//        int limit = 10;
-//
-//        // 가정: isReceived 값을 null로 설정하여 모든 쪽지를 조회
-//        List<MsgListDTO> msgList = msgService.getMessages(userCode, offset, limit, true);
-//
-//        Assertions.assertFalse(msgList.isEmpty());
-//        for (MsgListDTO msgListDTO : msgList) {
-//            System.out.println(msgListDTO);
-//        }
-//    }
+    @Test
+    @DisplayName("쪽지함 조회")
+    public void selectMsgList(){
+        int userCode = 1;
+        int offset = 0;
+        int limit = 9;
+
+
+        List<MsgListDTO> msgList = msgService.getMessages(userCode, offset, limit, true);
+
+        Assertions.assertNotEquals(msgList, msgService.getMessages(userCode, offset, limit, true));
+        for (MsgListDTO msgListDTO : msgList) {
+            System.out.println(msgListDTO);
+        }
+    }
 }
