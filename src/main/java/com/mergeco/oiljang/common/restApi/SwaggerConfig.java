@@ -26,7 +26,7 @@ public class SwaggerConfig {
     @Bean
     public Docket swaggerApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .host("http://mergeco.org/api")
+                .host("localhost:8000")
                 .useDefaultResponseMessages(false)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())

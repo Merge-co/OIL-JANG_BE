@@ -71,7 +71,7 @@ public class UserService {
     @Transactional
     public User join(JoinDTO joinDTO,MultipartFile imageFile) throws IOException {
 
-        /*//중복 유저 존재 여부 체크
+        //중복 유저 존재 여부 체크
         Optional<User> existingUser = userRepository.findById(joinDTO.getId());
         if (existingUser.isPresent()) {
             // 중복 사용자 처리
@@ -82,7 +82,7 @@ public class UserService {
         if (existingUserByNickname.isPresent()) {
             // 중복 닉네임 처리
             throw new UserException(UserErrorResult.DUPLICATED_NICKNAME_REGISTER);
-        }*/
+        }
 
 
         // 파일 업로드 및 경로 저장
@@ -171,6 +171,11 @@ public class UserService {
 
     public User login(LoginDTO loginDTO) {
         return null;
+    }
+
+    public boolean checkUserIdExist(String userId) {
+
+        return true;
     }
 
 
