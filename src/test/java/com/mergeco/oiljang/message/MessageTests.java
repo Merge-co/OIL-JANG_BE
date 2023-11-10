@@ -53,8 +53,8 @@ public class MessageTests {
 //                new MsgUserDTO(userCode, senderCode, receiverCode),
 //                new MsgDeleteDTO(msgDeleteCode, msgDeleteStatus)
 //                  //메인은 Message라서 Message에 먼저 값을 넣고 그 다음에 dto객체들에 값을 넣는데,
-                    //이 때 FK 제약조건 때문에, 값이 없다고 떠서 constraint 오류가 난다
-                    //joinColumn 걸어준 곳에 insertable, updatable을 false로 해두면 조회용으로만 쓰고 insert는 되지 않는다.
+    //이 때 FK 제약조건 때문에, 값이 없다고 떠서 constraint 오류가 난다
+    //joinColumn 걸어준 곳에 insertable, updatable을 false로 해두면 조회용으로만 쓰고 insert는 되지 않는다.
 //        );
 //
 //        System.out.println("test : " + msgInfo);
@@ -82,8 +82,11 @@ public class MessageTests {
     @DisplayName("쪽지 등록 테스트")
     @ParameterizedTest
     @MethodSource("getMsgInfos")
+
+=======
    void msgInsertTest(String msgContent, String msgStatus,
                       LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
+
                        int msgDeleteCode, String msgDeleteStatus){
         MsgInsertDTO msgInfo = new MsgInsertDTO(
                 msgContent,
@@ -93,7 +96,7 @@ public class MessageTests {
                 senderCode,
                 receiverCode,
                 new MsgDeleteDTO(msgDeleteCode, msgDeleteStatus)
-               );
+        );
 
         System.out.println("test: " + msgInfo);
         msgService.insertMsg(msgInfo);
@@ -187,7 +190,6 @@ public class MessageTests {
 //    @Test
 //    @DisplayName("쪽지함 조회")
 //    public void selectMsgList(){
-//
 //        int userCode = 1;
 //        int offset = 0;
 //        int limit = 10;

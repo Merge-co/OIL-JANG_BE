@@ -37,7 +37,7 @@ public class MsgService {
     }
 
     @Transactional
-        public void insertMsg(MsgInsertDTO msgInfo) {
+    public void insertMsg(MsgInsertDTO msgInfo) {
         System.out.println("msgInfo: " + msgInfo);
         System.out.println("service: " + modelMapper.map(msgInfo, Message.class));
         msgRepository.save(modelMapper.map(msgInfo, Message.class));
@@ -113,13 +113,13 @@ public class MsgService {
                 + "WHERE m.msgCode = :msgCode";
 
 
-       List<MsgProUserInfoDTO> msgProUserList = entityManager.createQuery(jpql, MsgProUserInfoDTO.class)
-               .setParameter("msgCode", msgCode)
-               .getResultList();
+        List<MsgProUserInfoDTO> msgProUserList = entityManager.createQuery(jpql, MsgProUserInfoDTO.class)
+                .setParameter("msgCode", msgCode)
+                .getResultList();
 
         System.out.println("service : " + msgProUserList);
 
-       return msgProUserList;
+        return msgProUserList;
     }
 
 

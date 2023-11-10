@@ -44,5 +44,4 @@ public class Inquiry {
     protected Inquiry() {
     }
 
-
 }

@@ -95,6 +95,7 @@ public class MsgController {
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
+
 //    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isRecevied={isRecevied}")
 //    public ResponseEntity<List<MsgListDTO>> getMessages(
 //            @PathVariable int userCode,
@@ -107,5 +108,5 @@ public class MsgController {
 //        return new ResponseEntity<>(msgListDTOList, HttpStatus.OK);
 //    }
 
-
 }
+
