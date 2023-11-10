@@ -17,9 +17,9 @@ public class MsgProUserInfoDTO {
     private String msgStatus;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate msgTime;
-    private UUID senderCode;
-    private UUID receiverCode;
-    private UUID userCode;
+    private int senderCode;
+    private int receiverCode;
+    private int userCode;
     private String id;
     private String name;
     private int productCode;

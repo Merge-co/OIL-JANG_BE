@@ -47,7 +47,7 @@ public class ProductController {
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productCategoryList", productCategoryList);
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "카테고리 정보", responseMap);
+        ResponseMessage responseMessage = new ResponseMessage(200, "카테고리 정보 조회 성공", responseMap);
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
@@ -104,7 +104,7 @@ public class ProductController {
         responseMap.put("productList", productListDTOList);
         responseMap.put("pagingBtn", pagingBtn);
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 목록", responseMap);
+        ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 목록 조회 성공", responseMap);
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
@@ -129,14 +129,19 @@ public class ProductController {
         responseMap.put("selectedWishCode", selectedWishCode);
         responseMap.put("selectedProductDetailImg", selectedProductDetailImg);
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 상세", responseMap);
+        ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 상세 조회 성공", responseMap);
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
     @ApiOperation(value = "관심 목록에 중고 상품 등록")
     @PostMapping("/products/{productCode}/wishLists")
-    public ResponseEntity<?> registWishlist(@PathVariable int productCode) {
+    public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode) {
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
         // 임시 번호 발급
         UUID uuid = UUID.fromString("52a9f8eb-7009-455b-b089-a9d374b06241");
         WishListDTO wishListDTO = new WishListDTO();
@@ -144,8 +149,12 @@ public class ProductController {
         wishListDTO.setRefUserCode(uuid);
         productService.insertWishList(wishListDTO);
 
-        return ResponseEntity
-                .created(URI.create("/products/" + productCode + "/wishLists")).build();
+        Map<String, Object> responseMap = new HashMap<>();
+//        responseMap.put("result", )
+
+        ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 등록 성공", responseMap);
+
+        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
     @PostMapping("/products/{productCode}/reports")
