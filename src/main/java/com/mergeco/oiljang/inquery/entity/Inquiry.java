@@ -1,11 +1,17 @@
 package com.mergeco.oiljang.inquery.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Arrays;
 
 @Entity(name = "inquiry_and_category")
 @Table(name = "inquiry")
+@Getter
+@AllArgsConstructor
 public class Inquiry {
 
     @Id
@@ -37,4 +43,5 @@ public class Inquiry {
 
     protected Inquiry() {
     }
+
 }

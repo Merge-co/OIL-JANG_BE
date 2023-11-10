@@ -82,8 +82,11 @@ public class MessageTests {
     @DisplayName("쪽지 등록 테스트")
     @ParameterizedTest
     @MethodSource("getMsgInfos")
-    void msgInsertTest(String msgContent, String msgStatus,
-                       LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
+
+=======
+   void msgInsertTest(String msgContent, String msgStatus,
+                      LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
+
                        int msgDeleteCode, String msgDeleteStatus){
         MsgInsertDTO msgInfo = new MsgInsertDTO(
                 msgContent,
@@ -187,7 +190,6 @@ public class MessageTests {
 //    @Test
 //    @DisplayName("쪽지함 조회")
 //    public void selectMsgList(){
-//
 //        int userCode = 1;
 //        int offset = 0;
 //        int limit = 10;
