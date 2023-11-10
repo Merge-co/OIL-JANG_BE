@@ -17,11 +17,11 @@ public class MsgInsertDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate msgTime;
     private int refProductCode;
-    private UUID senderCode;
-    private UUID receiverCode;
+    private int senderCode;
+    private int receiverCode;
     private MsgDeleteDTO msgDeleteInfoMsgDeleteDTO;
 
-    public MsgInsertDTO(String msgContent, String msgStatus, LocalDate msgTime, int refProductCode, UUID senderCode, UUID receiverCode, MsgDeleteDTO msgDeleteDTO) {
+    public MsgInsertDTO(String msgContent, String msgStatus, LocalDate msgTime, int refProductCode, int senderCode, int receiverCode, MsgDeleteDTO msgDeleteDTO) {
         this.msgContent = msgContent;
         this.msgStatus = msgStatus;
         this.msgTime = msgTime;

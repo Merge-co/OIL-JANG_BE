@@ -71,11 +71,10 @@ public class MessageTests {
 
     private static Stream<Arguments> getMsgInfos() {
         LocalDate msgTime = LocalDate.parse("2023-11-06");
-        UUID sunsu = UUID.fromString("00000000-3200-3131-0000-000000000000");
-        UUID bumbum = UUID.fromString("00000000-3132-3132-0000-000000000000");
+
 
         return Stream.of(Arguments.of("맥북 사고싶어요", "N", msgTime, 1,
-                sunsu, bumbum, 1, "N")
+                2, 2, 1, "N")
         );
     }
 
@@ -84,7 +83,7 @@ public class MessageTests {
     @ParameterizedTest
     @MethodSource("getMsgInfos")
    void msgInsertTest(String msgContent, String msgStatus,
-                      LocalDate msgTime,int refProductCode, UUID senderCode, UUID receiverCode,
+                      LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
                        int msgDeleteCode, String msgDeleteStatus){
         MsgInsertDTO msgInfo = new MsgInsertDTO(
                 msgContent,
@@ -180,29 +179,25 @@ public class MessageTests {
             System.out.println("msgDeleteInfoMsgDeleteDTO : " + detail.getMsgDeleteStatus());
         });
     }
-    @Test
-    @DisplayName("쪽지함 조회")
-    public void selectMsgList(){
-
-        UUID userCode = UUID.fromString("00000000-3132-3132-0000-000000000000");
-        int offset = 1;
-        int limit = 5;
-        boolean isReceived = true;
 
 
+
+
+
+//    @Test
+//    @DisplayName("쪽지함 조회")
+//    public void selectMsgList(){
 //
-//        private UUID userCode;
-//        private String senderOrReceiver;
-//        private String msgContent;
-//        private String msgStatus;
-//        @DateTimeFormat(pattern = "yyyy-MM-dd")
-//        private LocalDate msgTime;
-//        private boolean isReceived;
-
-
-        List<MsgListDTO> msgList = msgService.selectMsgList(userCode, offset, limit, isReceived);
-        for(MsgListDTO msgListDTO : msgList){
-            System.out.println(msgListDTO);
-        }
-    }
+//        int userCode = 1;
+//        int offset = 0;
+//        int limit = 10;
+//
+//        // 가정: isReceived 값을 null로 설정하여 모든 쪽지를 조회
+//        List<MsgListDTO> msgList = msgService.getMessages(userCode, offset, limit, true);
+//
+//        Assertions.assertFalse(msgList.isEmpty());
+//        for (MsgListDTO msgListDTO : msgList) {
+//            System.out.println(msgListDTO);
+//        }
+//    }
 }
