@@ -167,8 +167,11 @@ public class ProductService {
     }
 
     @Transactional
-    public void insertWishList(WishListDTO wishListDTO) {
+    public String  insertWishList(WishListDTO wishListDTO) {
+        String result = "관심 목록 등록 실패";
         wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
+        result = "관심 목록 등록 성공";
+        return result;
     }
 
 //    public void updateTest() {
@@ -185,7 +188,7 @@ public class ProductService {
                 ProImageInfoDTO imageInfo = new ProImageInfoDTO();
                 imageInfo.setRefProductCode(productCode);
                 imageInfo.setProImageOriginName(imageFile.getOriginalFilename());
-                imageInfo.setProImageDbName(imageAddress);
+                imageInfo.setProImageDbName(imageAddress.substring(imageAddress.lastIndexOf("/") + 1));
                 imageInfo.setProImageOriginAddr(imageAddress);
                 // 이미지 정보를 데이터베이스에 저장
                 addProImageInfo(imageInfo);
@@ -198,8 +201,9 @@ public class ProductService {
         try {
             System.out.println(22222);
             byte[] bytes = imageFile.getBytes();
-            String fileName = imageFile.getName(); // 사용자가 업로드한 파일명
-            String filePath = "/Users/minbumkim/Desktop/test/" + fileName; // 실제 이미지를 저장할 경로
+            String getName = imageFile.getName(); // 사용자가 업로드한 파일명
+            String dbFileName = UUID.randomUUID().toString();
+            String filePath = "C:/images/" + dbFileName; // 실제 이미지를 저장할 경로
             Path path = Paths.get(filePath);
             Files.write(path, bytes);
             System.out.println(22222);
@@ -213,6 +217,7 @@ public class ProductService {
     }
 
     public void addProImageInfo(ProImageInfoDTO imageInfo) {
+        proImageRepository.save(modelMapper.map(imageInfo, ProImageInfo.class));
     }
 
     /*민범님*/

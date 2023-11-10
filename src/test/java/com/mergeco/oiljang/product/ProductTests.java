@@ -188,12 +188,15 @@ public class ProductTests {
     }
 
     @Test
+    @Transactional
     void controllerRegistWishList() {
-        ResponseEntity<?> result = productController.registWishlist(1);
+        ResponseEntity<ResponseMessage> result = productController.registWishlist(1);
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
-//        Assertions.assertEquals(result.getBody().getMessage(), "중고 상품 상세");
-//        Assertions.assertTrue(result.getBody().getResults().size() > 0);
+        Assertions.assertEquals(result.getBody().getMessage(), "중고 상품 등록 성공");
+        Assertions.assertTrue(result.getBody().getResults().size() > 0);
     }
+
+
 
 }
 

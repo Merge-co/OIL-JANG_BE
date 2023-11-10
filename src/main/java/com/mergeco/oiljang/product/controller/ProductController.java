@@ -147,10 +147,9 @@ public class ProductController {
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);
         wishListDTO.setRefUserCode(uuid);
-        productService.insertWishList(wishListDTO);
 
         Map<String, Object> responseMap = new HashMap<>();
-//        responseMap.put("result", )
+        responseMap.put("result", productService.insertWishList(wishListDTO));
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 등록 성공", responseMap);
 

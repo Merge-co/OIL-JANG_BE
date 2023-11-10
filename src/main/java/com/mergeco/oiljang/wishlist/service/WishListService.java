@@ -21,16 +21,12 @@ public class WishListService {
     private final EntityManager entityManager;
     private final ModelMapper modelMapper;
     private final WishListRepository wishListRepository;
-    private final ProductRepository productRepository;
-    private final ProImageRepository proImageRepository;
 
     @Autowired
-    public WishListService(EntityManager entityManager, ModelMapper modelMapper, WishListRepository wishListRepository, ProductRepository productRepository, ProImageRepository proImageRepository) {
+    public WishListService(EntityManager entityManager, ModelMapper modelMapper, WishListRepository wishListRepository) {
         this.entityManager = entityManager;
         this.modelMapper = modelMapper;
         this.wishListRepository = wishListRepository;
-        this.productRepository = productRepository;
-        this.proImageRepository = proImageRepository;
     }
 
     public long countProductList() {
@@ -50,7 +46,10 @@ public class WishListService {
     }
 
     @Transactional
-    public void deleteWishList(int wishCode) {
+    public String deleteWishList(int wishCode) {
+        String result = "관심 목록에서 찜 삭제 실패";
         wishListRepository.deleteById(wishCode);
+        result = "관심 목록에서 찜 삭제 성공";
+        return result;
     }
 }

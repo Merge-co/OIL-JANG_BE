@@ -67,7 +67,7 @@ public class WishListController {
         responseMap.put("wishList", wishListInfoDTOList);
         responseMap.put("pagingBtn", pagingBtn);
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록", responseMap);
+        ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록 조회 성공", responseMap);
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
@@ -84,10 +84,11 @@ public class WishListController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        wishListService.deleteWishList(wishCode);
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("result", wishListService.deleteWishList(wishCode));
 
-        return ResponseEntity
-                .noContent()
-                .build();
+        ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록에서 찜 삭제 성공", responseMap);
+
+        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 }
