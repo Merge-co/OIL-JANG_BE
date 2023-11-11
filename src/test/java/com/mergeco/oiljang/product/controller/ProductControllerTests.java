@@ -67,7 +67,7 @@ public class ProductControllerTests {
     void controllerProductDetail() {
 
         //when
-        ResponseEntity<ResponseMessage> result = productController.selectProductInfo(1);
+        ResponseEntity<ResponseMessage> result = productController.selectProductInfo(2);
 
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
@@ -80,7 +80,7 @@ public class ProductControllerTests {
     void controllerRegistWishList() {
 
         //when
-        ResponseEntity<ResponseMessage> result = productController.registWishlist(1);
+        ResponseEntity<ResponseMessage> result = productController.registWishlist(2);
 
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
