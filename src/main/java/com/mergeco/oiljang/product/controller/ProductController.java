@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.product.controller;
 
+import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.product.dto.*;
@@ -119,11 +120,10 @@ public class ProductController {
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         int userCode = 1;
-        System.out.println(SecurityContextHolder.getContext() + " 1111");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            User user = (User) authentication.getPrincipal();
-            userCode = user.getUserCode();
+        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+            userCode = user.getUser().getUserCode();
         } else {
             return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
         }
@@ -153,9 +153,9 @@ public class ProductController {
 
         int userCode = 1;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            User user = (User) authentication.getPrincipal();
-            userCode = user.getUserCode();
+        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+            userCode = user.getUser().getUserCode();
         } else {
             return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
         }
