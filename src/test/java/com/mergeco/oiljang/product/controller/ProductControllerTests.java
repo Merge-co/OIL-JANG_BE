@@ -84,7 +84,7 @@ public class ProductControllerTests {
 
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
-        Assertions.assertEquals(result.getBody().getMessage(), "중고 상품 등록 성공");
+        Assertions.assertEquals(result.getBody().getMessage(), "관심 목록 등록 성공");
         Assertions.assertTrue(result.getBody().getResults().size() > 0);
     }
 
