@@ -134,7 +134,6 @@ public class ProductService {
         return productListDTO;
     }
 
-    // refUserCode 나중에 판매자 이름 추츨 해야 한다.
     public List<ProductDetailDTO> selectProductDetail(int productCode) {
         String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode.userCode = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
                 " FROM Product m JOIN m.SellStatus s WHERE m.productCode = :productCode";
