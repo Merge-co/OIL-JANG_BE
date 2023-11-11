@@ -288,7 +288,7 @@ public class ProductService {
 
     public List<SellingListDTO> selectSellingList(int offset, int limit, int refUserCode) {
         String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = p.productCode), p.SellStatus.sellStatus)" +
-                " FROM WishList w JOIN w.product p WHERE w.refUserCode = :refUserCode ORDER BY w.wishCode DESC";
+                " FROM Product p WHERE p.refUserCode = :refUserCode ORDER BY p.productCode DESC";
         List<SellingListDTO> wishList = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
                 .setFirstResult(offset)
