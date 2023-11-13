@@ -3,6 +3,7 @@ package com.mergeco.oiljang.user.controller;
 
 import com.mergeco.oiljang.auth.model.dto.JoinDTO;
 import com.mergeco.oiljang.auth.model.dto.LoginDTO;
+import com.mergeco.oiljang.auth.model.service.DetailsService;
 import com.mergeco.oiljang.common.exception.UserErrorResult;
 import com.mergeco.oiljang.common.exception.UserException;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
@@ -18,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.naming.AuthenticationException;
 
 @Api(tags = "회원")
 
@@ -44,8 +47,8 @@ public class UserController {
         }
 
     }
-    @ApiOperation(value = "아이디 중복 체크")
-    @GetMapping("/users")
+    @ApiOperation(value = "중복 체크")
+    @GetMapping("/users/checkId")
     public ResponseEntity<ResponseMessage> checkUserIdExist(@RequestParam String id) {
 
         try {
@@ -65,6 +68,30 @@ public class UserController {
         }
 
     }
+
+    @ApiOperation(value = "닉네임 중복 체크")
+    @GetMapping("/users/checkNickname")
+    public ResponseEntity<ResponseMessage> checkUserNicknameExist(@RequestParam String nickname) {
+
+        try {
+            boolean check = userService.checkUserNicknameExist(nickname);
+            if (check) {
+                // 사용 가능
+                return ResponseEntity.ok().body(new ResponseMessage(200, "사용 가능한 닉네임입니다.", null));
+            } else {
+
+                //중복된 경우
+                return ResponseEntity.ok().body(new ResponseMessage(200,"중복된 닉네임입니다.",null));
+            }
+        }catch (UserException e){
+            // 예외가 발생한 경우
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseMessage(500,"서버 오류",null));
+        }
+
+    }
+
+
 
 
 }

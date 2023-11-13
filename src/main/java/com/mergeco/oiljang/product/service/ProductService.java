@@ -286,6 +286,9 @@ public class ProductService {
         }
     }
 
+
+
+// 내 판매목록 조회
     public List<SellingListDTO> selectSellingList(int offset, int limit, int refUserCode) {
         String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = p.productCode), p.SellStatus.sellStatus)" +
                 " FROM Product p WHERE p.refUserCode = :refUserCode ORDER BY p.productCode DESC";
@@ -297,4 +300,23 @@ public class ProductService {
         return wishList;
     }
 
+    public Long countSellingList(int refUserCode) {
+        Long countPage = productRepository.countByRefUserCode(refUserCode);
+        return countPage;
+    }
+    public void updateViewCount(Long productId) {
+
+        if (productId == null || productId <= 0) {
+            throw new IllegalArgumentException("productId는 유효하지 않습니다.");
+        }
+    }
+
+    public void updateSellStatusToDeleted(int productCode) {
+        // 상품 존재 확인
+//        Product productToUpdate = productRepository.findById(productCode)
+//                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. " + productCode));
+//        // 상품의 판매 상태를 '삭제'로 업데이트
+//        productToUpdate.setSellStatus(ProductRepository.findBySellStatus("삭제"));
+//        productRepository.save(productToUpdate);
+    }
 }

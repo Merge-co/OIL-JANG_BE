@@ -1,10 +1,13 @@
 package com.mergeco.oiljang.common.restApi;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Map;
 
 public class ResponseMessage {
 
     private int httpStatusCode;
+
     private String message;
 
     private Map<String, Object> results;

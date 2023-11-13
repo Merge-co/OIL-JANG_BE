@@ -1,5 +1,7 @@
 package com.mergeco.oiljang.user.model.service;
 
+import com.mergeco.oiljang.auth.handler.CustomAuthenticationProvider;
+import com.mergeco.oiljang.auth.handler.TokenProvider;
 import com.mergeco.oiljang.auth.model.dto.*;
 import com.mergeco.oiljang.common.UserRole;
 import com.mergeco.oiljang.user.entity.EnrollType;
@@ -7,20 +9,13 @@ import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.entity.UserProfile;
 import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
-/*import lombok.RequiredArgsConstructor;*/
 import lombok.extern.slf4j.Slf4j;
-/*import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;*/
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-/*import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;*/
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -28,7 +23,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -43,21 +37,22 @@ public class UserService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+
     private final UserRepository userRepository;
+
+    private final CustomAuthenticationProvider authenticationProvider;
 
     private final UserProfileRepository userProfileRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, UserProfileRepository userProfileRepository, PasswordEncoder passwordEncoder) {
+    private final TokenProvider tokenProvider;
+
+    public UserService(UserRepository userRepository, CustomAuthenticationProvider authenticationProvider, UserProfileRepository userProfileRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
+        this.authenticationProvider = authenticationProvider;
         this.userProfileRepository = userProfileRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public Optional<User> findUser(String id) {
-        Optional<User> user = userRepository.findById(id);
-
-        return user;
+        this.tokenProvider = tokenProvider;
     }
 
     @Transactional
@@ -157,23 +152,47 @@ public class UserService {
     }
 
     public boolean checkUserIdExist(String id) {
-        User user = userRepository.checkUserIdExist(id);
+        String userId = userRepository.checkUserIdExist(id);
 
-        log.info(String.valueOf(user));
-        System.out.println(user);
+        log.info(userId);
+        System.out.println(userId);
 
-        if (user != null){
+        if (userId != null){
             return false;
         }else
             return true;
     }
 
 
+    public boolean checkUserNicknameExist(String nickname) {
+        String userNickname = userRepository.checkUserNicknameExist(nickname);
 
+        log.info(userNickname);
+        System.out.println(userNickname);
 
-    public User login(LoginDTO loginDTO) {
-        return null;
+        if (userNickname != null){
+            return false;
+        }else
+            return true;
     }
+
+    @Transactional
+    public TokenDTO login(String id, String pwd) {
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(id, pwd);
+
+        Authentication authentication
+                = authenticationProvider.authenticate(authenticationToken);
+
+
+        TokenDTO token = tokenProvider.generateTokenDTO((User) authentication.getPrincipal());
+
+        return token;
+    }
+
+
+
 
 
 

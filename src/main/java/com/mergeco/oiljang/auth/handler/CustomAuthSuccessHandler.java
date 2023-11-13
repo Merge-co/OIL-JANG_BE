@@ -3,13 +3,19 @@ package com.mergeco.oiljang.auth.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.auth.model.dto.TokenDTO;
+import com.mergeco.oiljang.auth.model.dto.UserRoleDTO;
 import com.mergeco.oiljang.common.AuthConstants;
+import com.mergeco.oiljang.common.UserRole;
+import com.mergeco.oiljang.common.restApi.LoginMessage;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.common.utils.ConvertUtil;
 import com.mergeco.oiljang.common.utils.TokenUtils;
 import com.mergeco.oiljang.user.entity.User;
 import org.json.simple.JSONObject;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.Provider;
+import org.modelmapper.TypeMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -34,16 +40,17 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
         this.modelMapper = modelMapper;
     }
 
+
     @Override
     @ResponseBody
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         User user = modelMapper.map(authentication.getPrincipal(), User.class);
+
+        UserRoleDTO userRoleDTO = modelMapper.map(user.getRole().getRole(), UserRoleDTO.class);
+
         TokenDTO tokenDTO = tokenProvider.generateTokenDTO(user);
 
-
-        HashMap<String, Object> responseResult = new HashMap<>();
-        responseResult.put("tokenDTO", tokenDTO);
-        ResponseMessage responseMessage = new ResponseMessage(200, "로그인 성공", responseResult);
+        LoginMessage loginMessage = new LoginMessage(HttpStatus.OK, "로그인 성공", tokenDTO);
         response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + tokenDTO.getAccessToken());
 
         response.setCharacterEncoding("UTF-8");
@@ -52,7 +59,7 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        out.println(objectMapper.writeValueAsString(responseMessage));
+        out.println(objectMapper.writeValueAsString(loginMessage));
         out.flush();
         out.close();
 
