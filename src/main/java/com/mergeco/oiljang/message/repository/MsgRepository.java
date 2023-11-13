@@ -18,6 +18,7 @@ import java.util.List;
 
 public interface MsgRepository extends JpaRepository<Message, Integer> {
 
+
 //    @Query("SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime) "
 //            + "FROM message_and_delete m "
 //            + "LEFT JOIN User u ON m.senderCode = :userCode "

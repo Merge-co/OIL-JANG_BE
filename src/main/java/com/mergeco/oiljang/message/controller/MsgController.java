@@ -99,6 +99,7 @@ public class MsgController {
 
         List<MsgProUserInfoDTO> msgProUserInfoDTOList = msgService.selectMsgDetail(msgCode);
         System.out.println("controller: " + msgProUserInfoDTOList);
+        msgService.updateMsgStatus(msgCode);
 
         Map<String, Object> responesMap = new HashMap<>();
         responesMap.put("msgProUserList", msgProUserInfoDTOList);
@@ -109,6 +110,7 @@ public class MsgController {
     }
 
 
+    @ApiOperation(value = "쪽지 리스트 조회")
     @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isRecevied={isRecevied}")
     public ResponseEntity<List<MsgListDTO>> getMessages(
             @RequestParam(required = false) Integer page,
@@ -157,6 +159,23 @@ public class MsgController {
 
         return new ResponseEntity<>(msgListDTOList, HttpStatus.OK);
     }
+
+
+    @ApiOperation(value = "쪽지 삭제(수정)")
+    @DeleteMapping("/messages/{msgCode}")
+    public ResponseEntity<?> updateDeleteCode(@PathVariable int msgCode){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        msgService.updateDeleteCode(msgCode);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("mshCode", msgCode);
+        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 등록 성공", responseMap);
+        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+    }
+
+
 
 }
 
