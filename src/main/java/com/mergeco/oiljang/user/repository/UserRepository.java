@@ -13,9 +13,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findById(String id);
 
 
-    @Query("SELECT up FROM User up WHERE up.nickname = :nickname")
-    Optional<User> findByNickname(String nickname);
+    @Query("SELECT up.nickname FROM User up WHERE up.nickname = :nickname")
+    String checkUserNicknameExist(String nickname);
 
     @Query("SELECT up.id FROM User up WHERE up.id = :id")
-    User checkUserIdExist(String id);
+    String checkUserIdExist(String id);
+
+    @Query("SELECT up FROM User up WHERE up.id = :userId")
+    User findByUserId(String userId);
 }

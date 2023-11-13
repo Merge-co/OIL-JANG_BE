@@ -64,15 +64,11 @@ public class WebSecurityConfig {
                 .antMatchers("/swagger-ui/index.html","/swagger-ui.html", "/swagger-ui/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security").permitAll()
                 .antMatchers("/users/**","/reports/**","/messages/**","/products/**","/categories/**","/wishLists/**").permitAll()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .antMatchers("/**").hasAnyRole("USER","ADMIN","ALL")
                 //.anyRequest().permitAll()
 
                 .and()
-               /* .oauth2Login()
-                .successHandler(oAuth2LoginSuccessHandler())
-                .failureHandler(oAuth2LoginFailureHandler())
-                .userInfoEndpoint().userService(customOAuth2UserService)
-                .and()*/
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
@@ -84,7 +80,7 @@ public class WebSecurityConfig {
 
                 .and()
                 .formLogin().disable()
-               // .addFilterBefore(customAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(customAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic().disable();
 
         return http.build();
@@ -98,7 +94,5 @@ public class WebSecurityConfig {
         customAuthenticationFilter.afterPropertiesSet();
         return customAuthenticationFilter;
     }
-
-
 
 }

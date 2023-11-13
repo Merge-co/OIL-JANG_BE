@@ -35,6 +35,7 @@ public class TokenProvider {
                 TokenUtils.generateJwtToken(userDTO));
     }
 
+
     public String getUserId(String token){return TokenUtils.getClaimsFromToken(token).getSubject();}
 
     public Authentication getAuthentication(String token){
