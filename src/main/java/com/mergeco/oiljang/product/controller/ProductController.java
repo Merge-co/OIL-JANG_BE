@@ -207,6 +207,19 @@ public class ProductController {
             return new ResponseEntity<>("상품 수정에 실패했습니다. 상품을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
         }
     }
+    // 상품 삭제
+    @ApiOperation(value = "중고 상품 삭제")
+    @DeleteMapping(value = "/products/{productCode}")
+    public ResponseEntity<ResponseMessage> deleteProduct(@PathVariable int productCode) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        productService.updateSellStatusToDeleted(productCode);
+
+        ResponseMessage responseMessage = new ResponseMessage(200, "상품 삭제 성공", null);
+
+        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+    }
 
     // 내 판매목록 조회
     @GetMapping("users/{userCode}/products")
@@ -222,8 +235,27 @@ public class ProductController {
         int limit = 3;
         int offset = limit * (page - 1);
 
+        List<SellingListDTO> sellingList = productService.selectSellingList(offset, limit, userCode);
+
+        double totalItem = Long.valueOf(productService.countSellingList(userCode)).doubleValue();
+        int totalPage = (int) Math.ceil(totalItem / limit);
+
+        if (page >= totalPage) {
+            page = totalPage;
+        } else if (page < 1) {
+            page = 1;
+        }
+
+        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+
+        Map<String ,Object> responseMap = new HashMap<>();
+        responseMap.put("sellingList",sellingList);
+        responseMap.put("pagingBtn",pagingBtn);
+
+        ResponseMessage responseMessage = new ResponseMessage(200, "판매 목록 조회 성공", responseMap);
+
+        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
 
 //        productService.selectSellingList();
-        return null;
     }
 }
