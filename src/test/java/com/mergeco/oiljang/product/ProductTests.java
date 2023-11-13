@@ -6,6 +6,7 @@ import com.mergeco.oiljang.product.dto.CategoryDTO;
 import com.mergeco.oiljang.product.dto.ProductDTO;
 import com.mergeco.oiljang.product.dto.ProductDetailDTO;
 import com.mergeco.oiljang.product.dto.ProductListDTO;
+import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.product.service.ProductService;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
@@ -26,9 +27,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,16 +45,17 @@ public class ProductTests {
     @Autowired
     private ProductRepository productRepository;
 
+
     @Test
     void printService() {
-        Assertions.assertNotNull(productService);
+        assertNotNull(productService);
     }
 
     @Test
     void selectCategory() {
         List<CategoryDTO> productCategoryList = productService.findAllCategory();
         System.out.println(productCategoryList);
-        Assertions.assertNotNull(productCategoryList);
+        assertNotNull(productCategoryList);
     }
 
     @Test
@@ -63,7 +66,7 @@ public class ProductTests {
     @Test
     void selectProductList() {
         List<ProductListDTO> productListDTO = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
-        for(ProductListDTO product : productListDTO) {
+        for (ProductListDTO product : productListDTO) {
             System.out.println(product);
         }
     }
@@ -91,7 +94,7 @@ public class ProductTests {
     @Test
     void selectProductDetail() {
         List<ProductDetailDTO> productDetailDTOS = productService.selectProductDetail(5);
-        for(ProductDetailDTO productDetailDTO : productDetailDTOS) {
+        for (ProductDetailDTO productDetailDTO : productDetailDTOS) {
             System.out.println(productDetailDTO);
         }
     }
@@ -99,7 +102,7 @@ public class ProductTests {
     @Test
     void selectProductDetailImg() {
         Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(5);
-        for(String key : selectedProductDetailImg.keySet()) {
+        for (String key : selectedProductDetailImg.keySet()) {
             System.out.println(key + " : " + selectedProductDetailImg.get(key));
         }
     }
@@ -153,9 +156,10 @@ public class ProductTests {
     }
 
     private static final String TEMP_IMAGE_DIR = "temp_images";
+
     @Test
     void printProductController() {
-        Assertions.assertNotNull(productController);
+        assertNotNull(productController);
     }
 
     @Test
@@ -190,8 +194,22 @@ public class ProductTests {
         Assertions.assertEquals(result.getBody().getMessage(), "중고 상품 등록 성공");
         Assertions.assertTrue(result.getBody().getResults().size() > 0);
     }
+    @Test
+    @Transactional
+    void controllerDeleteProduct() {
+        int productCodeToDelete = 2;
+
+        // 삭제하기 전 상품이 존재하는지 확인
+        Product productToDelete = productRepository.findById(productCodeToDelete).orElse(null);
+        assertNotNull(productToDelete);
 
 
-
+        // 상품 삭제 요청
+        ResponseEntity<ResponseMessage> deleteResponse = productController.deleteProduct(productCodeToDelete);
+        assertEquals(deleteResponse.getStatusCode(), HttpStatus.OK);
+//
+//        // 삭제된 상품이 더 이상 존재하지 않는지 확인
+        Product deletedProduct = productRepository.findById(productCodeToDelete).orElse(null);
+        assertNull(deletedProduct);
+    }
 }
-
