@@ -1,24 +1,19 @@
 package com.mergeco.oiljang.report.service;
 
-import com.mergeco.oiljang.common.restApi.ResponseMessage;
-import com.mergeco.oiljang.product.dto.ProductDTO;
+import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.report.entity.Report;
 import com.mergeco.oiljang.report.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
-import com.mergeco.oiljang.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -170,17 +165,20 @@ public class ReportService {
     }
 
     public List<Object[]> selectByReportManagement() {
-        String jpql = "SELECT r.reportNo, r.product.refUserCode, r.product.productName, r.reportCategory.reportCategoryCode, r.sellStatus.sellStatus " +
+        log.info("[reportService] selectReport Start ================================================");
+        String jpql = "SELECT r.reportNo, (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode ), r.product.productName, r.sellStatus.sellStatus, r.reportCategory.reportCategoryCode " +
                 "FROM tbl_report r " +
                 "RIGHT JOIN r.product c";
         List<Object[]> managment = manager.createQuery(jpql).getResultList();
+
+        log.info("[reportService] selectReport END ================================================");
 
         return managment;
 
     }
 
     public List<Object[]> selectByProcessDetail() {
-        String jpql = "SELECT r.reportNo, r.reportDate, r.reportCategory.reportCategoryCode, r.product.productName, r.processDate, r.sellStatus.sellStatus, r.reportComment, r.processComment " +
+        String jpql = "SELECT r.reportCategory.reportCategoryCode, r.product.productName, r.processDate , r.sellStatus.sellStatusCode,   r.reportComment, r.processComment " +
                 "FROM tbl_report r " +
                 "LEFT JOIN r.product c";
         List<Object[]> process = manager.createQuery(jpql).getResultList();
@@ -206,22 +204,39 @@ public class ReportService {
 
     @Transactional
     public void registReport(ReportDTO reportInfo) {
-        System.out.println("서비스에서 받았니 ? : " + reportInfo);
+        log.info("[reportService] insertReport Start ==================================================");
 
         reportRepository.save(modelMapper.map(reportInfo, Report.class));
+
+        log.info("[reportService] insertReport END ==================================================");
     }
 
 
     @Transactional
-    public void modifyReport(int reportNo) {
-        Report report = reportRepository.findById(reportNo).orElseThrow(IllegalArgumentException::new);
-        System.out.println("==================================================");
-        System.out.println("데이터 있니 ? : " + report);
-        Report reportModify = report
-                .processDistinction("처리 부분 테스트Distinction ")
-                .processComment("테스트진행중 Comment 입니다,")
-                .processDate(LocalDateTime.now());
-        reportRepository.save(reportModify);
+    public Object modifyReport(@RequestBody ReportDTO reportDTO) {
+        log.info("[reportService] updateReport Start ================================================");
+
+        int result = 0;
+
+        try {
+            Report report = reportRepository.findById(reportDTO.getReportNo()).get();
+            log.info("Repository Check : " + report);
+
+            report = report
+                    .processDistinction(reportDTO.getProcessDistinction())
+                    .processComment(reportDTO.getProcessComment())
+                    .processDate(reportDTO.getProcessDate())
+                    .sellStatus(reportDTO.getSellStatus())
+                    .build();
+
+            result = 1;
+
+        } catch (Exception e) {
+            log.info("[Report update] Exception !!" + e);
+        }
+
+        log.info("[reportService] updateReport END ===============================================");
+        return (result > 0) ? "처리 완료" : "처리 실패";
     }
 
   /*  @Transactional
@@ -239,5 +254,6 @@ public class ReportService {
         String reportComment = "";
 
     }*/
+
 
 }

@@ -2,6 +2,7 @@ package com.mergeco.oiljang.report.entity;
 
 import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.entity.SellStatus;
+import com.mergeco.oiljang.report.controller.ReportController;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Getter
-
 public class Report {
 
     @Id
@@ -46,63 +46,61 @@ public class Report {
     @ManyToOne
     private ReportCategory reportCategory;// 신고분류 코드 FK
 
+    public Report(int reportNo, String reportUserNick, String reportComment, LocalDateTime reportDate, String processDistinction, String processComment, LocalDateTime processDate, Product product, SellStatus sellStatus, ReportCategory reportCategory) {
+        this.reportNo = reportNo;
+        this.reportComment = reportComment;
+        this.reportUserNick = reportUserNick;
+        this.sellStatus = sellStatus;
+        this.reportDate = reportDate;
+        this.processDistinction = processDistinction;
+        this.processComment = processComment;
+        this.processDate = processDate;
+        this.product = product;
+        this.reportCategory = reportCategory;
 
-    public Report reportNo(int val) {
-        reportNo = val;
+    }
+
+
+    public Report reportUserNick(String reportUserNick) {
+        this.reportUserNick = reportUserNick;
         return this;
     }
-    public Report reportUserNick(String val){
-        reportUserNick = val;
+
+    public Report reportComment(String reportComment) {
+        this.reportComment = reportComment;
         return this;
     }
-    public Report reportComment(String val) {
-        reportComment = val;
+
+    public Report reportDate(LocalDateTime reportDate) {
+        this.reportDate = reportDate;
         return this;
     }
-    public Report reportDate(LocalDateTime val) {
-        reportDate = val;
+
+    public Report processDistinction(String processDistinction) {
+        this.processDistinction = processDistinction;
         return this;
     }
-    public Report processDistinction(String val){
-        processDistinction = val;
+
+    public Report processComment(String processComment) {
+        this.processComment = processComment ;
         return this;
     }
-    public Report processComment(String val){
-        processComment = val;
+
+    public Report processDate(LocalDateTime processDate) {
+        this.processDate = processDate ;
         return this;
     }
-    public Report processDate (LocalDateTime val){
-        processDate = val;
+
+    public Report sellStatus(SellStatus sellStatus){
+        this.sellStatus = sellStatus;
         return this;
     }
+
     protected Report() {
     }
 
-    public int getReportNo() {
-        return reportNo;
+    public Report build() {
+        return new Report(reportNo, reportUserNick,  reportComment,  reportDate,  processDistinction,  processComment,  processDate,  product,  sellStatus,  reportCategory);
     }
 
-    public String getReportUserNick() {
-        return reportUserNick;
-    }
-
-    public String getReportComment() {
-        return reportComment;
-    }
-
-    public LocalDateTime getReportDate() {
-        return reportDate;
-    }
-
-    public String getProcessDistinction() {
-        return processDistinction;
-    }
-
-    public String getProcessComment() {
-        return processComment;
-    }
-
-    public LocalDateTime getProcessDate() {
-        return processDate;
-    }
 }
