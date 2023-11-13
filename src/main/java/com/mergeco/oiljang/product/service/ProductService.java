@@ -134,7 +134,6 @@ public class ProductService {
         return productListDTO;
     }
 
-    // refUserCode 나중에 판매자 이름 추츨 해야 한다.
     public List<ProductDetailDTO> selectProductDetail(int productCode) {
         String jpql ="SELECT new com.mergeco.oiljang.product.dto.ProductDetailDTO(m.productCode, m.productName, m.productPrice, m.Category.categoryName, (SELECT c.categoryName FROM Category c WHERE c.categoryCode = m.Category.upperCategoryCode), m.enrollDateTime, m.viewCount, (SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), m.refUserCode, (SELECT up.userImageThumbAddr FROM UserProfile up WHERE up.refUserCode.userCode = m.refUserCode) ,(SELECT u.nickname FROM User u WHERE u.userCode = m.refUserCode), m.productDesc, m.wishPlaceTrade, s.sellStatus)" +
                 " FROM Product m JOIN m.SellStatus s WHERE m.productCode = :productCode";
@@ -291,8 +290,8 @@ public class ProductService {
 
 // 내 판매목록 조회
     public List<SellingListDTO> selectSellingList(int offset, int limit, int refUserCode) {
-        String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = :productCode), p.SellStatus.sellStatus)" +
-                " FROM WishList w JOIN w.product p WHERE w.refUserCode = :refUserCode ORDER BY w.wishCode DESC";
+        String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = p.productCode), p.SellStatus.sellStatus)" +
+                " FROM Product p WHERE p.refUserCode = :refUserCode ORDER BY p.productCode DESC";
         List<SellingListDTO> wishList = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
                 .setFirstResult(offset)

@@ -1,9 +1,11 @@
 package com.mergeco.oiljang.product.controller;
 
+import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.product.dto.*;
 import com.mergeco.oiljang.product.service.ProductService;
+import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,11 +14,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.security.Principal;
 import java.util.*;
 
 
@@ -106,7 +111,7 @@ public class ProductController {
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
-    @ApiOperation("중고 상품 상세 조회")/* 보류 */
+    @ApiOperation("중고 상품 상세 조회")
     @GetMapping("/products/{productCode}")
     public ResponseEntity<ResponseMessage> selectProductInfo(@PathVariable int productCode) {
 
@@ -114,8 +119,17 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        int userCode = 1;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+            userCode = user.getUser().getUserCode();
+        } else {
+            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
+        }
+
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
-        List<Integer> selectedWishCode = productService.selectWishCode(1, productCode);
+        List<Integer> selectedWishCode = productService.selectWishCode(userCode, productCode);
         productService.updateViewCount(productCode);
         Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
@@ -129,7 +143,7 @@ public class ProductController {
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "관심 목록에 중고 상품 등록")/* 보류 */
+    @ApiOperation(value = "관심 목록에 중고 상품 등록")
     @PostMapping("/products/{productCode}/wishLists")
     public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode) {
 
@@ -137,8 +151,14 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        // 임시 번호 발급
         int userCode = 1;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+            userCode = user.getUser().getUserCode();
+        } else {
+            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
+        }
 
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);
@@ -147,7 +167,7 @@ public class ProductController {
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("result", productService.insertWishList(wishListDTO));
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 등록 성공", responseMap);
+        ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록 등록 성공", responseMap);
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
