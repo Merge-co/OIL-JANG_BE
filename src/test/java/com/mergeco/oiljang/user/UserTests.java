@@ -57,14 +57,14 @@ public class UserTests {
 
     private static Stream<Arguments> joinData() throws IOException {
         JoinDTO joinDTO = new JoinDTO();
-        joinDTO.setNickname("newuser20");
-        joinDTO.setName("New User");
-        joinDTO.setId("newuser20");
-        joinDTO.setPwd("newpassword");
+        joinDTO.setNickname("토마스기차");
+        joinDTO.setName("이선호");
+        joinDTO.setId("user03");
+        joinDTO.setPwd("user03");
         joinDTO.setBirthDate("2000-01-03");
-        joinDTO.setGender("Male");
-        joinDTO.setPhone("1151512114");
-        joinDTO.setEmail("newuser@example.com");
+        joinDTO.setGender("남");
+        joinDTO.setPhone("01043214321");
+        joinDTO.setEmail("sun@naver.com");
 
 
         File imageFile = new File("C:\\Users\\User\\Desktop\\dir\\upload\\image.jpg");
@@ -88,25 +88,41 @@ public class UserTests {
 
 
         // Then
-
         UserProfile userProfile = newUser.getUserProfile();
         Assertions.assertNotNull(userProfile);
 
     }
 
-
-    @DisplayName("중복확인 테스트")
+    @DisplayName("아이디 중복 확인 테스트")
     @Test
     public void testduplicateId() {
 
         //given
-        String id1 = "newuser20"; //중복일 경우
+        String id1 = "user01"; //중복일 경우
         String id2 = "user1011110"; //중복이 아닐 경우
 
         //when
         boolean result1 = userService.checkUserIdExist(id1); //중복일 경우
-        System.out.println(result1);
         boolean result2 = userService.checkUserIdExist(id2); //중복이 아닐 경우
+
+        //then
+        Assertions.assertFalse(result1);
+        Assertions.assertTrue(result2);
+
+    }
+
+    @DisplayName("닉네임 중복 확인 테스트")
+    @Test
+    public void testduplicateNickname() {
+
+        //given
+        String nickname1 = "모짜르트"; //중복일 경우
+        String nickname2 = "테스트01"; //중복이 아닐 경우
+
+        //when
+        boolean result1 = userService.checkUserNicknameExist(nickname1); //중복일 경우
+        System.out.println(result1);
+        boolean result2 = userService.checkUserNicknameExist(nickname2); //중복이 아닐 경우
         System.out.println(result2);
 
         //then
@@ -115,20 +131,6 @@ public class UserTests {
 
     }
 
-
-
-
-    @DisplayName("JWT 로그인 테스트")
-    @Test
-    public void testLogin() throws IOException {
-        //given
-        String id = "newuser";
-        String pwd = "newpassword";
-
-
-
-
-    }
 
 
 

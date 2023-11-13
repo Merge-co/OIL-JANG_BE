@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
@@ -22,12 +23,6 @@ public class TokenUtils {
     private static String jwtSecretKey;
     private static Long tokenValidateTime;
 
-   /* @Value("${jwt.access.header}")
-    private static String accessHeader;
-
-    @Value("${jwt.refresh.expiration}")
-    private static String refreshHeader;
-*/
 
     @Value("${jwt.secretKey}")
     public void setJwtSecretKey(String jwtSecretKey) {
@@ -88,12 +83,13 @@ public class TokenUtils {
 
     public static String generateJwtToken(DetailsUser user) {
         Date expireTime = new Date(System.currentTimeMillis() + tokenValidateTime);
+
         JwtBuilder builder = Jwts.builder()
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
-                .setSubject("oiljang token : " + user.getUser().getUserCode())
-                .signWith(SignatureAlgorithm.HS256, createSignature())
-                .setExpiration(expireTime);
+                .setSubject("oiljang token : " + user.getUserCode())
+                .setExpiration(expireTime)
+                .signWith(SignatureAlgorithm.HS256, createSignature());
         return builder.compact();
     }
 
@@ -112,8 +108,8 @@ public class TokenUtils {
     private static Map<String, Object> createClaims(DetailsUser user) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("userName", user.getUser().getName());
-        claims.put("Role", user.getUser().getRole());
+        claims.put("userName", user.getName());
+        claims.put("Role", user.getRole());
 
         return claims;
     }
@@ -124,12 +120,5 @@ public class TokenUtils {
         return new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
-/*    public String createRefreshToken() {
-        Date now = new Date();
-        return JWT.create()
-                .withSubject(AuthConstants.REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .sign(Algorithm.HMAC512(secretKey));
-    }*/
 
 }

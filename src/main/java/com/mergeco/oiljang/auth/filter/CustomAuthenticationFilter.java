@@ -21,6 +21,7 @@ import java.io.IOException;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private CustomAuthenticationProvider customAuthenticationProvider;
+
     public CustomAuthenticationFilter(CustomAuthenticationProvider customAuthenticationProvider) {
         super.setAuthenticationManager(new ProviderManager(customAuthenticationProvider));
     }
@@ -41,13 +42,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     private UsernamePasswordAuthenticationToken getAuthRequest(HttpServletRequest request) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 
         DetailsUser user = objectMapper.readValue(request.getInputStream(), DetailsUser.class);
 
-        return new UsernamePasswordAuthenticationToken(user.getUser().getId(), user.getUser().getPwd(), user.getAuthorities());
-
+        return new UsernamePasswordAuthenticationToken(user.getId(), user.getPwd(), user.getAuthorities());
 
     }
 }
