@@ -2,22 +2,16 @@ package com.mergeco.oiljang.message.service;
 
 import com.mergeco.oiljang.message.dto.*;
 import com.mergeco.oiljang.message.entity.Message;
+import com.mergeco.oiljang.message.entity.MsgDeleteInfo;
 import com.mergeco.oiljang.message.repository.MsgDeleteRepository;
 import com.mergeco.oiljang.message.repository.MsgRepository;
-import io.swagger.models.auth.In;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.repository.query.Param;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -107,7 +101,6 @@ public class MsgService {
 
 
     //내 이름.아이디는 토큰에서 가져오기
-    @Transactional
     public List<MsgProUserInfoDTO> selectMsgDetail(int msgCode) {
         String jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgProUserInfoDTO(m.msgCode, m.msgContent, m.msgStatus, m.msgTime, m.senderCode, m.receiverCode, u.userCode, u.id, u.name, p.productCode, p.productName, p.productDesc, md.msgDeleteCode, md.msgDeleteStatus) "
                 + "FROM message_and_delete m "
@@ -129,12 +122,13 @@ public class MsgService {
     }
 
     @Transactional
-    public void updateMsgStatus(int msgCode) {
+    public int updateMsgStatus(int msgCode) {
         Message message = msgRepository.findById(msgCode).orElseThrow(IllegalArgumentException::new);
 
-        message = message.msgStatus("Y").builder();
-        msgRepository.save(message);
+        Message messageSave = message.msgStatus("Y").builder();
+        msgRepository.save(messageSave);
         System.out.println(message);
+        return msgCode;
     }
 
 
@@ -145,13 +139,13 @@ public class MsgService {
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.receiverCode = :userCode "
                     + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 4) AND m.senderCode <> :userCode";
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (4, 2) AND m.senderCode <> :userCode";
         } else {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.senderCode = :userCode "
                     + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (3, 4)";
+                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (4, 3)";
         }
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
@@ -166,8 +160,56 @@ public class MsgService {
         return countPage;
     }
 
+    private boolean isDeletedBySender(int sender, MsgDeleteInfo msgDeleteInfo){
+        if(msgDeleteInfo.getMsgDeleteCode() == 3){
+            return true;
+        }
+        return false;
+    }
+
+      private boolean isDeletedByReceiver(int receiver, MsgDeleteInfo msgDeleteInfo){
+        if(msgDeleteInfo.getMsgDeleteCode() == 2){
+            return true;
+        }
+        return false;
+    }
 
     @Transactional
-    public void updateDeleteCode(int i) {
+    public void updateDeleteCode(int msgCode) {
+        Message message = msgRepository.findById(msgCode)
+                .orElseThrow(IllegalArgumentException::new);
+
+        System.out.println("service : " + msgCode);
+        int sender = message.getSenderCode();
+        int receiver = message.getReceiverCode();
+
+
+
+
+        //builder를 쓰면 새로 받아줘야하고, 현재 영속화 된 엔티티는 Message이기 때문에 , MsgDeleteInfo를 새로 객체생성해서 값을 받아줬으면
+        //해당 값들을 다시 Message엔티티에 세팅해줘야한다.
+
+        System.out.println("들어왔니 ?? : " + sender + "이건 리시브" + receiver);
+        System.out.println("????테니스는 무슨 : " + message.getMsgDeleteInfo());
+
+        if(isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())){
+                message.getMsgDeleteInfo().msgDeleteCode(1).builder();
+            message.getMsgDeleteInfo().msgDeleteStatus("S").builder();
+        }else if(isDeletedBySender(sender, message.getMsgDeleteInfo())){
+            message.getMsgDeleteInfo().msgDeleteCode(3).builder();
+            message.getMsgDeleteInfo().msgDeleteStatus("N").builder();
+        }else if(isDeletedByReceiver(receiver, message.getMsgDeleteInfo())){
+            message.getMsgDeleteInfo().msgDeleteCode(2).builder();
+            message.getMsgDeleteInfo().msgDeleteStatus("R").builder();
+        }else{
+            message.getMsgDeleteInfo().msgDeleteCode(4).builder();
+            message.getMsgDeleteInfo().msgDeleteStatus("B").builder();
+        }
+
+        System.out.println("servide : " + message.getMsgDeleteInfo());
+        message.builder();
+        System.out.println("메세지야~:" + message);
+        msgRepository.save(message);
     }
+
 }

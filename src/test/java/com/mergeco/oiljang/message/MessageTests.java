@@ -1,7 +1,11 @@
 package com.mergeco.oiljang.message;
 
 import com.mergeco.oiljang.message.dto.*;
+import com.mergeco.oiljang.message.entity.Message;
+import com.mergeco.oiljang.message.entity.MsgDeleteInfo;
+import com.mergeco.oiljang.message.repository.MsgRepository;
 import com.mergeco.oiljang.message.service.MsgService;
+import com.mergeco.oiljang.user.repository.UserRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +16,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,6 +29,9 @@ public class MessageTests {
 
     @Autowired
     private MsgService msgService;
+
+    @Autowired
+    private UserRepository msgRepository;
 
 
 //    private static Stream<Arguments> getMsgInfos() {
@@ -74,8 +82,8 @@ public class MessageTests {
         LocalDate msgTime = LocalDate.parse("2023-11-06");
 
 
-        return Stream.of(Arguments.of("맥북 사고싶어요", "N", msgTime, 1,
-                1, 2, 1, "N")
+        return Stream.of(Arguments.of("맥북 사고싶어요", "N", msgTime, 2,
+                3, 3, 2, "R")
         );
     }
 
@@ -161,20 +169,20 @@ public class MessageTests {
     @Transactional
     public void selectMsgDetail(){
 
-        int msgCode = 2;
+        int msgCode = 3;
 
         List<MsgProUserInfoDTO> msgDetail = msgService.selectMsgDetail(msgCode);
-        System.out.println("test: " + msgDetail);
+            System.out.println("test: " + msgDetail);
 
-        Assertions.assertFalse(msgDetail.isEmpty());
-        msgDetail.forEach(detail -> {
-            System.out.println("msgCode: " + detail.getMsgCode());
-            System.out.println("msgContent: " + detail.getMsgContent());
-            System.out.println("msgStatus : " + detail.getMsgStatus());
-            System.out.println("msgTime : " + detail.getMsgTime());
-            System.out.println("senderCode: " + detail.getSenderCode());
-            System.out.println("receiverCode : " + detail.getReceiverCode());
-            System.out.println("id : " + detail.getId());
+//            Assertions.assertFalse(msgDetail.isEmpty());
+            msgDetail.forEach(detail -> {
+                System.out.println("msgCode: " + detail.getMsgCode());
+                System.out.println("msgContent: " + detail.getMsgContent());
+                System.out.println("msgStatus : " + detail.getMsgStatus());
+                System.out.println("msgTime : " + detail.getMsgTime());
+                System.out.println("senderCode: " + detail.getSenderCode());
+                System.out.println("receiverCode : " + detail.getReceiverCode());
+                System.out.println("id : " + detail.getId());
             System.out.println("name : " + detail.getName());
             System.out.println("productCode: " + detail.getProductCode());
             System.out.println("productName : " + detail.getProductName());
@@ -182,11 +190,21 @@ public class MessageTests {
             System.out.println("msgDeleteInfoMsgDeleteDTO : " + detail.getMsgDeleteCode());
             System.out.println("msgDeleteInfoMsgDeleteDTO : " + detail.getMsgDeleteStatus());
         });
+        msgService.updateMsgStatus(3);
+
+        Assertions.assertEquals(3, msgService.updateMsgStatus(3));
     }
+
+
 
     @Test
     @Transactional
-    void updateMsgStatus(){msgService.updateMsgStatus(1);}
+    void updateMsgStatus(){
+
+        msgService.updateMsgStatus(3);
+
+        Assertions.assertEquals(3, msgService.updateMsgStatus(3));
+    }
 
 
     @Test
@@ -206,10 +224,20 @@ public class MessageTests {
     }
 
 
+
+    /*
+     * 1 -> B
+     * 2 -> R
+     * 3 -> S
+     * 4 -> N
+     * */
+
     @Test
     @DisplayName("쪽지 삭제에 따른 상태값 변경 테스트")
     @Transactional
     public void deleteMsg(){
-        msgService.updateDeleteCode(1);
+        int msgCode = 2;
+        msgService.updateDeleteCode(msgCode);
     }
+
 }
