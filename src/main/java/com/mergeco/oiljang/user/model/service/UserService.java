@@ -4,22 +4,29 @@ import com.mergeco.oiljang.auth.handler.CustomAuthenticationProvider;
 import com.mergeco.oiljang.auth.handler.TokenProvider;
 import com.mergeco.oiljang.auth.model.dto.*;
 import com.mergeco.oiljang.common.UserRole;
+import com.mergeco.oiljang.common.exception.DuplicateNicknameException;
+import com.mergeco.oiljang.common.exception.InvalidPasswordException;
+import com.mergeco.oiljang.common.exception.UserNotFoundException;
 import com.mergeco.oiljang.user.entity.EnrollType;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.entity.UserProfile;
+import com.mergeco.oiljang.user.model.dto.UpdateUserDTO;
+import com.mergeco.oiljang.user.model.dto.UserDTO;
 import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -38,6 +45,8 @@ public class UserService {
     private String uploadDir;
 
 
+    @PersistenceContext
+    private final EntityManager entityManager;
     private final UserRepository userRepository;
 
     private final CustomAuthenticationProvider authenticationProvider;
@@ -47,7 +56,8 @@ public class UserService {
 
     private final TokenProvider tokenProvider;
 
-    public UserService(UserRepository userRepository, CustomAuthenticationProvider authenticationProvider, UserProfileRepository userProfileRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+    public UserService(EntityManager entityManager, UserRepository userRepository, CustomAuthenticationProvider authenticationProvider, UserProfileRepository userProfileRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+        this.entityManager = entityManager;
         this.userRepository = userRepository;
         this.authenticationProvider = authenticationProvider;
         this.userProfileRepository = userProfileRepository;
@@ -56,20 +66,16 @@ public class UserService {
     }
 
     @Transactional
-    public User join(JoinDTO joinDTO,MultipartFile imageFile) throws IOException {
+    public User join(JoinDTO joinDTO, MultipartFile imageFile) throws IOException {
 
-/*        //중복 유저 존재 여부 체크
-        Optional<User> existingUser = userRepository.findById(joinDTO.getId());
-        if (existingUser.isPresent()) {
-            // 중복 사용자 처리
-            throw new UserException(UserErrorResult.DUPLICATED_MEMBER_REGISTER);
+        if (!checkUserNicknameExist(joinDTO.getNickname())) {
+            throw new DuplicateNicknameException("이미 사용 중인 닉네임입니다.");
         }
 
-        Optional<User> existingUserByNickname = userRepository.findByNickname(joinDTO.getNickname());
-        if (existingUserByNickname.isPresent()) {
-            // 중복 닉네임 처리
-            throw new UserException(UserErrorResult.DUPLICATED_NICKNAME_REGISTER);
-        }*/
+        // 중복 아이디 체크
+        if (!checkUserIdExist(joinDTO.getId())) {
+            throw new DuplicateNicknameException("이미 사용 중인 아이디입니다.");
+        }
 
 
         // 파일 업로드 및 경로 저장
@@ -110,6 +116,7 @@ public class UserService {
                 .build();
 
         user.setUserProfile(userProfile);
+
         user.passwordEncode(passwordEncoder);
 
         User joinUser = userRepository.save(user);
@@ -157,9 +164,9 @@ public class UserService {
         log.info(userId);
         System.out.println(userId);
 
-        if (userId != null){
+        if (userId != null) {
             return false;
-        }else
+        } else
             return true;
     }
 
@@ -170,26 +177,197 @@ public class UserService {
         log.info(userNickname);
         System.out.println(userNickname);
 
-        if (userNickname != null){
+        if (userNickname != null) {
             return false;
-        }else
+        } else
             return true;
     }
 
-    @Transactional
-    public TokenDTO login(String id, String pwd) {
+    public User findUserByCode(int userCode) {
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(id, pwd);
+        return userRepository.findById(userCode).orElse(null);
 
-        Authentication authentication
-                = authenticationProvider.authenticate(authenticationToken);
-
-
-        TokenDTO token = tokenProvider.generateTokenDTO((User) authentication.getPrincipal());
-
-        return token;
     }
+
+    public UserDTO getUserInfo(int userCode) {
+
+        User user = findUserByCode(userCode);
+
+
+        if (user != null) {
+            UserDTO userDTO = UserDTO.fromEntity(user);
+
+            UserProfile userProfile = user.getUserProfile();
+            if (userProfile != null) {
+                userDTO.setUserImageOriginName(userProfile.getUserImageOriginName());
+                userDTO.setUserImageName(userProfile.getUserImageName());
+                userDTO.setUserImageOriginAddr(userProfile.getUserImageOriginAddr());
+                userDTO.setUserImageThumbAddr(userProfile.getUserImageThumbAddr());
+            }
+
+            return userDTO;
+        }
+
+        return null;
+
+    }
+
+    @Transactional
+    public UserDTO updateUser(int userCode, UpdateUserDTO updateUserDTO) throws IOException {
+
+        User user = userRepository.findById(userCode)
+                .orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
+
+        UserProfile profile = userProfileRepository.findByUser(user);
+
+        System.out.println(user);
+        System.out.println(profile);
+
+        User updatedUser = null;
+
+        UserProfile updatedUserProfile = null;
+
+        if (updateUserDTO.getNickname() != null) {
+            validateNickname(userCode, updateUserDTO.getNickname());
+            updatedUser = User.builder()
+                    .userCode(user.getUserCode())
+                    .nickname(updateUserDTO.getNickname())
+                    .name(user.getName())
+                    .id(user.getId())
+                    .pwd(user.getPwd())
+                    .birthDate(user.getBirthDate())
+                    .gender(user.getGender())
+                    .enrollType(user.getEnrollType())
+                    .role(user.getRole())
+                    .phone(user.getPhone())
+                    .verifyStatus(user.getVerifyStatus())
+                    .withdrawStatus(user.getWithdrawStatus())
+                    .email(user.getEmail())
+                    .enrollDate(user.getEnrollDate())
+                    .profileImageUrl(user.getProfileImageUrl())
+                    .userProfile(user.getUserProfile())
+                    .build();
+        }
+
+
+        if (updateUserDTO.getProfileImage() != null) {
+            MultipartFile profileImage = updateUserDTO.getProfileImage();
+
+
+            if (updatedUser.getUserProfile() != null) {
+                updateProfileImage(updatedUser,updatedUser.getUserProfile(), profileImage);
+            } else {
+
+                String originalFilename = user.getId() + "-original-" + profileImage.getOriginalFilename();
+                String thumbnailFilename = user.getId() + "-thumbnail-" + profileImage.getOriginalFilename();
+
+                saveProfileImage(profileImage, originalFilename, thumbnailFilename);
+
+                String userProfileOriginPath = Paths.get(uploadDir, originalFilename).toString();
+                String userProfileThumbPath = Paths.get(uploadDir, thumbnailFilename).toString();
+
+                System.out.println(userProfileOriginPath);
+                System.out.println(userProfileThumbPath);
+
+                updatedUserProfile = UserProfile.builder()
+                        .profileCode(updatedUserProfile.getProfileCode())
+                        .userImageOriginName(originalFilename)
+                        .userImageName(thumbnailFilename)
+                        .userImageOriginAddr(userProfileOriginPath)
+                        .userImageThumbAddr(userProfileThumbPath)
+                        .build();
+
+                updatedUser.setUserProfile(updatedUserProfile);
+                userProfileRepository.save(updatedUserProfile);
+            }
+        }
+
+        if (updateUserDTO.getNewPassword() != null) {
+            validatePasswordUpdate(updatedUser, updateUserDTO.getNewPassword(), updateUserDTO.getNewPasswordConfirm());
+            updatedUser = User.builder()
+                    .userCode(user.getUserCode())
+                    .nickname(user.getNickname())
+                    .name(user.getName())
+                    .id(user.getId())
+                    .pwd(updateUserDTO.getNewPassword())
+                    .birthDate(user.getBirthDate())
+                    .gender(user.getGender())
+                    .enrollType(user.getEnrollType())
+                    .role(user.getRole())
+                    .phone(user.getPhone())
+                    .verifyStatus(user.getVerifyStatus())
+                    .withdrawStatus(user.getWithdrawStatus())
+                    .email(user.getEmail())
+                    .enrollDate(user.getEnrollDate())
+                    .profileImageUrl(user.getProfileImageUrl())
+                    .userProfile(user.getUserProfile())
+                    .build();
+            updatePasswordAndSave(updatedUser);
+        }else {
+            userRepository.save(updatedUser);
+        }
+
+        User finalUpdatedUser = userRepository.save(updatedUser != null ? updatedUser : user);
+
+        return UserDTO.fromEntity(finalUpdatedUser);
+    }
+
+    private void updateProfileImage(User updatedUser, UserProfile userProfile, MultipartFile profileImage) throws IOException {
+        deleteProfileImage(userProfile.getUserImageOriginAddr());
+        deleteProfileImage(userProfile.getUserImageThumbAddr());
+
+        String originalFilename = userProfile.getRefUserCode().getId() + "-original-" + profileImage.getOriginalFilename();
+        String thumbnailFilename = userProfile.getRefUserCode().getId() + "-thumbnail-" + profileImage.getOriginalFilename();
+
+        saveProfileImage(profileImage, originalFilename, thumbnailFilename);
+
+        UserProfile updatedUserProfile = userProfile.builder()
+                .profileCode(userProfile.getProfileCode())
+                .userImageOriginName(originalFilename)
+                .userImageName(thumbnailFilename)
+                .userImageOriginAddr(Paths.get(uploadDir, originalFilename).toString())
+                .userImageThumbAddr(Paths.get(uploadDir, thumbnailFilename).toString())
+                .build();
+
+        updatedUserProfile.setRefUserCode(updatedUser);
+
+        userProfileRepository.save(updatedUserProfile);
+        System.out.println(Paths.get(uploadDir, thumbnailFilename).toString());
+        System.out.println(updatedUser.getUserCode());
+        userRepository.editProfileUrl(Paths.get(uploadDir, thumbnailFilename).toString(), updatedUser.getUserCode());
+    }
+
+    private void deleteProfileImage(String userImageOriginAddr) {
+
+        try {
+            Files.deleteIfExists(Paths.get(userImageOriginAddr));
+            log.info("파일 삭제 성공 : " + userImageOriginAddr);
+        } catch (IOException e) {
+            log.error("파일 삭제 실패 : " + userImageOriginAddr, e);
+        }
+
+    }
+
+    private void validateNickname(int userCode, String newNickname) {
+        User existingUser = userRepository.findByNickname(newNickname);
+        if (existingUser != null && existingUser.getUserCode() != userCode) {
+            throw new DuplicateNicknameException("이미 사용 중인 닉네임입니다.");
+        }
+    }
+
+    // 비밀번호 변경 유효성 검사 메소드
+    private void validatePasswordUpdate(User user, String newPassword, String newPasswordConfirm) {
+        if (!newPassword.equals(newPasswordConfirm)) {
+            throw new InvalidPasswordException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
+    }
+
+
+    private void updatePasswordAndSave(User user) {
+        user.passwordEncode(passwordEncoder);
+        userRepository.save(user);
+    }
+
 
 
 
