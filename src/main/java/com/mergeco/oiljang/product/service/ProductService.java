@@ -58,6 +58,7 @@ public class ProductService {
 
 
     public ProductDTO addProduct(ProductDTO productDTO) {
+        System.out.println(productDTO);
         //ProductDTO를 Product Entity로 변환
         Product product = convertToEntity(productDTO);
 
@@ -183,7 +184,11 @@ public class ProductService {
 
     public void addProductImage(int productCode, List<MultipartFile> imageFiles) {
         if(imageFiles != null && imageFiles.size() <= 5) {
+
+            Product product = productRepository.findById(productCode).orElseThrow(null);
+
             for (MultipartFile imageFile : imageFiles) {
+                System.out.println(productCode);
                 //이미지 업로드 및 정보 저장
                 String imageAddress = saveImage(imageFile);
                 ProImageInfoDTO imageInfo = new ProImageInfoDTO();
@@ -204,8 +209,18 @@ public class ProductService {
             byte[] bytes = imageFile.getBytes();
 
             String getName = imageFile.getName(); // 사용자가 업로드한 파일명
+            System.out.println(imageFile.getOriginalFilename());
+            String ext = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf("."));
+            System.out.println(ext);
             String dbFileName = UUID.randomUUID().toString();
-            String filePath = "C:/images/" + dbFileName; // 실제 이미지를 저장할 경로
+            String ostype = "C:/images/";
+            if (System.getProperty("os.name").indexOf("Windows") != -1 ){
+                ostype = "C:/images/";
+            } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
+                ostype = "/Users/minbumkim/Desktop/test/";
+            }
+            String filePath = ostype + dbFileName + ext;
+            System.out.println(System.getProperty("os.name"));
 
             Path path = Paths.get(filePath);
             Files.write(path, bytes);
@@ -229,13 +244,20 @@ public class ProductService {
     @Transactional
     public void updateProductInfo(int productCode, ProductDTO updatedProductDTO) {
         // 업데이트할 상품을 조회
-        Product existingProduct = productRepository.findById(updatedProductDTO.getProductCode())
+        Product existingProduct = productRepository.findById(productCode)
                 .orElseThrow(IllegalArgumentException::new);
+        System.out.println(existingProduct);
+        System.out.println(updatedProductDTO);
 
         // 새로운 정보로 업데이트
         existingProduct.productName(updatedProductDTO.getProductName());
         existingProduct.productPrice(updatedProductDTO.getProductPrice());
-        existingProduct.productDesc(updatedProductDTO.getProductDesc());
+//        existingProduct.productDesc(updatedProductDTO.getProductDesc());
+
+        String productDesc = updatedProductDTO.getProductDesc();
+        if (productDesc != null) {
+            existingProduct.productDesc(productDesc);
+        }
 
         //상품 업데이트
         productRepository.save(existingProduct);
@@ -310,13 +332,15 @@ public class ProductService {
             throw new IllegalArgumentException("productId는 유효하지 않습니다.");
         }
     }
-
+    @Transactional
     public void updateSellStatusToDeleted(int productCode) {
         // 상품 존재 확인
-//        Product productToUpdate = productRepository.findById(productCode)
-//                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. " + productCode));
-//        // 상품의 판매 상태를 '삭제'로 업데이트
-//        productToUpdate.setSellStatus(ProductRepository.findBySellStatus("삭제"));
-//        productRepository.save(productToUpdate);
+        Product deletedProduct = productRepository.findById(productCode)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. " + productCode));
+        // 상품의 판매 상태를 '삭제'로 업데이트
+        System.out.println(deletedProduct);
+        deletedProduct = deletedProduct.sellStatus(3).builder();
+        System.out.println(deletedProduct);
+        productRepository.save(deletedProduct);
     }
 }

@@ -120,13 +120,13 @@ public class ProductController {
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         int userCode = 1;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-            userCode = user.getUser().getUserCode();
-        } else {
-            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
-        }
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+//            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+//            userCode = user.getUser().getUserCode();
+//        } else {
+//            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
+//        }
 
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
         List<Integer> selectedWishCode = productService.selectWishCode(userCode, productCode);
@@ -152,13 +152,13 @@ public class ProductController {
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         int userCode = 1;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-            userCode = user.getUser().getUserCode();
-        } else {
-            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
-        }
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+//            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+//            userCode = user.getUser().getUserCode();
+//        } else {
+//            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
+//        }
 
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);
@@ -183,51 +183,58 @@ public class ProductController {
         return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> uploadFile(@RequestParam("userUploadedFile") MultipartFile userUploadedFile) {
-        if (userUploadedFile.isEmpty()) {
-            return new ResponseEntity<>("No file uploaded.", HttpStatus.BAD_REQUEST);
-        }
+//    public ResponseEntity<String> uploadFile(@RequestParam("userUploadedFile") MultipartFile userUploadedFile) {
+//        if (userUploadedFile.isEmpty()) {
+//            return new ResponseEntity<>("No file uploaded.", HttpStatus.BAD_REQUEST);
+//        }
+//
+//        try {
+//            // 업로드된 파일 처리 로직
+//            String fileName = userUploadedFile.getName();
+//            System.out.println(fileName);
+//            byte[] bytes = userUploadedFile.getBytes();
+//            System.out.println(bytes);
+//            System.out.println(11111);
+//            String a = productService.saveImage(userUploadedFile);
+//            System.out.println(a);
+//            return new ResponseEntity<>("File uploaded successfully!", HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
-        try {
-            // 업로드된 파일 처리 로직
-            String fileName = userUploadedFile.getName();
-            System.out.println(fileName);
-            byte[] bytes = userUploadedFile.getBytes();
-            System.out.println(bytes);
-            System.out.println(11111);
-            String a = productService.saveImage(userUploadedFile);
-            System.out.println(a);
-            return new ResponseEntity<>("File uploaded successfully!", HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping("/products/{productCode}/images")
-    public ResponseEntity<ResponseMessage> addProductImages(
-            @PathVariable int productCode,
-            @RequestParam("imagesFiles") List<MultipartFile> imageFiles
+    @PostMapping("/products")
+    public ResponseEntity<ResponseMessage> addProduct(
+            @RequestParam("imagesFiles") List<MultipartFile> imageFiles,
+            @ModelAttribute ProductDTO productDTO
     ) {
+        System.out.println(productDTO);
         //이미지 업로드 및 정보 저장 메서드 호출
+        int productCode = productService.addProduct(productDTO).getProductCode();
         productService.addProductImage(productCode, imageFiles);
         // 필요한 응답 메시지 생성
         ResponseMessage responseMessage = new ResponseMessage(200, "이미지 추가 완료!", null);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
+
+
     //상품 수정 API
 
-    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody ProductDTO updatedProductDTO) {
+    // 상품 삭제
+    @ApiOperation(value = "상품 수정")
+    @PutMapping("/products/{productCode}")
+    public ResponseEntity<String> updateProduct(@PathVariable int productCode, @RequestBody ProductDTO productDTO) {
         try {
+            System.out.println(productDTO);
             // 상품 수정 메서드를 ProductService에서 호출
-            productService.updateProductInfo(productCode, updatedProductDTO);
+            productService.updateProductInfo(productCode, productDTO);
             return new ResponseEntity<>("상품 수정이 완료되었습니다.", HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("상품 수정에 실패했습니다. 상품을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
         }
     }
-    // 상품 삭제
     @ApiOperation(value = "중고 상품 삭제")
     @DeleteMapping(value = "/products/{productCode}")
     public ResponseEntity<ResponseMessage> deleteProduct(@PathVariable int productCode) {
