@@ -54,7 +54,7 @@ public class Message {
     @Column(name = "receiver_code")
     private int receiverCode;
 
-    @JoinColumn(name = "msg_delete_code" )
+    @JoinColumn(name = "msg_delete_code")
     @ManyToOne
     private MsgDeleteInfo msgDeleteInfo;
 
@@ -91,7 +91,7 @@ public class Message {
         return this;
     }
     public Message msgDeleteInfo(MsgDeleteInfo val){
-        msgDeleteInfo = val;
+        MsgDeleteInfo msgDeleteInfo = val;
         return this;
     }
 

@@ -31,9 +31,6 @@ public class Inquiry {
     @Column(name = "inq_time")
     private LocalDate inqTime;
 
-    @Column(name = "inq_status")
-    private String inqStatus;
-
     @Column(name = "ref_user_code")
     private int refUserCode;
 
@@ -41,7 +38,42 @@ public class Inquiry {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private InqCategory inqCategory;
 
+    @Column(name = "inq_status")
+    private String inqStatus;
+
     protected Inquiry() {
+    }
+    public Inquiry inqCode(int val){
+        inqCode = val;
+        return this;
+    }
+    public Inquiry inqTitle(String val){
+        inqTitle = val;
+        return this;
+    }
+    public Inquiry inqContent(String val){
+        inqContent = val;
+        return this;
+    }
+    public Inquiry inqAnswer(String val){
+        inqAnswer = val;
+        return this;
+    }
+    public Inquiry inqTime(LocalDate val){
+        inqTime = val;
+        return this;
+    }
+    public Inquiry refUserCode(int val){
+        refUserCode = val;
+        return this;
+    }
+    public Inquiry inqCategory(InqCategory val){
+        inqCategory = val;
+        return this;
+    }
+    public Inquiry inqStatus(String val){
+        inqStatus = val;
+        return this;
     }
 
 }

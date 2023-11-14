@@ -5,7 +5,9 @@ import com.mergeco.oiljang.message.entity.Message;
 import com.mergeco.oiljang.message.entity.MsgDeleteInfo;
 import com.mergeco.oiljang.message.repository.MsgRepository;
 import com.mergeco.oiljang.message.service.MsgService;
+import com.mergeco.oiljang.report.entity.Report;
 import com.mergeco.oiljang.user.repository.UserRepository;
+import io.swagger.annotations.ApiOperation;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -18,9 +20,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -31,7 +36,7 @@ public class MessageTests {
     private MsgService msgService;
 
     @Autowired
-    private UserRepository msgRepository;
+    private MsgRepository msgRepository;
 
 
 //    private static Stream<Arguments> getMsgInfos() {
@@ -201,9 +206,9 @@ public class MessageTests {
     @Transactional
     void updateMsgStatus(){
 
-        msgService.updateMsgStatus(3);
+        int msg = msgService.updateMsgStatus(5);
 
-        Assertions.assertEquals(3, msgService.updateMsgStatus(3));
+        Assertions.assertEquals(5, msg);
     }
 
 
@@ -235,9 +240,44 @@ public class MessageTests {
     @Test
     @DisplayName("쪽지 삭제에 따른 상태값 변경 테스트")
     @Transactional
-    public void deleteMsg(){
-        int msgCode = 2;
-        msgService.updateDeleteCode(msgCode);
+    public void deleteMsg() {
+
+        int msgCode = 6;
+        Optional<Message> message = msgRepository.findById(msgCode);
+
+        // 쪽지가 존재하면
+        if (message.isPresent()) {
+            // 쪽지 삭제 상태 업데이트
+            int result = msgService.updateDeleteCode(msgCode);
+
+            // 쪽지가 성공적으로 업데이트되었는지 확인
+            Assertions.assertEquals(1, result);
+
+            // 업데이트된 쪽지를 다시 조회
+            Optional<Message> updatedMessage = msgRepository.findById(msgCode);
+
+            // 업데이트된 쪽지 상태 확인
+            Assertions.assertTrue(updatedMessage.isPresent());
+            Assertions.assertEquals(2, updatedMessage.get().getMsgDeleteInfo().getMsgDeleteCode());
+        } else {
+            Assertions.fail("쪽지가 존재하지 않습니다.");
+        }
     }
 
+
+    @DisplayName("LIKE 연산자를 활용한 조회")
+    @Test
+      public void selectMsgLike(){
+
+        int userCode = 1;
+        int offset = 0;
+        int limit = 9;
+        String keyword = "맥";
+
+        List<MsgListDTO> msgList = msgService.selectMsgLike(userCode, offset, limit, true, keyword);
+
+        Assertions.assertNotNull(msgList);
+        msgList.forEach(System.out::println);
+
+    }
 }

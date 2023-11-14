@@ -13,6 +13,8 @@ import java.util.UUID;
 @ToString
 public class MsgListDTO {
     private int userCode;
+    private String name;
+    private String id;
     private int senderCode;
     private int receiverCode;
     private String msgContent;

@@ -125,8 +125,8 @@ public class MsgService {
     public int updateMsgStatus(int msgCode) {
         Message message = msgRepository.findById(msgCode).orElseThrow(IllegalArgumentException::new);
 
-        Message messageSave = message.msgStatus("Y").builder();
-        msgRepository.save(messageSave);
+        message.msgStatus("Y").builder();
+        msgRepository.save(message);
         System.out.println(message);
         return msgCode;
     }
@@ -135,17 +135,17 @@ public class MsgService {
     public List<MsgListDTO> getMessages(int userCode, int offset, int limit, Boolean isReceived) {
         String jpql;
         if (isReceived != null && isReceived) {
-            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.receiverCode = :userCode "
                     + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (4, 2) AND m.senderCode <> :userCode";
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> :userCode";
         } else {
-            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.senderCode = :userCode "
                     + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (4, 3)";
+                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3)";
         }
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
@@ -161,7 +161,7 @@ public class MsgService {
     }
 
     private boolean isDeletedBySender(int sender, MsgDeleteInfo msgDeleteInfo){
-        if(msgDeleteInfo.getMsgDeleteCode() == 3){
+        if(msgDeleteInfo.getMsgDeleteCode() == 1){
             return true;
         }
         return false;
@@ -175,41 +175,92 @@ public class MsgService {
     }
 
     @Transactional
-    public void updateDeleteCode(int msgCode) {
-        Message message = msgRepository.findById(msgCode)
-                .orElseThrow(IllegalArgumentException::new);
-
-        System.out.println("service : " + msgCode);
-        int sender = message.getSenderCode();
-        int receiver = message.getReceiverCode();
+    public int updateDeleteCode(int msgCode) {
 
 
+        int result = 0;
+
+        try {
+            Message message = msgRepository.findById(msgCode).orElseThrow(IllegalArgumentException::new);
+
+            System.out.println("service : " + msgCode);
+            int sender = message.getSenderCode();
+            int receiver = message.getReceiverCode();
 
 
-        //builder를 쓰면 새로 받아줘야하고, 현재 영속화 된 엔티티는 Message이기 때문에 , MsgDeleteInfo를 새로 객체생성해서 값을 받아줬으면
-        //해당 값들을 다시 Message엔티티에 세팅해줘야한다.
+            //builder를 쓰면 새로 받아줘야하고, 현재 영속화 된 엔티티는 Message이기 때문에 , MsgDeleteInfo를 새로 객체생성해서 값을 받아줬으면
+            //해당 값들을 다시 Message엔티티에 세팅해줘야한다.
 
-        System.out.println("들어왔니 ?? : " + sender + "이건 리시브" + receiver);
-        System.out.println("????테니스는 무슨 : " + message.getMsgDeleteInfo());
+            System.out.println("sender : " + sender + "receiver :" + receiver);
+            System.out.println("essage.getMsgDeleteInfo() : " + message.getMsgDeleteInfo());
 
-        if(isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())){
+
+
+            if (isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
+                System.out.println("확ㅇ니1:" + message.getMsgDeleteInfo());
+                message = message.msgDeleteInfo(message.getMsgDeleteInfo());
+                message.getMsgDeleteInfo().msgDeleteCode(4).builder();
+
+                System.out.println("message1: " + message);
+
+            } else if (isDeletedBySender(sender, message.getMsgDeleteInfo())) {
+                System.out.println("확ㅇ니2:" + message.getMsgDeleteInfo());
+                message.msgDeleteInfo(message.getMsgDeleteInfo());
+                message.getMsgDeleteInfo().msgDeleteCode(2).builder();
+                System.out.println("message2: " + message);
+            } else if (isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
+                System.out.println("확ㅇ니3:" + message.getMsgDeleteInfo());
+                message.msgDeleteInfo(message.getMsgDeleteInfo());
+                message.getMsgDeleteInfo().msgDeleteCode(3).builder();
+                System.out.println("message3: " + message);
+            } else {
+                System.out.println("확ㅇ니4:" + message.getMsgDeleteInfo());
+                message.msgDeleteInfo(message.getMsgDeleteInfo());
                 message.getMsgDeleteInfo().msgDeleteCode(1).builder();
-            message.getMsgDeleteInfo().msgDeleteStatus("S").builder();
-        }else if(isDeletedBySender(sender, message.getMsgDeleteInfo())){
-            message.getMsgDeleteInfo().msgDeleteCode(3).builder();
-            message.getMsgDeleteInfo().msgDeleteStatus("N").builder();
-        }else if(isDeletedByReceiver(receiver, message.getMsgDeleteInfo())){
-            message.getMsgDeleteInfo().msgDeleteCode(2).builder();
-            message.getMsgDeleteInfo().msgDeleteStatus("R").builder();
-        }else{
-            message.getMsgDeleteInfo().msgDeleteCode(4).builder();
-            message.getMsgDeleteInfo().msgDeleteStatus("B").builder();
+                System.out.println("message4: " + message);
+            }
+            System.out.println("로고 ");
+
+            msgRepository.save(message);
+            result = 1;
+
+        } catch (Exception e) {
+            System.out.println("exception!!!!!!!!! " + e);
+            throw new RuntimeException(e);
         }
 
-        System.out.println("servide : " + message.getMsgDeleteInfo());
-        message.builder();
-        System.out.println("메세지야~:" + message);
-        msgRepository.save(message);
+        return (result > 0) ? 1 : 2;
     }
 
+
+
+    public List<MsgListDTO> selectMsgLike(int userCode, int offset, int limit, Boolean isReceived, String keyword) {
+        String jpql;
+
+        if (isReceived != null && isReceived) {
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                    + "FROM message_and_delete m "
+                    + "LEFT JOIN User u ON m.receiverCode = :userCode "
+                    + "LEFT JOIN m.msgDeleteInfo md "
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (2, 3) AND m.senderCode <> :userCode "
+                    + "AND (m.msgContent LIKE :keyword OR u.name LIKE :keyword)";
+
+        } else {
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                    + "FROM message_and_delete m "
+                    + "LEFT JOIN User u ON m.senderCode = :userCode "
+                    + "LEFT JOIN m.msgDeleteInfo md "
+                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3) "
+                    + "AND (m.msgContent LIKE :keyword OR u.name LIKE :keyword)";
+        }
+
+        TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
+        query.setParameter("userCode", userCode);
+        query.setParameter("keyword", keyword);
+
+        return query.getResultList();
+    }
+
+
 }
+
