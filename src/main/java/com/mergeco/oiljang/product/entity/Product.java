@@ -1,6 +1,8 @@
 package com.mergeco.oiljang.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -32,6 +34,7 @@ public class Product {
     private String wishPlaceTrade;
 
     @Column(name = "enroll_datetime")
+    @CreationTimestamp
     private LocalDateTime enrollDateTime;
 
     @Column(name = "view_count")
@@ -94,12 +97,12 @@ public class Product {
     }
 
     public Product category(int val) {
-        Category.categoryCode(val);
+        Category = new Category(val, null, 0);
         return this;
     }
 
     public Product sellStatus(int val) {
-        SellStatus.sellStatusCode(val);
+        SellStatus= new SellStatus(val, null);
         return this;
     }
 
