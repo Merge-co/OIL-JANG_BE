@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.report;
 
+import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.report.dto.ReportCategoryDTO;
 import com.mergeco.oiljang.report.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
@@ -378,7 +379,7 @@ public class ReportTests {
                 reportComment,
                 reportDate,
                 product,
-                sellStatus,
+                null,
                 new ReportCategoryDTO(reportCategoryNo, reportCategoryCode),
                 null,
                 null,

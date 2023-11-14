@@ -35,16 +35,9 @@ public class ReportController {
     }
 
     @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
-    @GetMapping("/reportManagerment")
-    public ResponseEntity<ResponseMessage> findReportManagement() {
-
-        List<Object[]> management = reportService.selectByReportManagement();
-
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("management", management);
-
-        ResponseMessage responseMessage = new ResponseMessage(200, "신고관리 조회", responseMap);
-        return new ResponseEntity<>(responseMessage, getHeaders(), HttpStatus.OK);
+    @GetMapping("/reportSelect")
+    public List<Report> main() {
+        return reportService.findReports();
     }
 
     @ApiOperation(value = "신고하기", notes = "유저가 신고를 등록합니다.", tags = {"ReportController"})
@@ -74,8 +67,8 @@ public class ReportController {
         responseMap.put("reportDTO", reportDTO);
         log.info("변경된 DTO : " + reportDTO);
 
-     ResponseMessage responseMessage = new ResponseMessage(200, "신고처리 완료", responseMap);
-     return new ResponseEntity<>(responseMessage, getHeaders(),HttpStatus.OK);
+        ResponseMessage responseMessage = new ResponseMessage(200, "신고처리 완료", responseMap);
+        return new ResponseEntity<>(responseMessage, getHeaders(), HttpStatus.OK);
     }
 
 
@@ -98,7 +91,5 @@ public class ReportController {
         httpHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         return httpHeaders;
     }
-
-
 
 }
