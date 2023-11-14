@@ -163,19 +163,73 @@ public class MsgController {
 
     @ApiOperation(value = "쪽지 삭제(수정)")
     @DeleteMapping("/messages/{msgCode}")
-    public ResponseEntity<?> updateDeleteCode(@PathVariable int msgCode){
+    public ResponseEntity<ResponseMessage> updateDeleteCode(@PathVariable int msgCode){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        msgService.updateDeleteCode(msgCode);
+
+
+        int result = msgService.updateDeleteCode(msgCode);
+
+        System.out.println(result);
+
 
         Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("mshCode", msgCode);
-        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 등록 성공", responseMap);
+        responseMap.put("msgCode", msgCode);
+        ResponseMessage responseMessage = new ResponseMessage(200,"쪽지 삭제 성공",responseMap);
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
 
+    @ApiOperation(value = "쪽지 검색 후 리스트 조회")
+    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isReceived={isReceived}&keyword={keyword}")
+    public ResponseEntity<ResponseMessage> selectMsgLike(
+             @RequestParam(required = false) Integer page,
+             @RequestParam String pageKind,
+             @PathVariable int userCode,
+             @RequestParam int offset,
+             @RequestParam int limit,
+             @RequestParam(required = false) Boolean isReceived,
+             @PathVariable(required = false) String keyword){
+
+        if(page == null){
+            page = 1;
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        limit = 0;
+        switch (pageKind){
+            case "merge":
+                limit = 6;
+            case "list":
+                limit = 8;
+        }
+
+        offset = limit * (page -1);
+
+        List<MsgListDTO> msgListDTOList = msgService.selectMsgLike(userCode, offset, limit, isReceived, keyword);
+        double totalMsg = Long.valueOf(msgService.countMsgList()).doubleValue();
+        int totalPage = (int) Math.ceil(totalMsg / limit);
+
+        if(page >= totalPage){
+            page = totalPage;
+        }else if(page < 1){
+            page = 1;
+        }
+
+        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("msgListDTOList", msgListDTOList);
+        responseMap.put("pageingBtn", pagingBtn);
+
+        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 리스트 조회 성공", responseMap);
+
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
 
 }
 
