@@ -27,6 +27,7 @@ public class DetailsUser implements UserDetails {
     private String gender;
     private String phone;
     private List<UserRole> role;
+    private User user;
 
     private Collection<GrantedAuthority> authorities;
 
@@ -40,6 +41,10 @@ public class DetailsUser implements UserDetails {
             return authorities;
         }
         return new ArrayList<>();
+    }
+
+    public User getUser() {
+        return user;
     }
     @Override
     public String getPassword() {

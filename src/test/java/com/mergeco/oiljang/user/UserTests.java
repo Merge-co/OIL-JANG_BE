@@ -3,6 +3,8 @@ package com.mergeco.oiljang.user;
 import com.mergeco.oiljang.auth.model.dto.JoinDTO;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.entity.UserProfile;
+import com.mergeco.oiljang.user.model.dto.UpdateUserDTO;
+import com.mergeco.oiljang.user.model.dto.UserDTO;
 import com.mergeco.oiljang.user.model.service.UserService;
 import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
@@ -47,24 +49,17 @@ public class UserTests {
     private UserService userService;
 
 
-  /*  @AfterEach
-    public void afterEach(){
-        userRepository.clearStore();
-    }*/
-
-
-
 
     private static Stream<Arguments> joinData() throws IOException {
         JoinDTO joinDTO = new JoinDTO();
-        joinDTO.setNickname("토마스기차");
-        joinDTO.setName("이선호");
-        joinDTO.setId("user03");
-        joinDTO.setPwd("user03");
+        joinDTO.setNickname("테스형2");
+        joinDTO.setName("테스형2");
+        joinDTO.setId("test02");
+        joinDTO.setPwd("test02");
         joinDTO.setBirthDate("2000-01-03");
         joinDTO.setGender("남");
-        joinDTO.setPhone("01043214321");
-        joinDTO.setEmail("sun@naver.com");
+        joinDTO.setPhone("010312341241");
+        joinDTO.setEmail("test2@naver.com");
 
 
         File imageFile = new File("C:\\Users\\User\\Desktop\\dir\\upload\\image.jpg");
@@ -132,6 +127,76 @@ public class UserTests {
     }
 
 
+    @DisplayName("나의 회원 정보 조회 테스트")
+    @Test
+    public void testMyInfo(){
 
+        //give
+        int userCode = 1;
 
+        //when
+        UserDTO userDTO = userService.getUserInfo(userCode);
+
+        //then
+        Assertions.assertNotNull(userDTO);
+        Assertions.assertEquals(userCode, userDTO.getUserCode());
+
+        Assertions.assertNotNull(userDTO.getUserImageOriginName());
+        Assertions.assertNotNull(userDTO.getUserImageName());
+        Assertions.assertNotNull(userDTO.getUserImageOriginAddr());
+        Assertions.assertNotNull(userDTO.getUserImageThumbAddr());
+    }
+
+    @DisplayName("나의 회원 정보 수정 성공 테스트(닉네임 및 프로필 이미지 변경)")
+    @Test
+    public void testUpdateMyInfo() throws IOException{
+
+        //given
+        int userCode = 7;
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setNickname("수정 테스트 완료");
+
+        String imagePath = "C:\\Users\\User\\Desktop\\dir\\upload\\lion.jpg";
+        File imageFile = new File(imagePath);
+
+        FileInputStream fileInputStream = new FileInputStream(imageFile);
+        MultipartFile profileImage = new MockMultipartFile("file", imageFile.getName(),"image/*",fileInputStream);
+
+        updateUserDTO.setProfileImage(profileImage);
+
+        //when
+        UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO);
+
+        //then
+        Assertions.assertNotNull(updatedUserDTO);
+        Assertions.assertEquals(userCode, updatedUserDTO.getUserCode());
+        Assertions.assertEquals(updateUserDTO.getNickname(), updatedUserDTO.getNickname());
+
+        Assertions.assertNotNull(updatedUserDTO.getUserImageOriginName());
+        Assertions.assertNotNull(updatedUserDTO.getUserImageName());
+        Assertions.assertNotNull(updatedUserDTO.getUserImageOriginAddr());
+        Assertions.assertNotNull(updatedUserDTO.getUserImageThumbAddr());
+
+    }
+
+    @DisplayName("나의 회원 정보 수정 성공 테스트(비밀번호 변경)")
+    @Test
+    public void testUpdateUserPassword() throws IOException {
+
+        //given
+        int userCode = 7;
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setNewPassword("changePwd1");
+        updateUserDTO.setNewPasswordConfirm("changePwd1");
+
+        //when
+        UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO);
+
+        //then
+        Assertions.assertNotNull(updatedUserDTO);
+        Assertions.assertEquals(userCode, updatedUserDTO.getUserCode());
+
+    }
 }

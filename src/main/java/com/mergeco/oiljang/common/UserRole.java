@@ -1,11 +1,15 @@
 package com.mergeco.oiljang.common;
 
+
 public enum UserRole {
     USER("USER"),
     ADMIN("ADMIN"),
     ALL("USER,ADMIN");
 
     private String role;
+
+    UserRole() {
+    }
 
     UserRole(String role) {
         this.role = role;
