@@ -57,6 +57,7 @@ public class ProductController {
     @ApiOperation(value = "중고 상품 목록 조회")
     @GetMapping("/products")
     public ResponseEntity<ResponseMessage> selectProductList(@RequestParam(required = false) Integer page, @RequestParam String pageKind, @RequestParam(required = false) Integer categoryCode, @RequestParam(required = false, defaultValue = "latest") String sortCondition, @RequestParam(required = false) Integer minPrice, @RequestParam(required = false) Integer maxPrice) {
+        System.out.println(pageKind);
 
         if (page == null) {
             page = 1;
@@ -83,8 +84,10 @@ public class ProductController {
         switch (pageKind) {
             case "merge":
                 limit = 6;
+                break;
             case "list":
                 limit = 8;
+                break;
         }
 
         int offset = limit * (page - 1);

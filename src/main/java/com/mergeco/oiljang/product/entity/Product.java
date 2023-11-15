@@ -1,6 +1,7 @@
 package com.mergeco.oiljang.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -44,6 +45,7 @@ public class Product {
     private int refUserCode;
 
     @ManyToOne
+    @ColumnDefault("1")
     @JoinColumn(name = "sell_status_code")
     private SellStatus SellStatus;
 
