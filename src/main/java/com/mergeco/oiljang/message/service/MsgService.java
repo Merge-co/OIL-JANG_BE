@@ -36,7 +36,6 @@ public class MsgService {
     @Transactional
     public void insertMsg(MsgInsertDTO msgInfo) {
         System.out.println("msgInfo: " + msgInfo);
-        System.out.println("service: " + modelMapper.map(msgInfo, Message.class));
         msgRepository.save(modelMapper.map(msgInfo, Message.class));
     }
 
@@ -126,7 +125,10 @@ public class MsgService {
         Message message = msgRepository.findById(msgCode).orElseThrow(IllegalArgumentException::new);
 
         message.msgStatus("Y").builder();
+        message = message.msgStatus("Y").builder();
         msgRepository.save(message);
+
+
         System.out.println(message);
         return msgCode;
     }
@@ -161,14 +163,14 @@ public class MsgService {
     }
 
     private boolean isDeletedBySender(int sender, MsgDeleteInfo msgDeleteInfo){
-        if(msgDeleteInfo.getMsgDeleteCode() == 1){
+        if(msgDeleteInfo.getMsgDeleteCode() == 2){
             return true;
         }
         return false;
     }
 
       private boolean isDeletedByReceiver(int receiver, MsgDeleteInfo msgDeleteInfo){
-        if(msgDeleteInfo.getMsgDeleteCode() == 2){
+        if(msgDeleteInfo.getMsgDeleteCode() == 3){
             return true;
         }
         return false;
@@ -183,46 +185,55 @@ public class MsgService {
         try {
             Message message = msgRepository.findById(msgCode).orElseThrow(IllegalArgumentException::new);
 
+
             System.out.println("service : " + msgCode);
             int sender = message.getSenderCode();
             int receiver = message.getReceiverCode();
 
+            //MsgDeleteInfo msgDeleteInfo = message.getMsgDeleteInfo();
 
             //builder를 쓰면 새로 받아줘야하고, 현재 영속화 된 엔티티는 Message이기 때문에 , MsgDeleteInfo를 새로 객체생성해서 값을 받아줬으면
             //해당 값들을 다시 Message엔티티에 세팅해줘야한다.
 
             System.out.println("sender : " + sender + "receiver :" + receiver);
-            System.out.println("essage.getMsgDeleteInfo() : " + message.getMsgDeleteInfo());
+            System.out.println("message.getMsgDeleteInfo() : " + message.getMsgDeleteInfo());
 
 
+                if (isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
+                    if (message.getMsgDeleteInfo().getMsgDeleteCode() != 4 && message.getMsgDeleteInfo().getMsgDeleteCode() != 1) {
+                        System.out.println("4번");
+                         message = message.msgDeleteInfo(new MsgDeleteInfo(4, "B")).builder();
+                    }
 
-            if (isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
-                System.out.println("확ㅇ니1:" + message.getMsgDeleteInfo());
-                message = message.msgDeleteInfo(message.getMsgDeleteInfo());
-                message.getMsgDeleteInfo().msgDeleteCode(4).builder();
+                } else if (isDeletedBySender(sender, message.getMsgDeleteInfo())) {
+                    if (message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
+                        System.out.println("2번");
 
-                System.out.println("message1: " + message);
+                        message = message.msgDeleteInfo(new MsgDeleteInfo(2, "S")).builder();
+                    }
+                } else if (isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
+                    if (message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
+                        System.out.println("3번");
+                        message = message.msgDeleteInfo(new MsgDeleteInfo(3, "R")).builder();
+                    }
 
-            } else if (isDeletedBySender(sender, message.getMsgDeleteInfo())) {
-                System.out.println("확ㅇ니2:" + message.getMsgDeleteInfo());
-                message.msgDeleteInfo(message.getMsgDeleteInfo());
-                message.getMsgDeleteInfo().msgDeleteCode(2).builder();
-                System.out.println("message2: " + message);
-            } else if (isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
-                System.out.println("확ㅇ니3:" + message.getMsgDeleteInfo());
-                message.msgDeleteInfo(message.getMsgDeleteInfo());
-                message.getMsgDeleteInfo().msgDeleteCode(3).builder();
-                System.out.println("message3: " + message);
-            } else {
-                System.out.println("확ㅇ니4:" + message.getMsgDeleteInfo());
-                message.msgDeleteInfo(message.getMsgDeleteInfo());
-                message.getMsgDeleteInfo().msgDeleteCode(1).builder();
-                System.out.println("message4: " + message);
+                } else {
+                    if (message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
+                        System.out.println("1번");
+                        if(isDeletedBySender(sender, message.getMsgDeleteInfo())){
+                            message = message.msgDeleteInfo(new MsgDeleteInfo(2, "S")).builder();
+                        } else if(isDeletedByReceiver(receiver, message.getMsgDeleteInfo())){
+                            message = message.msgDeleteInfo(new MsgDeleteInfo(3, "R")).builder();
+                        }
+
+                        System.out.println("1번 메시지 : " + message);
+                    }
+
+
             }
-            System.out.println("로고 ");
 
-            msgRepository.save(message);
-            result = 1;
+                    msgRepository.save(message);
+                    result = 1;
 
         } catch (Exception e) {
             System.out.println("exception!!!!!!!!! " + e);
@@ -231,6 +242,7 @@ public class MsgService {
 
         return (result > 0) ? 1 : 2;
     }
+
 
 
 

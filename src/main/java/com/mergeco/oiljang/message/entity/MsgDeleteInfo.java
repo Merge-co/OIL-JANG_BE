@@ -26,19 +26,20 @@ public class MsgDeleteInfo {
     protected MsgDeleteInfo() {
     }
 
-    public MsgDeleteInfo msgDeleteCode(int val){
-        msgDeleteCode = val;
-        return this;
-    }
+//    public MsgDeleteInfo msgDeleteCode(int val){
+//        msgDeleteCode = val;
+//        return this;
+//    }
 
-    public MsgDeleteInfo msgDeleteStatus(String val){
-        msgDeleteStatus = val;
-        return this;
-    }
-
-    public MsgDeleteInfo builder(){
-        return new MsgDeleteInfo(msgDeleteCode, msgDeleteStatus);
-    }
+//    public MsgDeleteInfo msgDeleteStatus(String val){
+//        msgDeleteStatus = val;
+//        return this;
+//    }
+//
+//
+//    public MsgDeleteInfo builder(){
+//        return new MsgDeleteInfo(msgDeleteCode, msgDeleteStatus);
+//    }
 
 
 }

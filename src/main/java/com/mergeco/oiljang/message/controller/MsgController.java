@@ -111,13 +111,10 @@ public class MsgController {
 
 
     @ApiOperation(value = "쪽지 리스트 조회")
-    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isRecevied={isRecevied}")
+    @GetMapping("/users/{userCode}/messages?isReceived={isReceived}")
     public ResponseEntity<List<MsgListDTO>> getMessages(
             @RequestParam(required = false) Integer page,
-            @RequestParam String pageKind,
             @PathVariable int userCode,
-            @RequestParam int offset,
-            @RequestParam int limit,
             @RequestParam Boolean isReceived) {
 
 
@@ -129,15 +126,9 @@ public class MsgController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        limit = 0;
-        switch (pageKind){
-            case "merge":
-                limit = 6;
-            case "list":
-                limit = 8;
-        }
 
-        offset = limit * (page -1);
+        int limit = 3;
+        int offset = limit * (page - 1);
 
         List<MsgListDTO> msgListDTOList = msgService.getMessages(userCode, offset, limit, isReceived);
         double totalMsg = Long.valueOf(msgService.countMsgList()).doubleValue();
@@ -163,7 +154,7 @@ public class MsgController {
 
     @ApiOperation(value = "쪽지 삭제(수정)")
     @DeleteMapping("/messages/{msgCode}")
-    public ResponseEntity<ResponseMessage> updateDeleteCode(@PathVariable int msgCode){
+    public ResponseEntity<ResponseMessage> updateDeleteCode(@PathVariable int msgCode, int senderCode, int receiverCode){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
@@ -182,13 +173,10 @@ public class MsgController {
 
 
     @ApiOperation(value = "쪽지 검색 후 리스트 조회")
-    @GetMapping("/users/{userCode}/messages?offset={offset}&limit={limit}&isReceived={isReceived}&keyword={keyword}")
+    @GetMapping("/users/{userCode}/messages?isReceived={isReceived}&keyword={keyword}")
     public ResponseEntity<ResponseMessage> selectMsgLike(
              @RequestParam(required = false) Integer page,
-             @RequestParam String pageKind,
              @PathVariable int userCode,
-             @RequestParam int offset,
-             @RequestParam int limit,
              @RequestParam(required = false) Boolean isReceived,
              @PathVariable(required = false) String keyword){
 
@@ -200,15 +188,9 @@ public class MsgController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        limit = 0;
-        switch (pageKind){
-            case "merge":
-                limit = 6;
-            case "list":
-                limit = 8;
-        }
 
-        offset = limit * (page -1);
+        int limit = 3;
+        int offset = limit * (page - 1);
 
         List<MsgListDTO> msgListDTOList = msgService.selectMsgLike(userCode, offset, limit, isReceived, keyword);
         double totalMsg = Long.valueOf(msgService.countMsgList()).doubleValue();
