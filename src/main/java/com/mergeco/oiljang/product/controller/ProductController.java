@@ -93,7 +93,7 @@ public class ProductController {
         int offset = limit * (page - 1);
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
-        double totalItem = Long.valueOf(productService.countProductList()).doubleValue();
+        double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice)).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
         if (page >= totalPage) {

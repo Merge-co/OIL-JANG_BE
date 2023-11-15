@@ -22,6 +22,7 @@ public class JpqlPagingButton {
         pageStatus.put("firstPage", FIRST_PAGE);
         pageStatus.put("before", before);
         pageStatus.put("after", after);
+        pageStatus.put("lastPage", totalPage);
         if(before == 0) {
             pageStatus.put("before", FIRST_PAGE);
         }
