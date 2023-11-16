@@ -67,8 +67,8 @@ public class Inquiry {
         refUserCode = val;
         return this;
     }
-    public Inquiry inqCategory(InqCategory val){
-        inqCategory = val;
+    public Inquiry inqCategory(int val, String val2){
+        inqCategory = new InqCategory(val, val2);
         return this;
     }
     public Inquiry inqStatus(String val){

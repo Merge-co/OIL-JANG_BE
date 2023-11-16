@@ -19,6 +19,10 @@ public class InqDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate inqTime;
     private int refUserCode;
-    private InqCategory inqCategory;
+    private int inqCateCode;
+    private String inqCateName;
     private String inqStatus;
+   // private int userCode;
+
+
 }

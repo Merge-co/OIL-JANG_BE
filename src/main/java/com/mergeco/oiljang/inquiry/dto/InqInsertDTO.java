@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.inquiry.dto;
 
+import com.mergeco.oiljang.inquiry.entity.InqCategory;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -20,6 +21,7 @@ public class InqInsertDTO {
     private int refUserCode;
     private InqCategoryDTO inqCategoryInqCategoryDTO;
     private String inqStatus;
+
 
     public InqInsertDTO(String inqTitle, String inqContent, String inqAnswer, LocalDate inqTime, int refUserCode, InqCategoryDTO inqCategoryDTO, String inqStatus) {
         this.inqTitle = inqTitle;

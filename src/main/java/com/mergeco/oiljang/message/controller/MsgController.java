@@ -115,7 +115,7 @@ public class MsgController {
     public ResponseEntity<List<MsgListDTO>> getMessages(
             @RequestParam(required = false) Integer page,
             @PathVariable int userCode,
-            @RequestParam Boolean isReceived) {
+            @PathVariable Boolean isReceived) {
 
 
         if(page == null){
@@ -177,7 +177,7 @@ public class MsgController {
     public ResponseEntity<ResponseMessage> selectMsgLike(
              @RequestParam(required = false) Integer page,
              @PathVariable int userCode,
-             @RequestParam(required = false) Boolean isReceived,
+             @PathVariable(required = false) Boolean isReceived,
              @PathVariable(required = false) String keyword){
 
         if(page == null){

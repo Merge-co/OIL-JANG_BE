@@ -105,7 +105,7 @@ public class MsgService {
                 + "FROM message_and_delete m "
                 + "LEFT JOIN User u ON m.senderCode = u.userCode OR m.receiverCode = u.userCode "
                 + "LEFT JOIN Product p ON m.refProductCode = p.productCode "
-                + "LEFT JOIN m.msgDeleteInfo md "
+                + "JOIN m.msgDeleteInfo md "
                 + "WHERE m.msgCode = :msgCode";
 
 
@@ -139,14 +139,15 @@ public class MsgService {
         if (isReceived != null && isReceived) {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.receiverCode = :userCode "
-                    + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> :userCode";
+                    + "LEFT JOIN User u ON m.receiverCode = u.userCode "
+                    + "JOIN m.msgDeleteInfo md "
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode";
+            System.out.println("거치는지 확인");
         } else {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.senderCode = :userCode "
-                    + "LEFT JOIN m.msgDeleteInfo md "
+                    + "LEFT JOIN User u ON m.senderCode = u.userCode "
+                    + "JOIN m.msgDeleteInfo md "
                     + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3)";
         }
 
@@ -252,23 +253,25 @@ public class MsgService {
         if (isReceived != null && isReceived) {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.receiverCode = :userCode "
-                    + "LEFT JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (2, 3) AND m.senderCode <> :userCode "
+                    + "LEFT JOIN User u ON m.receiverCode = u.userCode "
+                    + "JOIN m.msgDeleteInfo md "
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode "
                     + "AND (m.msgContent LIKE :keyword OR u.name LIKE :keyword)";
 
         } else {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.senderCode = :userCode "
-                    + "LEFT JOIN m.msgDeleteInfo md "
+                    + "LEFT JOIN User u ON m.senderCode = u.userCode "
+                    + "JOIN m.msgDeleteInfo md "
                     + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3) "
                     + "AND (m.msgContent LIKE :keyword OR u.name LIKE :keyword)";
         }
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
         query.setParameter("userCode", userCode);
-        query.setParameter("keyword", keyword);
+        query.setParameter("keyword", "%" + keyword + "%");
+
+
 
         return query.getResultList();
     }
