@@ -18,6 +18,7 @@ public class UserDTO {
     private String pwd;
     private String email;
     private String phone;
+    private String withdrawStatus;
     private String profileImageUrl;
     private String userImageOriginName;
     private String userImageName;
@@ -33,6 +34,7 @@ public class UserDTO {
         userDTO.setPwd(user.getPwd());
         userDTO.setEmail(user.getEmail());
         userDTO.setPhone(user.getPhone());
+        userDTO.setWithdrawStatus(user.getWithdrawStatus());
         userDTO.setProfileImageUrl(user.getProfileImageUrl());
 
         UserProfile userProfile = user.getUserProfile();

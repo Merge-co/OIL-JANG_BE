@@ -4,6 +4,7 @@ import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.common.UserRole;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class DetailsService implements UserDetailsService {
 
     private final UserRepository repository;
@@ -36,11 +39,25 @@ public class DetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
-        User user = repository.findByUserId(userId);
+        try {
 
-        DetailsUser userDTO = modelMapper.map(user, DetailsUser.class);
+            User user = repository.findByUserId(userId);
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
+            System.out.println("User Info: " + user);
+
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found with ID: " + userId);
+            }
+
+            DetailsUser userDTO = modelMapper.map(user, DetailsUser.class);
+
+            System.out.println("User DTO: " + userDTO);
+
+
+            List<GrantedAuthority> authorities = user.getRoleList().stream()
+                    .map(role -> new SimpleGrantedAuthority(role))
+                    .collect(Collectors.toList());
+            userDTO.setAuthorities(authorities);
 
        /* if(userId == null || userId.equals("")){
             throw new AuthenticationServiceException(userId + "is EMPTY!");
@@ -50,9 +67,15 @@ public class DetailsService implements UserDetailsService {
                     .orElseThrow(() -> new AuthenticationServiceException(userId));
         }*/
 
-        userDTO.setAuthorities(authorities);
+            userDTO.setAuthorities(authorities);
 
-        return userDTO;
+            System.out.println("Final User DTO: " + userDTO);
+
+
+            return userDTO;
+        }catch (NumberFormatException e){
+            throw new UsernameNotFoundException("Invalid userCode format: " + userId);
+        }
     }
 
 

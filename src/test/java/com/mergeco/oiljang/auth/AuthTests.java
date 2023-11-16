@@ -28,10 +28,8 @@ public class AuthTests {
     @DisplayName("JWT 로그인 성공 테스트")
     public void testJwtLoginSuccess() throws Exception {
 
-        /*String id = "user01";
-        String pwd = "user01";*/
-        String id = "test01";
-        String pwd = "1234";
+        String id = "user01";
+        String pwd = "user01";
 
         LoginDTO loginDTO = new LoginDTO();
         loginDTO.setId(id);

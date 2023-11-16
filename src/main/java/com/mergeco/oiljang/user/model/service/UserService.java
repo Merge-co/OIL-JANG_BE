@@ -106,7 +106,7 @@ public class UserService {
                 .birthDate(joinDTO.getBirthDate())
                 .gender(joinDTO.getGender())
                 .enrollType(EnrollType.NORMAL)
-                .role(UserRole.USER)
+                .role(UserRole.ROLE_USER)
                 .phone(joinDTO.getPhone())
                 .verifyStatus("Y")
                 .withdrawStatus("N")
@@ -116,6 +116,8 @@ public class UserService {
                 .build();
 
         user.setUserProfile(userProfile);
+
+        log.debug("user : {}",user);
 
         user.passwordEncode(passwordEncoder);
 
@@ -366,6 +368,17 @@ public class UserService {
     private void updatePasswordAndSave(User user) {
         user.passwordEncode(passwordEncoder);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void withdrawUser(int userCode) {
+
+        User user = userRepository.findById(userCode).orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
+
+        user.withdraw();
+
+        userRepository.save(user);
+
     }
 
 

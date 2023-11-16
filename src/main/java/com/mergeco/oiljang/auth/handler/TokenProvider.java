@@ -6,15 +6,17 @@ import com.mergeco.oiljang.auth.model.service.DetailsService;
 import com.mergeco.oiljang.common.AuthConstants;
 import com.mergeco.oiljang.common.utils.TokenUtils;
 import com.mergeco.oiljang.user.entity.User;
-import com.mergeco.oiljang.user.model.dto.UserDTO;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class TokenProvider {
 
     private final DetailsService detailsService;
@@ -28,26 +30,40 @@ public class TokenProvider {
     }
 
     public TokenDTO generateTokenDTO(User user){
+
+        log.debug("generateTokenDTO user :{}", user);
+
+
         DetailsUser userDTO = modelMapper.map(user, DetailsUser.class);
 
-        return new TokenDTO(AuthConstants.TOKEN_TYPE,
-                user.getName(),
-                TokenUtils.generateJwtToken(userDTO));
+        log.debug("generateTokenDTO userDTO :{}", userDTO);
+
+        return new TokenDTO(AuthConstants.TOKEN_TYPE, user.getName(), TokenUtils.generateJwtToken(userDTO));
     }
 
 
-    public String getUserId(String token){return TokenUtils.getClaimsFromToken(token).getSubject();}
+    public String getUserId(String token){
 
-    public Authentication getAuthentication(String token){
+        Claims claims = TokenUtils.getClaimsFromToken(token);
+        String userId = claims.getSubject();
+        log.debug("Extracted user ID '{}' from token", userId);
+
+        return userId;
+    }
+
+    public Authentication getAuthentication(String token, UserDetailsService userDetailsService){
         Claims claims = TokenUtils.getClaimsFromToken(token);
 
-        if(claims.get("users") == null){
+        if (claims.get("Role") == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
-        UserDetails userDetails = detailsService.loadUserByUsername(this.getUserId(token));
+        String userId = this.getUserId(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        log.info("Created Authentication object for user: {}", userId);
+        return authentication;
     }
 
 }

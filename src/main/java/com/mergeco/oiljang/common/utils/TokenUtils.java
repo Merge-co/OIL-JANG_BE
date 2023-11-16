@@ -87,7 +87,7 @@ public class TokenUtils {
         JwtBuilder builder = Jwts.builder()
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
-                .setSubject("oiljang token : " + user.getUserCode())
+                .setSubject(user.getId())
                 .setExpiration(expireTime)
                 .signWith(SignatureAlgorithm.HS256, createSignature());
         return builder.compact();
@@ -109,6 +109,7 @@ public class TokenUtils {
         Map<String, Object> claims = new HashMap<>();
 
         claims.put("userName", user.getName());
+        claims.put("userCode", user.getUserCode());
         claims.put("Role", user.getRole());
 
         return claims;

@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mergeco.oiljang.common.UserRole;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
@@ -77,6 +78,7 @@ public class User {
 
     @JsonIgnore
     @OneToOne(mappedBy = "refUserCode", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private UserProfile userProfile;
 
     @Column(name = "profile_Image_Url")
@@ -88,6 +90,10 @@ public class User {
         if (userProfile != null) {
             userProfile.setRefUserCode(this);
         }
+    }
+
+    public void withdraw() {
+        this.withdrawStatus = "Y";
     }
 
     public void authorizeUser() {
