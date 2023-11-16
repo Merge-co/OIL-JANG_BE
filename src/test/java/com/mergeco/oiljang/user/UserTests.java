@@ -52,14 +52,14 @@ public class UserTests {
 
     private static Stream<Arguments> joinData() throws IOException {
         JoinDTO joinDTO = new JoinDTO();
-        joinDTO.setNickname("테스형2");
-        joinDTO.setName("테스형2");
-        joinDTO.setId("test02");
-        joinDTO.setPwd("test02");
+        joinDTO.setNickname("테스형4");
+        joinDTO.setName("테스형4");
+        joinDTO.setId("test04");
+        joinDTO.setPwd("test04");
         joinDTO.setBirthDate("2000-01-03");
         joinDTO.setGender("남");
-        joinDTO.setPhone("010312341241");
-        joinDTO.setEmail("test2@naver.com");
+        joinDTO.setPhone("1254151342");
+        joinDTO.setEmail("test3@naver.com");
 
 
         File imageFile = new File("C:\\Users\\User\\Desktop\\dir\\upload\\image.jpg");
@@ -188,8 +188,8 @@ public class UserTests {
         int userCode = 7;
 
         UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-        updateUserDTO.setNewPassword("changePwd1");
-        updateUserDTO.setNewPasswordConfirm("changePwd1");
+        updateUserDTO.setNewPassword("test01");
+        updateUserDTO.setNewPasswordConfirm("test01");
 
         //when
         UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO);
@@ -199,4 +199,23 @@ public class UserTests {
         Assertions.assertEquals(userCode, updatedUserDTO.getUserCode());
 
     }
+
+    @DisplayName("회원 탈퇴 상태값으로 변경 테스트")
+    @Test
+public void testWithdrawUser(){
+
+        //given
+        int userCode = 13;
+
+        //when
+        userService.withdrawUser(userCode);
+
+        //then
+        UserDTO withdrawnUser = UserDTO.fromEntity(userRepository.findById(userCode).orElse(null));
+        Assertions.assertNotNull(withdrawnUser);
+        Assertions.assertEquals("Y", withdrawnUser.getWithdrawStatus().toUpperCase());
+    }
+
+
+
 }

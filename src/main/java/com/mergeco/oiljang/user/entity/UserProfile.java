@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
@@ -22,6 +23,7 @@ public class UserProfile {
 
     @OneToOne
     @JoinColumn(name = "ref_user_code", referencedColumnName = "user_code")
+    @JsonBackReference
     private User refUserCode;
 
     @Column(name = "user_image_origin_name")

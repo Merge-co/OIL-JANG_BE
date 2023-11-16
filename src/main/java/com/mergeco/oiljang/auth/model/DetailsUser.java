@@ -4,6 +4,7 @@ import com.mergeco.oiljang.common.UserRole;
 import com.mergeco.oiljang.user.entity.User;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class DetailsUser implements UserDetails {
 
     private int userCode;
+    private String nickname;
     private String id;
     private String pwd;
     private String name;
@@ -32,11 +34,11 @@ public class DetailsUser implements UserDetails {
     private Collection<GrantedAuthority> authorities;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        if(role != null) {
-            role.forEach(role -> {
-                authorities.add(() -> role.getRole().toString());
+        if (role != null) {
+            role.forEach(userRole -> {
+                authorities.add(new SimpleGrantedAuthority(userRole.getRole().toString()));
             });
             return authorities;
         }
@@ -58,21 +60,21 @@ public class DetailsUser implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
