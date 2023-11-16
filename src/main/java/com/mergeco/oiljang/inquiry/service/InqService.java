@@ -231,7 +231,22 @@ public class InqService {
         return (result > 0) ? 1 : -1;
     }
 
+    @Transactional
+    public int deleteInq(int inqCode) {
 
+        int result = 0;
+
+        try{
+            inqRepository.deleteById(inqCode);
+
+            result = 1;
+        }catch (Exception e){
+            System.out.println("실패~");
+        }
+
+
+        return (result > 0) ? 1 : -1;
+    }
 
 
 //    @Transactional

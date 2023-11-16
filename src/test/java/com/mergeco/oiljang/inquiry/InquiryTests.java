@@ -86,7 +86,7 @@ public class InquiryTests {
         int limit = 9;
 
         List<InqSelectListDTO> inqList = inqService.selectInqList(userCode, offset, limit);
-        log.info("문의 상세조회 테스트 : {}", inqList);
+        //log.info("문의 상세조회 테스트 : {}", inqList);
         System.out.println("문의 상세조회 테스트 : " + inqList);
 
 
@@ -169,7 +169,6 @@ public class InquiryTests {
         Assertions.assertEquals(1, inq);
     }
 
-
 //    @Test
 //    @DisplayName("답변여부 상태값 변경")
 //    void updateMsgStatus(){
@@ -179,10 +178,14 @@ public class InquiryTests {
 //        Assertions.assertEquals("문의 상태 수정 성공", inq);
 //    }
 
-
     @Test
     @DisplayName("문의 삭제")
     public void deleteInq(){
 
+        int inqCode = 1;
+
+        int result = inqService.deleteInq(inqCode);
+
+        Assertions.assertEquals(1, result);
     }
 }

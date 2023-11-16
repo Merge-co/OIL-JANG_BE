@@ -271,11 +271,26 @@ public class InqController {
         System.out.println("컨트롤러 inqDTO: " + inqDTO);
         int result = inqService.updateInq(inqDTO, userCode, inqCode);
 
-        System.out.println(result);
+        System.out.println("result : " + result);
 
-        Map<String, Object> reponseMap = new HashMap<>();
-        reponseMap.put("inqDTO", inqDTO);
-        ResponseMessage responseMessage = new ResponseMessage(200, "문의 수정 성공", reponseMap);
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("inqDTO", inqDTO);
+        ResponseMessage responseMessage = new ResponseMessage(200, "문의 수정 성공", responseMap);
+        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+    }
+
+
+    @ApiOperation(value = "문의 삭제")
+    @DeleteMapping("/inquiries/{inqCode}")
+    public ResponseEntity<ResponseMessage> deleteInq(@PathVariable int inqCode){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        int result = inqService.deleteInq(inqCode);
+
+        System.out.println("result : " + result);
+        Map<String, Object> responseMap = new HashMap<>();
+        ResponseMessage responseMessage = new ResponseMessage(200, "문의 삭제 성공", responseMap);
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 }
