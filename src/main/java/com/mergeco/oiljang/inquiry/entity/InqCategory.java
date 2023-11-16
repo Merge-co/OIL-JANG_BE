@@ -1,4 +1,8 @@
-package com.mergeco.oiljang.inquery.entity;
+package com.mergeco.oiljang.inquiry.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +11,9 @@ import javax.persistence.Table;
 
 @Entity(name = "inqCategory")
 @Table(name = "inq_category")
+@AllArgsConstructor
+@Getter
+@ToString
 public class InqCategory {
     @Id
     @Column(name = "inq_cate_code")
@@ -18,19 +25,4 @@ public class InqCategory {
     protected InqCategory() {
     }
 
-    public int getInqCateCode() {
-        return inqCateCode;
-    }
-
-    public String getInqCateName() {
-        return inqCateName;
-    }
-
-    @Override
-    public String toString() {
-        return "InqCategory{" +
-                "inqCateCode=" + inqCateCode +
-                ", inqCateName='" + inqCateName + '\'' +
-                '}';
-    }
 }

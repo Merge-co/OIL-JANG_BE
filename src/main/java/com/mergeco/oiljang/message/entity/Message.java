@@ -54,7 +54,7 @@ public class Message {
     @Column(name = "receiver_code")
     private int receiverCode;
 
-    @JoinColumn(name = "msg_delete_code")
+    @JoinColumn(name = "msg_delete_code", insertable = false, updatable = false)
     @ManyToOne
     private MsgDeleteInfo msgDeleteInfo;
 
@@ -90,11 +90,15 @@ public class Message {
         receiverCode = val;
         return this;
     }
+//    public Message msgDeleteInfo(int val){
+//        MsgDeleteInfo msgDeleteInfo = new MsgDeleteInfo(val, null);
+//        return this;
+//    }
+
     public Message msgDeleteInfo(MsgDeleteInfo val){
-        MsgDeleteInfo msgDeleteInfo = val;
+        msgDeleteInfo = val;
         return this;
     }
-
     public Message builder(){
         return new Message(msgCode, msgContent, msgStatus, msgTime, refProductCode, senderCode, receiverCode, msgDeleteInfo);
     }

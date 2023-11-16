@@ -1,4 +1,4 @@
-package com.mergeco.oiljang.inquery.dto;
+package com.mergeco.oiljang.inquiry.dto;
 
 import lombok.*;
 

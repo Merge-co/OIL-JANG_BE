@@ -1,17 +1,17 @@
-package com.mergeco.oiljang.inquery.entity;
+package com.mergeco.oiljang.inquiry.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Arrays;
 
 @Entity(name = "inquiry_and_category")
 @Table(name = "inquiry")
 @Getter
 @AllArgsConstructor
+@ToString
 public class Inquiry {
 
     @Id
@@ -35,7 +35,7 @@ public class Inquiry {
     private int refUserCode;
 
     @JoinColumn(name = "inq_cate_code")
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne()
     private InqCategory inqCategory;
 
     @Column(name = "inq_status")
@@ -67,13 +67,17 @@ public class Inquiry {
         refUserCode = val;
         return this;
     }
-    public Inquiry inqCategory(InqCategory val){
-        inqCategory = val;
+    public Inquiry inqCategory(int val, String val2){
+        inqCategory = new InqCategory(val, val2);
         return this;
     }
     public Inquiry inqStatus(String val){
         inqStatus = val;
         return this;
+    }
+
+    public Inquiry builder(){
+        return new Inquiry(inqCode, inqTitle, inqContent, inqAnswer, inqTime, refUserCode, inqCategory, inqStatus);
     }
 
 }
