@@ -131,14 +131,15 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        int userCode = 1;
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-//            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-//            userCode = user.getUser().getUserCode();
-//        } else {
-//            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
-//        }
+        int userCode;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+            userCode = user.getUser().getUserCode();
+        } else {
+            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
+        }
+        System.out.println("ararar" + userCode);
 
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
         List<Integer> selectedWishCode = productService.selectWishCode(userCode, productCode);
@@ -163,14 +164,14 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        int userCode = 1;
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-//            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-//            userCode = user.getUser().getUserCode();
-//        } else {
-//            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
-//        }
+        int userCode;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+            userCode = user.getUser().getUserCode();
+        } else {
+            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
+        }
 
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);
