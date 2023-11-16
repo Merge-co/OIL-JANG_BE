@@ -22,21 +22,28 @@ public class ReportService {
     @PersistenceContext
     private final EntityManager manager;
     private final ReportRepository reportRepository;
-    private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ReportService(EntityManager manager, ReportRepository reportRepository, ProductRepository productRepository, ModelMapper modelMapper) {
+    public ReportService(EntityManager manager, ReportRepository reportRepository, ModelMapper modelMapper) {
         this.manager = manager;
         this.reportRepository = reportRepository;
-        this.productRepository = productRepository;
         this.modelMapper = modelMapper;
     }
 
     public List<Report> findReports() {
-        log.info("[reportService] selectReport  ================================================");
-        return reportRepository.findAll();
+        log.info("[reportService] selectReport  Start================================================");
+        String jpql = "SELECT r " +
+                "FROM tbl_report r " +
+                "RIGHT JOIN r.productCode c ";
+        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
+
+        log.info("[reportService] selectReport  END ================================================");
+//        return reportRepository.findAll();
+        return managment;
     }
+//    (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )
+
     @Transactional
     public String registReport(ReportDTO reportInfo) {
         log.info("[reportService] insertReport Start ==================================================");
@@ -45,12 +52,12 @@ public class ReportService {
         try {
             Report insertReport = modelMapper.map(reportInfo, Report.class);
             reportRepository.save(insertReport);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("check" + e);
             throw new RuntimeException(e);
         }
         log.info("[reportService] insertReport END ==================================================");
-        return (result > 0 ) ? "신고하기 완료" : "신고하기 실패";
+        return (result > 0) ? "신고하기 완료" : "신고하기 실패";
     }
 
 
@@ -68,7 +75,7 @@ public class ReportService {
                     .processDistinction(reportDTO.getProcessDistinction())
                     .processComment(reportDTO.getProcessComment())
                     .processDate(reportDTO.getProcessDate())
-                    .sellStatus(reportDTO.getSellStatus())
+//                    .sellStatus(reportDTO.getSellStatusCode())
                     .build();
             result = 1;
 
@@ -80,13 +87,41 @@ public class ReportService {
     }
 
     public List<Object[]> selectByProcessDetail() {
-        String jpql = "SELECT r.reportCategory.reportCategoryCode, r.product.productName, r.processDate , r.sellStatus.sellStatusCode,   r.reportComment, r.processComment " +
+        String jpql = "SELECT r.productCode.productName, r.processDate , r.sellStatusCode.sellStatusCode,   r.reportComment, r.processComment " +
                 "FROM tbl_report r " +
-                "LEFT JOIN r.product c";
+                "LEFT JOIN r.productCode c";
         List<Object[]> process = manager.createQuery(jpql).getResultList();
 
         return process;
     }
 
 
+    public List<Object[]> selectByReportProduct() {
+        String jpql = "SELECT r.refReportCategoryNo.reportCategoryCode, r.productCode.productName " +
+                "FROM tbl_report r " +
+                "LEFT JOIN r.refReportCategoryNo c";
+        List<Object[]> categoryList = manager.createQuery(jpql).getResultList();
+
+        return categoryList;
+    }
+    public List<Object[]> selectByReportProcess() {
+        String jpql = "SELECT r.refReportCategoryNo.reportCategoryNo, r.productCode.productName, r.reportComment " +
+                "FROM tbl_report r " +
+                "LEFT JOIN r.productCode c";
+        List<Object[]> reportList = manager.createQuery(jpql).getResultList();
+
+        return reportList;
+    }
+    public List<Object[]> selectByReportManagement() {
+        log.info("[reportService] selectReport Start ================================================");
+        String jpql = "SELECT r.reportNo, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ), r.productCode.productName, r.sellStatusCode.sellStatus, r.refReportCategoryNo.reportCategoryCode " +
+                "FROM tbl_report r " +
+                "RIGHT JOIN r.productCode c";
+        List<Object[]> managment = manager.createQuery(jpql).getResultList();
+
+        log.info("[reportService] selectReport END ================================================");
+
+        return managment;
+
+    }
 }

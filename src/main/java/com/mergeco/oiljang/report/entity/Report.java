@@ -4,6 +4,8 @@ import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.report.controller.ReportController;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,15 +27,16 @@ public class Report {
     @Column(name = "report_comment")
     private String reportComment; // 신고 내용
     @Column(name = "report_date")
+    @CreationTimestamp
     private LocalDateTime reportDate; //신고일시
 
     @JoinColumn(name = "product_code")
     @ManyToOne
-    private Product product; // 상품 코드
+    private Product productCode; // 상품 코드
 
     @JoinColumn(name = "sell_status_code")
     @ManyToOne
-    private SellStatus sellStatus; // 판매상태코드
+    private SellStatus sellStatusCode; // 판매상태코드
 
     @Column(name = "process_distinction")
     private String processDistinction; // 처리분류
@@ -44,19 +47,19 @@ public class Report {
 
     @JoinColumn(name = "ref_report_category_no")
     @ManyToOne
-    private ReportCategory reportCategory;// 신고분류 코드 FK
+    private ReportCategory refReportCategoryNo;// 신고분류 코드 FK
 
-    public Report(int reportNo, String reportUserNick, String reportComment, LocalDateTime reportDate, String processDistinction, String processComment, LocalDateTime processDate, Product product, SellStatus sellStatus, ReportCategory reportCategory) {
+    public Report(int reportNo, String reportUserNick, String reportComment, LocalDateTime reportDate, String processDistinction, String processComment, LocalDateTime processDate, Product productCode, SellStatus sellStatusCode, ReportCategory refReportCategoryNo) {
         this.reportNo = reportNo;
         this.reportComment = reportComment;
         this.reportUserNick = reportUserNick;
-        this.sellStatus = sellStatus;
+        this.sellStatusCode = sellStatusCode;
         this.reportDate = reportDate;
         this.processDistinction = processDistinction;
         this.processComment = processComment;
         this.processDate = processDate;
-        this.product = product;
-        this.reportCategory = reportCategory;
+        this.productCode = productCode;
+        this.refReportCategoryNo = refReportCategoryNo;
 
     }
 
@@ -91,8 +94,8 @@ public class Report {
         return this;
     }
 
-    public Report sellStatus(SellStatus sellStatus){
-        this.sellStatus = sellStatus;
+    public Report sellStatus(SellStatus sellStatusCode){
+        this.sellStatusCode = sellStatusCode;
         return this;
     }
 
@@ -100,7 +103,7 @@ public class Report {
     }
 
     public Report build() {
-        return new Report(reportNo, reportUserNick,  reportComment,  reportDate,  processDistinction,  processComment,  processDate,  product,  sellStatus,  reportCategory);
+        return new Report(reportNo, reportUserNick,  reportComment,  reportDate,  processDistinction,  processComment,  processDate,  productCode,  sellStatusCode,  refReportCategoryNo);
     }
 
 }

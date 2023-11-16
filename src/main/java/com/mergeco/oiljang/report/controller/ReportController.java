@@ -40,10 +40,10 @@ public class ReportController {
         return reportService.findReports();
     }
 
+
     @ApiOperation(value = "신고하기", notes = "유저가 신고를 등록합니다.", tags = {"ReportController"})
     @PostMapping("/report")
-    public ResponseEntity<?> registReport(@RequestBody ReportDTO report) {
-
+    public ResponseEntity<ResponseMessage> registReport(@RequestBody ReportDTO report) {
         System.out.println("insertReport : " + report);
 
         reportService.registReport(report);
@@ -59,6 +59,7 @@ public class ReportController {
     @ApiOperation(value = "신고처리", notes = "관리자가 신고내용을 처리합니다.", tags = {"ReportController"})
     @PutMapping("/process")
     public ResponseEntity<?> processModify(@RequestBody ReportDTO reportDTO) {
+
         log.info("DTO 받아 오나요 ? : " + reportDTO);
 
         reportService.modifyReport(reportDTO);
