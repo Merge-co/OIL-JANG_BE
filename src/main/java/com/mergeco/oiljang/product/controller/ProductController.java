@@ -57,13 +57,14 @@ public class ProductController {
     @ApiOperation(value = "중고 상품 목록 조회")
     @GetMapping("/products")
     public ResponseEntity<ResponseMessage> selectProductList(@RequestParam(required = false) Integer page, @RequestParam String pageKind, @RequestParam(required = false) Integer categoryCode, @RequestParam(required = false, defaultValue = "latest") String sortCondition, @RequestParam(required = false) Integer minPrice, @RequestParam(required = false) Integer maxPrice) {
+        System.out.println(pageKind);
 
         if (page == null) {
             page = 1;
         }
 
         if (categoryCode == null) {
-            categoryCode = 1;
+            categoryCode = 6;
         }
 
         if (minPrice == null) {
@@ -83,14 +84,25 @@ public class ProductController {
         switch (pageKind) {
             case "merge":
                 limit = 6;
+                break;
             case "list":
                 limit = 8;
+                break;
+            case "main" :
+                limit = 15;
+                break;
         }
 
         int offset = limit * (page - 1);
+
+        if(pageKind.equals("main")) {
+            offset = 0;
+            limit = limit * page;
+        }
+
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
-        double totalItem = Long.valueOf(productService.countProductList()).doubleValue();
+        double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice)).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
         if (page >= totalPage) {

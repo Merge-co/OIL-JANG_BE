@@ -64,7 +64,7 @@ public class ProductServiceTests {
         //when
         //then
         Assertions.assertDoesNotThrow(
-                () -> productService.countProductList()
+                () -> productService.countProductList(1, -1, -1)
         );
     }
 

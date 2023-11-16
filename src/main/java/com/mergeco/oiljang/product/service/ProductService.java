@@ -84,13 +84,36 @@ public class ProductService {
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
     }
-    public Long countProductList() {
-        Long countPage = productRepository.count();
-        return countPage;
+    public Long countProductList(int categoryCode, int minPrice, int maxPrice) {
+        StringBuilder jpql = new StringBuilder("SELECT COUNT(*) FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
+
+        if(minPrice >= 0) {
+            jpql.append(" AND m.productPrice >= :minPrice");
+        }
+
+        if(maxPrice >= 0) {
+            jpql.append(" AND m.productPrice <= :maxPrice");
+        }
+
+        TypedQuery query = (TypedQuery) entityManager.createQuery(jpql.toString());
+
+        query.setParameter("categoryCode" ,categoryCode);
+
+        if(minPrice >= 0) {
+            query.setParameter("minPrice" ,minPrice);
+        }
+
+        if(maxPrice >= 0) {
+            query.setParameter("maxPrice" ,maxPrice);
+        }
+
+        Long productListCount = (Long) query.getSingleResult();
+
+        return productListCount;
     }
 
     public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, c.categoryName)" +
                 " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
 
         if(minPrice >= 0) {
