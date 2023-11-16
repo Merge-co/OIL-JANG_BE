@@ -88,9 +88,18 @@ public class ProductController {
             case "list":
                 limit = 8;
                 break;
+            case "main" :
+                limit = 15;
+                break;
         }
 
         int offset = limit * (page - 1);
+
+        if(pageKind.equals("main")) {
+            offset = 0;
+            limit = limit * page;
+        }
+
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
         double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice)).doubleValue();
