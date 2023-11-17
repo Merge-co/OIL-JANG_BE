@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.Principal;
@@ -57,14 +58,13 @@ public class ProductController {
     @ApiOperation(value = "중고 상품 목록 조회")
     @GetMapping("/products")
     public ResponseEntity<ResponseMessage> selectProductList(@RequestParam(required = false) Integer page, @RequestParam String pageKind, @RequestParam(required = false) Integer categoryCode, @RequestParam(required = false, defaultValue = "latest") String sortCondition, @RequestParam(required = false) Integer minPrice, @RequestParam(required = false) Integer maxPrice) {
-        System.out.println(pageKind);
 
         if (page == null) {
             page = 1;
         }
 
         if (categoryCode == null) {
-            categoryCode = 6;
+            categoryCode = 1;
         }
 
         if (minPrice == null) {
@@ -84,25 +84,14 @@ public class ProductController {
         switch (pageKind) {
             case "merge":
                 limit = 6;
-                break;
             case "list":
                 limit = 8;
-                break;
-            case "main" :
-                limit = 15;
-                break;
         }
 
         int offset = limit * (page - 1);
-
-        if(pageKind.equals("main")) {
-            offset = 0;
-            limit = limit * page;
-        }
-
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
-        double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice)).doubleValue();
+        double totalItem = Long.valueOf(productService.countProductList()).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
         if (page >= totalPage) {
@@ -196,33 +185,13 @@ public class ProductController {
         return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
     }
 
-//    public ResponseEntity<String> uploadFile(@RequestParam("userUploadedFile") MultipartFile userUploadedFile) {
-//        if (userUploadedFile.isEmpty()) {
-//            return new ResponseEntity<>("No file uploaded.", HttpStatus.BAD_REQUEST);
-//        }
-//
-//        try {
-//            // 업로드된 파일 처리 로직
-//            String fileName = userUploadedFile.getName();
-//            System.out.println(fileName);
-//            byte[] bytes = userUploadedFile.getBytes();
-//            System.out.println(bytes);
-//            System.out.println(11111);
-//            String a = productService.saveImage(userUploadedFile);
-//            System.out.println(a);
-//            return new ResponseEntity<>("File uploaded successfully!", HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @PostMapping("/products")
     public ResponseEntity<ResponseMessage> addProduct(
             @RequestParam("imagesFiles") List<MultipartFile> imageFiles,
             @ModelAttribute ProductDTO productDTO
-    ) {
-        System.out.println(productDTO);
+    ) throws IOException {
+        System.out.println("Received ProductDTO: " + productDTO);
         //이미지 업로드 및 정보 저장 메서드 호출
         int productCode = productService.addProduct(productDTO).getProductCode();
         productService.addProductImage(productCode, imageFiles);

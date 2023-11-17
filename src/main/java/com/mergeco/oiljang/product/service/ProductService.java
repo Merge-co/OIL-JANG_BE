@@ -14,15 +14,18 @@ import com.mergeco.oiljang.wishlist.dto.WishListDTO;
 import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
 import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
+import net.coobird.thumbnailator.Thumbnails;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,36 +87,13 @@ public class ProductService {
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
     }
-    public Long countProductList(int categoryCode, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT COUNT(*) FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
-
-        if(minPrice >= 0) {
-            jpql.append(" AND m.productPrice >= :minPrice");
-        }
-
-        if(maxPrice >= 0) {
-            jpql.append(" AND m.productPrice <= :maxPrice");
-        }
-
-        TypedQuery query = (TypedQuery) entityManager.createQuery(jpql.toString());
-
-        query.setParameter("categoryCode" ,categoryCode);
-
-        if(minPrice >= 0) {
-            query.setParameter("minPrice" ,minPrice);
-        }
-
-        if(maxPrice >= 0) {
-            query.setParameter("maxPrice" ,maxPrice);
-        }
-
-        Long productListCount = (Long) query.getSingleResult();
-
-        return productListCount;
+    public Long countProductList() {
+        Long countPage = productRepository.count();
+        return countPage;
     }
 
     public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, c.categoryName)" +
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
                 " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
 
         if(minPrice >= 0) {
@@ -205,10 +185,26 @@ public class ProductService {
 //        productRepository.save(productSave);
 //    }
 
-    public void addProductImage(int productCode, List<MultipartFile> imageFiles) {
+    public void addProductImage(int productCode, List<MultipartFile> imageFiles) throws IOException {
         if(imageFiles != null && imageFiles.size() <= 5) {
 
             Product product = productRepository.findById(productCode).orElseThrow(null);
+            String ostype = "C:/images/";
+            String thumbName = UUID.randomUUID().toString();
+            String ext = imageFiles.get(0).getOriginalFilename().substring(imageFiles.get(0).getOriginalFilename().lastIndexOf("."));
+
+            if (System.getProperty("os.name").indexOf("Windows") != -1 ){
+                ostype = "C:/images/";
+            } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
+                ostype = "/Users/minbumkim/Desktop/test/";
+            }
+
+            File thumbnailFile = new File(ostype + thumbName + ext);
+
+            BufferedImage img = ImageIO.read(imageFiles.get(0).getInputStream());
+            Thumbnails.of(imageFiles.get(0).getInputStream()).size(219,166).toFile(thumbnailFile);
+
+            product = product.productThumbAddr(thumbnailFile.toString());
 
             for (MultipartFile imageFile : imageFiles) {
                 System.out.println(productCode);
@@ -222,6 +218,8 @@ public class ProductService {
                 // 이미지 정보를 데이터베이스에 저장
                 addProImageInfo(imageInfo);
             }
+
+
         }
     }
     public String saveImage(MultipartFile imageFile) {
@@ -275,7 +273,7 @@ public class ProductService {
         // 새로운 정보로 업데이트
         existingProduct.productName(updatedProductDTO.getProductName());
         existingProduct.productPrice(updatedProductDTO.getProductPrice());
-//        existingProduct.productDesc(updatedProductDTO.getProductDesc());
+        existingProduct.productDesc(updatedProductDTO.getProductDesc());
 
         String productDesc = updatedProductDTO.getProductDesc();
         if (productDesc != null) {

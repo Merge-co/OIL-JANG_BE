@@ -46,6 +46,7 @@ dependencies {
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'net.coobird:thumbnailator:0.4.14'
     implementation 'commons-fileupload:commons-fileupload:1.5'
+    implementation 'net.coobird:thumbnailator:0.4.8'
 }
 
 tasks.named('test') {
