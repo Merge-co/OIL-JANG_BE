@@ -131,25 +131,25 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        int userCode;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-            userCode = user.getUser().getUserCode();
-        } else {
-            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
-        }
-        System.out.println("ararar" + userCode);
 
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
-        List<Integer> selectedWishCode = productService.selectWishCode(userCode, productCode);
+
         productService.updateViewCount(productCode);
         Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productDetail", productDetailDTOList);
-        responseMap.put("selectedWishCode", selectedWishCode);
         responseMap.put("selectedProductDetailImg", selectedProductDetailImg);
+
+        int userCode;
+        List<Integer> selectedWishCode;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
+            DetailsUser user = (DetailsUser) authentication.getPrincipal();
+            userCode = user.getUser().getUserCode();
+            selectedWishCode = productService.selectWishCode(userCode, productCode);
+            responseMap.put("selectedWishCode", selectedWishCode);
+        }
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 상세 조회 성공", responseMap);
 
