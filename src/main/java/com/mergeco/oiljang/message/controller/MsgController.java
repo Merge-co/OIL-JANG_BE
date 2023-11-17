@@ -178,7 +178,7 @@ public class MsgController {
              @RequestParam(required = false) Integer page,
              @PathVariable int userCode,
              @RequestParam(required = false) Boolean isReceived,
-             @RequestParam(required = false) String keyword){
+             @RequestParam String keyword){
 
         if(page == null){
             page = 1;
