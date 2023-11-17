@@ -84,14 +84,25 @@ public class ProductController {
         switch (pageKind) {
             case "merge":
                 limit = 6;
+                break;
             case "list":
                 limit = 8;
+                break;
+            case "main" :
+                limit = 15;
+                break;
         }
 
         int offset = limit * (page - 1);
+
+        if(pageKind.equals("main")) {
+            offset = 0;
+            limit = limit * page;
+        }
+
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
-        double totalItem = Long.valueOf(productService.countProductList()).doubleValue();
+        double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice)).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
         if (page >= totalPage) {
