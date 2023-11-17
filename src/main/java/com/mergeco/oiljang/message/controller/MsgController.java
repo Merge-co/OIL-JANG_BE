@@ -111,11 +111,11 @@ public class MsgController {
 
 
     @ApiOperation(value = "쪽지 리스트 조회")
-    @GetMapping("/users/{userCode}/messages?isReceived={isReceived}")
+    @GetMapping("/users/{userCode}/messages")
     public ResponseEntity<List<MsgListDTO>> getMessages(
             @RequestParam(required = false) Integer page,
             @PathVariable int userCode,
-            @PathVariable Boolean isReceived) {
+            @RequestParam Boolean isReceived) {
 
 
         if(page == null){
@@ -173,12 +173,12 @@ public class MsgController {
 
 
     @ApiOperation(value = "쪽지 검색 후 리스트 조회")
-    @GetMapping("/users/{userCode}/messages?isReceived={isReceived}&keyword={keyword}")
+    @GetMapping("/users/{userCode}/messages/search")
     public ResponseEntity<ResponseMessage> selectMsgLike(
              @RequestParam(required = false) Integer page,
              @PathVariable int userCode,
-             @PathVariable(required = false) Boolean isReceived,
-             @PathVariable(required = false) String keyword){
+             @RequestParam(required = false) Boolean isReceived,
+             @RequestParam(required = false) String keyword){
 
         if(page == null){
             page = 1;
