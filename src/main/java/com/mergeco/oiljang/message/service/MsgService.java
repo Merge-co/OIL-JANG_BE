@@ -250,31 +250,67 @@ public class MsgService {
     public List<MsgListDTO> selectMsgLike(int userCode, int offset, int limit, Boolean isReceived, String keyword) {
         String jpql;
 
-        if (isReceived != null && isReceived) {
-            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
-                    + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.receiverCode = u.userCode "
-                    + "JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode "
-                    + "AND (m.msgContent LIKE :keyword OR u.name LIKE :keyword)";
 
-        } else {
-            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
-                    + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.senderCode = u.userCode "
-                    + "JOIN m.msgDeleteInfo md "
-                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3) "
-                    + "AND (m.msgContent LIKE :keyword OR u.name LIKE :keyword)";
+        if(keyword == null || keyword.equals("")) {
+            keyword = "";
+            if ((isReceived != null && isReceived)) {
+                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                        + "FROM message_and_delete m "
+                        + "LEFT JOIN User u ON m.receiverCode = u.userCode "
+                        + "JOIN m.msgDeleteInfo md "
+                        + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode";
+            } else {
+                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                        + "FROM message_and_delete m "
+                        + "LEFT JOIN User u ON m.senderCode = u.userCode "
+                        + "JOIN m.msgDeleteInfo md "
+                        + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3)";
+            }
+
+        }else{
+            if ((isReceived != null && isReceived)) {
+                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                        + "FROM message_and_delete m "
+                        + "LEFT JOIN User u ON m.receiverCode = u.userCode "
+                        + "JOIN m.msgDeleteInfo md "
+                        + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode "
+                        + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
+
+                System.out.println("확인==================");
+            } else {
+                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+                        + "FROM message_and_delete m "
+                        + "LEFT JOIN User u ON m.senderCode = u.userCode "
+                        + "JOIN m.msgDeleteInfo md "
+                        + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3) "
+                        + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
+
+                System.out.println("확인2==================");
+            }
         }
+
+
+
+
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
         query.setParameter("userCode", userCode);
-        query.setParameter("keyword", "%" + keyword + "%");
+        query.setParameter("keyword", keyword);
+
+        List<MsgListDTO> resultList = query.getResultList();
+
+        if (resultList.isEmpty()) {
+            System.out.println("검색 결과가 없습니다. 알림을 표시하세요."); // 여기에서는 간단히 콘솔에 출력하는 예시입니다.
+        }
+
+
+
 
 
 
         return query.getResultList();
     }
+
 
 
 }
