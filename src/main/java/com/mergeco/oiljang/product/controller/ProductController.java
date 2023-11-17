@@ -64,7 +64,7 @@ public class ProductController {
         }
 
         if (categoryCode == null) {
-            categoryCode = 1;
+            categoryCode = 6;
         }
 
         if (minPrice == null) {
