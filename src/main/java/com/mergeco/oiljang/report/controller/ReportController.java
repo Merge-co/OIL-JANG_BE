@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.report.controller;
 
+import com.mergeco.oiljang.common.restApi.LoginMessage;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.report.dto.ReportCategoryDTO;
 import com.mergeco.oiljang.report.dto.ReportDTO;
@@ -73,17 +74,17 @@ public class ReportController {
     }
 
 
-    @ApiOperation(value = "처리상세", notes = "관리자가 처리 내용을 확인", tags = {"ReportController"})
-    @GetMapping("/processDetail")
-    public ResponseEntity<ResponseMessage> processDetail() {
+    @ApiOperation(value = "신고처리 상세정보", notes = "관리자가 처리 내용을 확인", tags = {"ReportController"})
+    @GetMapping("/processDetail/{reportNo}")
+    public ResponseEntity<?> processDetail(@PathVariable int reportNo) {
 
-        List<Object[]> process = reportService.selectByProcessDetail();
+        Report process = reportService.selectByProcessDetail(reportNo);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("process", process);
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "처리상세", responseMap);
-        return new ResponseEntity<>(responseMessage, getHeaders(), HttpStatus.OK);
+        LoginMessage message = new LoginMessage(HttpStatus.OK , "신고처리 상세정보 조회 성공", responseMap);
+        return new ResponseEntity<>(message, getHeaders(), HttpStatus.OK);
     }
 
     //헤더 값
