@@ -33,14 +33,15 @@ public class ReportService {
 
     public List<Report> findReports() {
         log.info("[reportService] selectReport  Start================================================");
-        String jpql = "SELECT r " +
-                "FROM tbl_report r " +
-                "RIGHT JOIN r.productCode c ";
-        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
+//        String jpql = "SELECT r " +
+//                "FROM tbl_report r " +
+//                "RIGHT JOIN r.productCode c ";
+//        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
+//        System.out.println("???? : "+ managment);
 
         log.info("[reportService] selectReport  END ================================================");
-//        return reportRepository.findAll();
-        return managment;
+        return reportRepository.findAll();
+//        return managment;
     }
 //    (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )
 
@@ -86,13 +87,15 @@ public class ReportService {
         return (result > 0) ? "처리 완료" : "처리 실패";
     }
 
-    public List<Object[]> selectByProcessDetail() {
-        String jpql = "SELECT r.productCode.productName, r.processDate , r.sellStatusCode.sellStatusCode,   r.reportComment, r.processComment " +
-                "FROM tbl_report r " +
-                "LEFT JOIN r.productCode c";
-        List<Object[]> process = manager.createQuery(jpql).getResultList();
+    public Report selectByProcessDetail(int reportNo) {
+        log.info("[ReportService] selectByProcessDetail Start ======================================");
 
-        return process;
+        Report report = reportRepository.findById(reportNo).get();
+
+        log.info("[ReportService] selectByProcessDetail END ======================================");
+
+
+        return report;
     }
 
 
