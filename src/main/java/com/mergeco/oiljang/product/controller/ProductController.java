@@ -158,24 +158,17 @@ public class ProductController {
 
     @ApiOperation(value = "관심 목록에 중고 상품 등록")
     @PostMapping("/products/{productCode}/wishLists")
-    public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode) {
+    public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode, Integer userCode) {
 
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        int userCode;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-            userCode = user.getUser().getUserCode();
-        } else {
-            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
-        }
+
 
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);
-        wishListDTO.setRefUserCode(1);
+        wishListDTO.setRefUserCode(2);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("result", productService.insertWishList(wishListDTO));

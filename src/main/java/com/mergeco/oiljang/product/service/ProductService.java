@@ -116,7 +116,7 @@ public class ProductService {
     }
 
     public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, s.sellStatus)" +
+        StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, s.sellStatus, m.refUserCode)" +
                 " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
 
         if(minPrice >= 0) {

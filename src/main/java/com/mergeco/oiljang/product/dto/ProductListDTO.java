@@ -13,18 +13,20 @@ public class ProductListDTO {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime enrollDateTime;
-    private String categoryName;
+    private String sellStatus;
+    private int refUserCode;
 
     public ProductListDTO() {
     }
 
-    public ProductListDTO(int productCode, String productThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String categoryName) {
+    public ProductListDTO(int productCode, String productThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus, int refUserCode) {
         this.productCode = productCode;
         this.productThumbAddr = productThumbAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.enrollDateTime = enrollDateTime;
-        this.categoryName = categoryName;
+        this.sellStatus = sellStatus;
+        this.refUserCode = refUserCode;
     }
 
     public int getProductCode() {
@@ -67,12 +69,20 @@ public class ProductListDTO {
         this.enrollDateTime = enrollDateTime;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public String getSellStatus() {
+        return sellStatus;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setSellStatus(String sellStatus) {
+        this.sellStatus = sellStatus;
+    }
+
+    public int getRefUserCode() {
+        return refUserCode;
+    }
+
+    public void setRefUserCode(int refUserCode) {
+        this.refUserCode = refUserCode;
     }
 
     @Override
@@ -83,7 +93,8 @@ public class ProductListDTO {
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", enrollDateTime=" + enrollDateTime +
-                ", categoryName='" + categoryName + '\'' +
+                ", sellStatus='" + sellStatus + '\'' +
+                ", refUserCode=" + refUserCode +
                 '}';
     }
 }
