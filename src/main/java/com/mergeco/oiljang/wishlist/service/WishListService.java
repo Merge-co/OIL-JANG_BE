@@ -3,6 +3,7 @@ package com.mergeco.oiljang.wishlist.service;
 import com.mergeco.oiljang.product.repository.ProImageRepository;
 import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
+import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,11 @@ public class WishListService {
     @Transactional
     public String deleteWishList(int wishCode) {
         String result = "관심 목록에서 찜 삭제 실패";
-        wishListRepository.deleteById(wishCode);
+        WishList wishList = wishListRepository.findById(wishCode).orElse(null);
+        System.out.println(11111);
+        if(wishList != null) {
+            wishListRepository.delete(wishList);
+        }
         result = "관심 목록에서 찜 삭제 성공";
         return result;
     }
