@@ -13,19 +13,19 @@ public class ProductListDTO {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime enrollDateTime;
-    private String sellStatus;
+    private String categoryName;
     private int refUserCode;
 
     public ProductListDTO() {
     }
 
-    public ProductListDTO(int productCode, String productThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String sellStatus, int refUserCode) {
+    public ProductListDTO(int productCode, String productThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String categoryName, int refUserCode) {
         this.productCode = productCode;
         this.productThumbAddr = productThumbAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.enrollDateTime = enrollDateTime;
-        this.sellStatus = sellStatus;
+        this.categoryName = categoryName;
         this.refUserCode = refUserCode;
     }
 
@@ -69,12 +69,12 @@ public class ProductListDTO {
         this.enrollDateTime = enrollDateTime;
     }
 
-    public String getSellStatus() {
-        return sellStatus;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setSellStatus(String sellStatus) {
-        this.sellStatus = sellStatus;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public int getRefUserCode() {
@@ -93,7 +93,7 @@ public class ProductListDTO {
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", enrollDateTime=" + enrollDateTime +
-                ", sellStatus='" + sellStatus + '\'' +
+                ", categoryCode='" + categoryName + '\'' +
                 ", refUserCode=" + refUserCode +
                 '}';
     }
