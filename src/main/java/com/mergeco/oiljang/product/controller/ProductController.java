@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -125,30 +126,30 @@ public class ProductController {
 
     @ApiOperation("중고 상품 상세 조회")
     @GetMapping("/products/{productCode}")
-    public ResponseEntity<ResponseMessage> selectProductInfo(@PathVariable int productCode) {
-
+    public ResponseEntity<ResponseMessage> selectProductInfo(@PathVariable int productCode, String isView, String userCode) {
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
 
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
+        if(!Boolean.parseBoolean(isView) && isView != null) {
+            productService.updateViewCount(productCode);
+        }
 
-        productService.updateViewCount(productCode);
         Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productDetail", productDetailDTOList);
         responseMap.put("selectedProductDetailImg", selectedProductDetailImg);
 
-        int userCode;
+
         List<Integer> selectedWishCode;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-            userCode = user.getUser().getUserCode();
-            selectedWishCode = productService.selectWishCode(userCode, productCode);
-            responseMap.put("selectedWishCode", selectedWishCode);
+        if (userCode != null) {
+            selectedWishCode = productService.selectWishCode(Integer.parseInt(userCode), productCode);
+            if(selectedWishCode.size() != 0) {
+                responseMap.put("selectedWishCode", selectedWishCode);
+            }
         }
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 상세 조회 성공", responseMap);
@@ -163,8 +164,6 @@ public class ProductController {
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-
 
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);

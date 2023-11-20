@@ -34,7 +34,7 @@ public class WishListService {
     }
 
     public List<WishListInfoDTO> selectWishList(int offset, int limit, int refUserCode) {
-        String jpql = "SELECT new com.mergeco.oiljang.wishlist.dto.WishListInfoDTO(w.wishCode, p.productThumbAddr, p.SellStatus.sellStatus, p.productName, p.productPrice, p.productDesc)" +
+        String jpql = "SELECT new com.mergeco.oiljang.wishlist.dto.WishListInfoDTO(w.wishCode, p.productThumbAddr, p.SellStatus.sellStatus, p.productName, p.productPrice, p.productDesc, p.productCode)" +
                 " FROM WishList w JOIN w.product p WHERE w.refUserCode = :refUserCode ORDER BY w.wishCode DESC";
         List<WishListInfoDTO> wishList = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)

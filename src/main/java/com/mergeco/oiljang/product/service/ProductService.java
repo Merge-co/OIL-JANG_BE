@@ -178,7 +178,7 @@ public class ProductService {
         }
         return selectProductDetailImg;
     }
-    public List<Integer> selectWishCode(int refUserCode, int productCode) {
+    public List<Integer> selectWishCode(Integer refUserCode, int productCode) {
         String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND w.product.productCode = :productCode";
         List<Integer> wishCode = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
@@ -195,11 +195,17 @@ public class ProductService {
     }
 
     @Transactional
-    public String  insertWishList(WishListDTO wishListDTO) {
-        String result = "관심 목록 등록 실패";
+    public Integer insertWishList(WishListDTO wishListDTO) {
         wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
-        result = "관심 목록 등록 성공";
-        return result;
+
+        String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND w.product.productCode = :productCode";
+
+        List<Integer> wishCode = entityManager.createQuery(jpql)
+                .setParameter("refUserCode", wishListDTO.getRefUserCode())
+                .setParameter("productCode", wishListDTO.getRefProductCode())
+                .getResultList();
+
+        return wishCode.get(0);
     }
 
 //    public void updateTest() {

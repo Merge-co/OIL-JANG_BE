@@ -7,17 +7,19 @@ public class WishListInfoDTO {
     private String productName;
     private int productPrice;
     private String productDesc;
+    private int productCode;
 
     public WishListInfoDTO() {
     }
 
-    public WishListInfoDTO(int wishCode, String proImageThumbAddr, String sellStatus, String productName, int productPrice, String productDesc) {
+    public WishListInfoDTO(int wishCode, String proImageThumbAddr, String sellStatus, String productName, int productPrice, String productDesc, int productCode) {
         this.wishCode = wishCode;
         this.proImageThumbAddr = proImageThumbAddr;
         this.sellStatus = sellStatus;
         this.productName = productName;
         this.productPrice = productPrice;
         this.productDesc = productDesc;
+        this.productCode = productCode;
     }
 
     public int getWishCode() {
@@ -68,6 +70,14 @@ public class WishListInfoDTO {
         this.productDesc = productDesc;
     }
 
+    public int getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(int productCode) {
+        this.productCode = productCode;
+    }
+
     @Override
     public String toString() {
         return "WishListInfoDTO{" +
@@ -77,6 +87,7 @@ public class WishListInfoDTO {
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", productDesc='" + productDesc + '\'' +
+                ", productCode=" + productCode +
                 '}';
     }
 }
