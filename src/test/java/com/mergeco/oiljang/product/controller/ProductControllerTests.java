@@ -67,7 +67,7 @@ public class ProductControllerTests {
     void controllerProductDetail() {
 
         //when
-        ResponseEntity<ResponseMessage> result = productController.selectProductInfo(2, null);
+        ResponseEntity<ResponseMessage> result = productController.selectProductInfo(2, null, null);
 
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
