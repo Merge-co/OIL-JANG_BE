@@ -1,6 +1,7 @@
 package com.mergeco.oiljang.auth.model;
 
 import com.mergeco.oiljang.common.UserRole;
+import com.mergeco.oiljang.user.entity.EnrollType;
 import com.mergeco.oiljang.user.entity.User;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,18 +37,36 @@ public class DetailsUser implements UserDetails {
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
+
         if (role != null) {
             role.forEach(userRole -> {
                 authorities.add(new SimpleGrantedAuthority(userRole.getRole().toString()));
             });
-            return authorities;
         }
-        return new ArrayList<>();
+
+        return authorities;
     }
 
     public User getUser() {
         return user;
     }
+
+    public DetailsUser(User user) {
+        this.userCode = user.getUserCode();
+        this.nickname = user.getNickname();
+        this.id = user.getId();
+        this.pwd = user.getPwd();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.birthDate = user.getBirthDate();
+        this.gender = user.getGender();
+        this.phone = user.getPhone();
+        this.role = new ArrayList<>();
+        this.role.add(user.getRole());
+        this.user = user;
+        this.authorities = getAuthorities();
+    }
+
     @Override
     public String getPassword() {
         return this.pwd;
@@ -77,4 +96,5 @@ public class DetailsUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

@@ -32,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
     @Query("UPDATE User u SET u.profileImageUrl = :profileImageUrl WHERE u.userCode = :userCode")
     int editProfileUrl(@Param("profileImageUrl") String profileImageUrl, @Param("userCode") int userCode);
+
+    @Query("SELECT up FROM User up WHERE up.email = :email")
+    Optional<User> findByEmail(String email);
 }
