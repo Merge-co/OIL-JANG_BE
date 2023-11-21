@@ -14,17 +14,19 @@ public class ProductListDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime enrollDateTime;
     private String categoryName;
+    private int refUserCode;
 
     public ProductListDTO() {
     }
 
-    public ProductListDTO(int productCode, String productThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String categoryName) {
+    public ProductListDTO(int productCode, String productThumbAddr, String productName, int productPrice, LocalDateTime enrollDateTime, String categoryName, int refUserCode) {
         this.productCode = productCode;
         this.productThumbAddr = productThumbAddr;
         this.productName = productName;
         this.productPrice = productPrice;
         this.enrollDateTime = enrollDateTime;
         this.categoryName = categoryName;
+        this.refUserCode = refUserCode;
     }
 
     public int getProductCode() {
@@ -75,6 +77,14 @@ public class ProductListDTO {
         this.categoryName = categoryName;
     }
 
+    public int getRefUserCode() {
+        return refUserCode;
+    }
+
+    public void setRefUserCode(int refUserCode) {
+        this.refUserCode = refUserCode;
+    }
+
     @Override
     public String toString() {
         return "ProductListDTO{" +
@@ -83,7 +93,8 @@ public class ProductListDTO {
                 ", productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
                 ", enrollDateTime=" + enrollDateTime +
-                ", categoryName='" + categoryName + '\'' +
+                ", categoryCode='" + categoryName + '\'' +
+                ", refUserCode=" + refUserCode +
                 '}';
     }
 }

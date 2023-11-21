@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +65,7 @@ public class ProductController {
         }
 
         if (categoryCode == null) {
-            categoryCode = 1;
+            categoryCode = 6;
         }
 
         if (minPrice == null) {
@@ -84,14 +85,25 @@ public class ProductController {
         switch (pageKind) {
             case "merge":
                 limit = 6;
+                break;
             case "list":
                 limit = 8;
+                break;
+            case "main" :
+                limit = 15;
+                break;
         }
 
         int offset = limit * (page - 1);
+
+        if(pageKind.equals("main")) {
+            offset = 0;
+            limit = limit * page;
+        }
+
         List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
 
-        double totalItem = Long.valueOf(productService.countProductList()).doubleValue();
+        double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice)).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
         if (page >= totalPage) {
@@ -114,30 +126,30 @@ public class ProductController {
 
     @ApiOperation("중고 상품 상세 조회")
     @GetMapping("/products/{productCode}")
-    public ResponseEntity<ResponseMessage> selectProductInfo(@PathVariable int productCode) {
-
+    public ResponseEntity<ResponseMessage> selectProductInfo(@PathVariable int productCode, String isView, String userCode) {
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
 
+        if(!Boolean.parseBoolean(isView) && isView != null) {
+            productService.updateViewCount(productCode);
+        }
         List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
 
-        productService.updateViewCount(productCode);
         Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productDetail", productDetailDTOList);
         responseMap.put("selectedProductDetailImg", selectedProductDetailImg);
 
-        int userCode;
+
         List<Integer> selectedWishCode;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-            userCode = user.getUser().getUserCode();
-            selectedWishCode = productService.selectWishCode(userCode, productCode);
-            responseMap.put("selectedWishCode", selectedWishCode);
+        if (userCode != null) {
+            selectedWishCode = productService.selectWishCode(Integer.parseInt(userCode), productCode);
+            if(selectedWishCode.size() != 0) {
+                responseMap.put("selectedWishCode", selectedWishCode);
+            }
         }
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 상세 조회 성공", responseMap);
@@ -147,24 +159,15 @@ public class ProductController {
 
     @ApiOperation(value = "관심 목록에 중고 상품 등록")
     @PostMapping("/products/{productCode}/wishLists")
-    public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode) {
+    public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode, Integer userCode) {
 
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        int userCode;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof DetailsUser) {
-            DetailsUser user = (DetailsUser) authentication.getPrincipal();
-            userCode = user.getUser().getUserCode();
-        } else {
-            return new ResponseEntity<>( new ResponseMessage(200, "로그인 페이지로 이동", null), headers, HttpStatus.OK);
-        }
-
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);
-        wishListDTO.setRefUserCode(1);
+        wishListDTO.setRefUserCode(2);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("result", productService.insertWishList(wishListDTO));
