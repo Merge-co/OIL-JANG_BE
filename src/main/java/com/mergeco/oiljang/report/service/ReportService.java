@@ -1,7 +1,7 @@
 package com.mergeco.oiljang.report.service;
 
 import com.mergeco.oiljang.product.entity.SellStatus;
-import com.mergeco.oiljang.product.repository.ProductRepository;
+import com.mergeco.oiljang.report.dto.ReportsDTO;
 import com.mergeco.oiljang.report.entity.Report;
 import com.mergeco.oiljang.report.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
@@ -31,19 +31,36 @@ public class ReportService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Report> findReports() {
-        log.info("[reportService] selectReport  Start================================================");
-//        String jpql = "SELECT r " +
-//                "FROM tbl_report r " +
-//                "RIGHT JOIN r.productCode c ";
-//        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
-//        System.out.println("???? : "+ managment);
+ /*   public List<Report> findReports() {
+        log.info("[reportService] selectReport  Start==================================");
+        String jpql = "SELECT r " +
+                "FROM tbl_report r " +
+                "RIGHT JOIN r.productCode c ";
+        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
+        System.out.println("???? : "+ managment);
 
-        log.info("[reportService] selectReport  END ================================================");
+        log.info("[reportService] selectReport  END ====================================");
         return reportRepository.findAll();
-//        return managment;
+        return managment;
     }
-//    (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )
+    (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )*/
+
+    public List<ReportsDTO> findReports() {
+        log.info("[reportService] selectReport Start ================================================");
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportUserNick , (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ), r.productCode.productName, r.processDistinction, r.refReportCategoryNo.reportCategoryCode, r.reportDate) " +
+                "FROM tbl_report r " +
+                "JOIN r.productCode c " +
+                "ORDER BY r.reportNo DESC";
+
+        List<ReportsDTO> management=  manager.createQuery(jpql, ReportsDTO.class).getResultList();
+
+        System.out.println("서비스 매니저: " + management );
+
+        log.info("[reportService] selectReport END ================================================");
+
+        return management;
+    }
+
 
     @Transactional
     public String registReport(ReportDTO reportInfo) {
@@ -63,27 +80,27 @@ public class ReportService {
 
 
     @Transactional
-    public Object modifyReport(@RequestBody ReportDTO reportDTO) {
-        log.info("[reportService] updateReport Start ================================================");
+    public String modifyReport(@RequestBody ReportDTO reportDTO) {
+        log.info("[reportService] updateReport Start =============================");
 
         int result = 0;
 
         try {
-            Report report = reportRepository.findById(reportDTO.getReportNo()).get();
-            log.info("Repository Check : " + report);
+            Report report = reportRepository.findById(reportDTO.getReportNo()).orElseThrow(IllegalArgumentException::new);
 
+            log.info("Repository Check : " + report);
             report = report
                     .processDistinction(reportDTO.getProcessDistinction())
                     .processComment(reportDTO.getProcessComment())
                     .processDate(reportDTO.getProcessDate())
-//                    .sellStatus(reportDTO.getSellStatusCode())
+                    .sellStatusCode(new SellStatus(reportDTO.getSellStatusCode(), null))
                     .build();
             result = 1;
 
         } catch (Exception e) {
             log.info("[Report update] Exception !!" + e);
         }
-        log.info("[reportService] updateReport END ===============================================");
+        log.info("[reportService] updateReport END ================================");
         return (result > 0) ? "처리 완료" : "처리 실패";
     }
 
@@ -107,6 +124,7 @@ public class ReportService {
 
         return categoryList;
     }
+
     public List<Object[]> selectByReportProcess() {
         String jpql = "SELECT r.refReportCategoryNo.reportCategoryNo, r.productCode.productName, r.reportComment " +
                 "FROM tbl_report r " +
@@ -115,6 +133,7 @@ public class ReportService {
 
         return reportList;
     }
+
     public List<Object[]> selectByReportManagement() {
         log.info("[reportService] selectReport Start ================================================");
         String jpql = "SELECT r.reportNo, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ), r.productCode.productName, r.sellStatusCode.sellStatus, r.refReportCategoryNo.reportCategoryCode " +
@@ -125,6 +144,18 @@ public class ReportService {
         log.info("[reportService] selectReport END ================================================");
 
         return managment;
+    }
 
+    public List<Report> selectReportList(String search) {
+        log.info("[ReportService] selectReportList Start =================");
+        log.info("[ReportService] search : {}", search);
+
+        List<Report> reportListWithSearchValue = reportRepository.findByReportUserNickContaining(search);
+
+        System.out.println("서비스 값다아옴 : " + reportListWithSearchValue);
+
+        log.info("[ReportService] selectReportList END ===================");
+
+        return reportListWithSearchValue;
     }
 }
