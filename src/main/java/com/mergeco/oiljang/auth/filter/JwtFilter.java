@@ -34,6 +34,16 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         log.info("doFilterInternal start");
+
+        if ((request.getRequestURI().equals("/join") && request.getMethod().equals("POST"))) {
+            log.info("Skipping JwtFilter for Join or Login request");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        log.info("Processing JwtFilter for non-Join and non-Login request");
+
+
         log.info("request : {}", request);
 
         try {
@@ -96,6 +106,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean isJoinEndpoint(HttpServletRequest request) {
-        return request.getRequestURI().equals("/join") && request.getMethod().equals("POST");
+        return (request.getRequestURI().equals("/join") && request.getMethod().equals("POST")) ||
+                (request.getRequestURI().equals("/login") && request.getMethod().equals("POST"));
     }
 }

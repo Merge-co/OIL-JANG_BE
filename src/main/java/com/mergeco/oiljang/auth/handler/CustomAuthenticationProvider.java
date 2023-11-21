@@ -4,9 +4,7 @@ import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.auth.model.service.DetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,11 +38,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         log.info("Authentication successful for user: {}", id);
-        return new UsernamePasswordAuthenticationToken(detailsUser, pass, detailsUser.getAuthorities());
+
+
+        return new UsernamePasswordAuthenticationToken(detailsUser, null, detailsUser.getAuthorities());
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
+
+
+
 }
