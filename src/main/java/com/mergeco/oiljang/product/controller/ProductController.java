@@ -132,10 +132,10 @@ public class ProductController {
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
 
-        List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
         if(!Boolean.parseBoolean(isView) && isView != null) {
             productService.updateViewCount(productCode);
         }
+        List<ProductDetailDTO> productDetailDTOList = productService.selectProductDetail(productCode);
 
         Map<String, String> selectedProductDetailImg = productService.selectProductDetailImg(productCode);
 
