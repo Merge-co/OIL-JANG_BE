@@ -17,6 +17,7 @@ public class BeanConfiguration {
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
                 .setFieldMatchingEnabled(true);
 
+
         return modelMapper;
     }
 

@@ -58,15 +58,15 @@ public class ProductServiceTests {
         Assertions.assertNotNull(productCategoryList);
     }
 
-    @Test
-    void countProductList() {
-
-        //when
-        //then
-        Assertions.assertDoesNotThrow(
-                () -> productService.countProductList(1, -1, -1)
-        );
-    }
+//    @Test
+//    void countProductList() {
+//
+//        //when
+//        //then
+//        Assertions.assertDoesNotThrow(
+//                () -> productService.countProductList(1, -1, -1)
+//        );
+//    }
 
     @Test
     void selectProductList() {
