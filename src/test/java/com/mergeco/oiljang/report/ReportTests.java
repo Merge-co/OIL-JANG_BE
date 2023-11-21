@@ -113,21 +113,21 @@ public class ReportTests {
 
     @DisplayName("신고처리상세 - 신고번호, 접수일시, 신고분류, 판매글, 처리일시, 신고처리 결과, 신고사유, 신고처리내용 조회")
     @Test
-    public void processDetail() {
+    public void processDetail(int reportNo) {
         //given
         //when
-        List<Object[]> processDetail = service.selectByProcessDetail();
+        Report processDetail = service.selectByProcessDetail(reportNo);
 
         //then
         Assertions.assertNotNull(processDetail);
         System.out.println(processDetail);
-        System.out.println("================================");
-        processDetail.forEach(row -> {
-            for (Object col : row) {
-                System.out.print(col + " : ");
-            }
-            System.out.println();
-        });
+//        System.out.println("================================");
+//        processDetail.forEach(row -> {
+//            for (Object col : row) {
+//                System.out.print(col + " : ");
+//            }
+//            System.out.println();
+//        });
     }
 
     /* ==================================================================================== */
@@ -157,9 +157,8 @@ public class ReportTests {
             String reportComment, // 신고내용
             LocalDateTime reportDate, // 신고일시
             int product, //상품코드
-            int sellStatus, //판매상태코드
-            int reportCategoryNo, // 신고분류
-            String reportCategoryCode
+            int sellStatusCode, //판매상태코드
+            int refReportCategoryNo // 신고분류
     ) {
         //given
         ReportDTO reportInsert = new ReportDTO(
@@ -168,8 +167,8 @@ public class ReportTests {
                 reportComment,
                 reportDate,
                 product,
-                null,
-                new ReportCategoryDTO(reportCategoryNo, reportCategoryCode),
+                sellStatusCode,
+                refReportCategoryNo,
                 null,
                 null,
                 null
