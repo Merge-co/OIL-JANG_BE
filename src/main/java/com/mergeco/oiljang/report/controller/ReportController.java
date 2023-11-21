@@ -63,28 +63,26 @@ public class ReportController {
 
         log.info("DTO 받아 오나요 ? : " + reportDTO);
 
-        reportService.modifyReport(reportDTO);
+        return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "접수된 신고 처리 완료", reportService.modifyReport(reportDTO)));
 
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("reportDTO", reportDTO);
-        log.info("변경된 DTO : " + reportDTO);
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "신고처리 완료", responseMap);
-        return new ResponseEntity<>(responseMessage, getHeaders(), HttpStatus.OK);
     }
 
 
     @ApiOperation(value = "신고처리 상세정보", notes = "관리자가 처리 내용을 확인", tags = {"ReportController"})
     @GetMapping("/processDetail/{reportNo}")
     public ResponseEntity<?> processDetail(@PathVariable int reportNo) {
+        return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "신고처리 상세정보 조회 성공", reportService.selectByProcessDetail(reportNo)));
+    }
 
-        Report process = reportService.selectByProcessDetail(reportNo);
+    @ApiOperation(value = "신고관리 검색", notes = "신고자 검색", tags = {"ReportController"})
+    @GetMapping("/search")
+    public ResponseEntity<?> selectSearchReportList (
+            @RequestParam(name = "s", defaultValue = "all") String search) {
 
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("process", process);
-
-        LoginMessage message = new LoginMessage(HttpStatus.OK , "신고처리 상세정보 조회 성공", responseMap);
-        return new ResponseEntity<>(message, getHeaders(), HttpStatus.OK);
+        return ResponseEntity
+                .ok()
+                .body(new LoginMessage(HttpStatus.OK, "조회 성공", reportService.selectReportList(search)));
     }
 
     //헤더 값

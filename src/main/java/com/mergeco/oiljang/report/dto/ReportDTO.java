@@ -1,7 +1,10 @@
 package com.mergeco.oiljang.report.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mergeco.oiljang.product.entity.SellStatus;
+import jdk.jfr.DataAmount;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +25,7 @@ public class ReportDTO {
     private int refReportCategoryNo; // 신고분류 코드 FK -> 광고성 , 사기의심
     private String processDistinction; // 처리분류 => null
     private String processComment; // 처리 내용  null
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime processDate; // 처리 일시 null
 
 }

@@ -4,8 +4,11 @@ import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.report.controller.ReportController;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -38,11 +41,14 @@ public class Report {
     @ManyToOne
     private SellStatus sellStatusCode; // 판매상태코드
 
+    @ColumnDefault("N")
+    @Builder.Default()
     @Column(name = "process_distinction")
     private String processDistinction; // 처리분류
     @Column(name = "process_comment")
     private String processComment; // 처리 내용
     @Column(name = "process_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime processDate; // 처리 일시
 
     @JoinColumn(name = "ref_report_category_no")
@@ -94,7 +100,7 @@ public class Report {
         return this;
     }
 
-    public Report sellStatus(SellStatus sellStatusCode){
+    public Report sellStatusCode(SellStatus sellStatusCode){
         this.sellStatusCode = sellStatusCode;
         return this;
     }
