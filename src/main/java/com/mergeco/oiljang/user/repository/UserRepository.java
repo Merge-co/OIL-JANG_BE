@@ -35,4 +35,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT up FROM User up WHERE up.email = :email")
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT up FROM User up WHERE up.email = :email")
+    User findByEmailFromOAuth2(String email);
+
 }

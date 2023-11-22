@@ -83,13 +83,15 @@ public class OAuth2Config {
                 .scope(googleScope.split(","))
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .clientName("Google")
-                .authorizationUri("https://accounts.google.com/o/oauth2/auth")  // 여기에 Google의 authorizationUri를 설정
+                .authorizationUri("https://accounts.google.com/o/oauth2/auth")
                 .tokenUri("https://accounts.google.com/o/oauth2/token")
-                .userInfoUri("https://www.googleapis.com/oauth2/v2/userinfo")
-                .userNameAttributeName(IdTokenClaimNames.SUB)
+                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
                 .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
+                .userNameAttributeName(IdTokenClaimNames.SUB)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
                 .build();
+
+
     }
 
     public ClientRegistration naverClientRegistration() {

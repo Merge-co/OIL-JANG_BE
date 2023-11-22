@@ -179,7 +179,7 @@ public class ProductService {
         return selectProductDetailImg;
     }
     public List<Integer> selectWishCode(Integer refUserCode, int productCode) {
-        String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND w.product.productCode = :productCode";
+        String jpql = "SELECT w.wishCode FROM WishList w WHERE w.refUserCode = :refUserCode AND w.product.productCode = :productCode";
         List<Integer> wishCode = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
                 .setParameter("productCode", productCode)
@@ -198,7 +198,7 @@ public class ProductService {
     public Integer insertWishList(WishListDTO wishListDTO) {
         wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
 
-        String jpql = "SELECT w.wishCode FROM WishList w WHERE refUserCode = :refUserCode AND w.product.productCode = :productCode";
+        String jpql = "SELECT w.wishCode FROM WishList w WHERE w.refUserCode = :refUserCode AND w.product.productCode = :productCode";
 
         List<Integer> wishCode = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", wishListDTO.getRefUserCode())

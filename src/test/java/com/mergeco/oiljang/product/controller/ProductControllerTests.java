@@ -80,7 +80,9 @@ public class ProductControllerTests {
     void controllerRegistWishList() {
 
         //when
-        ResponseEntity<ResponseMessage> result = productController.registWishlist(2, 2);
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductCode(2);
+        ResponseEntity<ResponseMessage> result = productController.registWishlist(2, productDTO);
 
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);

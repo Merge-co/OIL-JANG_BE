@@ -34,9 +34,17 @@ public class MsgService {
     }
 
     @Transactional
-    public void insertMsg(MsgInsertDTO msgInfo) {
-        System.out.println("msgInfo: " + msgInfo);
-        msgRepository.save(modelMapper.map(msgInfo, Message.class));
+    public String insertMsg(MsgInsertDTO msgInfo) {
+        int result = 0;
+
+        try{
+            System.out.println("msgInfo: " + msgInfo);
+            msgRepository.save(modelMapper.map(msgInfo, Message.class));
+            result = 1;
+        }catch(Exception e){
+            System.out.println("Exception! " + e);
+        }
+        return (result > 0) ? "쪽지 등록 성공" : "쪽지 등록 실패";
     }
 
 
@@ -137,14 +145,14 @@ public class MsgService {
     public List<MsgListDTO> getMessages(int userCode, int offset, int limit, Boolean isReceived) {
         String jpql;
         if (isReceived != null && isReceived) {
-            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.receiverCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
                     + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode";
             System.out.println("거치는지 확인");
         } else {
-            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+            jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.senderCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
