@@ -1,21 +1,19 @@
 package com.mergeco.oiljang.report.service;
 
 import com.mergeco.oiljang.product.entity.SellStatus;
+import com.mergeco.oiljang.report.dto.ReportsDTO;
 import com.mergeco.oiljang.report.entity.Report;
 import com.mergeco.oiljang.report.dto.ReportDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.liquibase.DataSourceClosingSpringLiquibase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,19 +31,35 @@ public class ReportService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Report> findReports() {
-        log.info("[reportService] selectReport  Start================================================");
-//        String jpql = "SELECT r " +
-//                "FROM tbl_report r " +
-//                "RIGHT JOIN r.productCode c ";
-//        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
-//        System.out.println("???? : "+ managment);
+ /*   public List<Report> findReports() {
+        log.info("[reportService] selectReport  Start==================================");
+        String jpql = "SELECT r " +
+                "FROM tbl_report r " +
+                "RIGHT JOIN r.productCode c ";
+        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
+        System.out.println("???? : "+ managment);
 
-        log.info("[reportService] selectReport  END ================================================");
+        log.info("[reportService] selectReport  END ====================================");
         return reportRepository.findAll();
-//        return managment;
+        return managment;
     }
-//    (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )
+    (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )*/
+
+    public List<ReportsDTO> findReports() {
+        log.info("[reportService] selectReport Start ===========================");
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+                "FROM tbl_report r " +
+                "JOIN r.productCode c " +
+                "ORDER BY r.reportNo DESC";
+        List<ReportsDTO> management=  manager.createQuery(jpql).getResultList();
+
+        System.out.println("서비스 매니저: " + management );
+
+        log.info("[reportService] selectReport END =============================");
+
+        return management;
+    }
+
 
     @Transactional
     public String registReport(ReportDTO reportInfo) {
@@ -94,6 +108,8 @@ public class ReportService {
 
         Report report = reportRepository.findById(reportNo).get();
 
+        System.out.println(report);
+
         log.info("[ReportService] selectByProcessDetail END ======================================");
 
 
@@ -139,7 +155,7 @@ public class ReportService {
 
         System.out.println("서비스 값다아옴 : " + reportListWithSearchValue);
 
-            log.info("[ReportService] selectReportList END ===================");
+        log.info("[ReportService] selectReportList END ===================");
 
         return reportListWithSearchValue;
     }
