@@ -5,6 +5,7 @@ import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.common.utils.TokenUtils;
 import com.mergeco.oiljang.user.entity.User;
 import com.mergeco.oiljang.user.model.service.OAuth2Service;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +14,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +25,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/oauth2")
+@Slf4j
 public class OAuth2Controller {
 
     @Autowired
@@ -40,6 +43,9 @@ public class OAuth2Controller {
 
     @PostMapping("/login/google")
     public ResponseEntity<?> loginWithGoogle(){
+
+        log.debug("loginWithGoogle start");
+
         Map<String, Object> additionalParameters = new HashMap<>();
         additionalParameters.put("access_type", "offline");
         additionalParameters.put("prompt", "consent");
@@ -48,12 +54,15 @@ public class OAuth2Controller {
         return ResponseEntity.ok("{\"authorizeUrl\": \"" + authorizeUrl + "\"}");
     }
 
-    @PostMapping("/login/google/callback")
+    @GetMapping("/login/google/callback")
     public ResponseEntity<?> googleCallback(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient,
                                             @AuthenticationPrincipal OAuth2User oauth2User
     ){
         // OAuth2 사용자 정보를 기반으로 User 생성
         oAuth2Service.joinFromGoogle(oauth2User);
+
+
+        log.debug("Google Login Successful!");
 
 
         // JWT 토큰을 클라이언트에 반환
@@ -71,7 +80,7 @@ public class OAuth2Controller {
         return ResponseEntity.ok("{\"authorizeUrl\": \"" + authorizeUrl + "\"}");
     }
 
-    @PostMapping("/login/naver/callback")
+    @GetMapping("/login/naver/callback")
     public ResponseEntity<?> naverCallback(@RegisteredOAuth2AuthorizedClient("naver") OAuth2AuthorizedClient authorizedClient,
                                             @AuthenticationPrincipal OAuth2User oauth2User){
 
