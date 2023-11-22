@@ -38,18 +38,20 @@ public class MsgController {
 
     @ApiOperation(value = "쪽지 등록")
     @PostMapping("/messages")
-    public ResponseEntity<ResponseMessage> msgAnswer(@RequestBody MsgInsertDTO msgInfo) {
+    public ResponseEntity<?> msgAnswer(@RequestBody MsgInsertDTO msgInfo) {
 
-        HttpHeaders headers = new HttpHeaders();
+      //  HttpHeaders headers = new HttpHeaders();
 
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+      //  headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-            msgService.insertMsg(msgInfo);
+          //  msgService.insertMsg(msgInfo);
             System.out.println("controller : " + msgInfo);
-            Map<String, Object> responseMap = new HashMap<>();
+          //  Map<String, Object> responseMap = new HashMap<>();
 
-            ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 등록 성공", responseMap);
-            return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+           // ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 등록 성공", responseMap);
+            return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "쪽지 등록 성공", msgService.insertMsg(msgInfo)));
+
+
     }
 
 

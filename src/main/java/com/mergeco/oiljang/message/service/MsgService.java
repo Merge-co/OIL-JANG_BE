@@ -34,9 +34,17 @@ public class MsgService {
     }
 
     @Transactional
-    public void insertMsg(MsgInsertDTO msgInfo) {
-        System.out.println("msgInfo: " + msgInfo);
-        msgRepository.save(modelMapper.map(msgInfo, Message.class));
+    public String insertMsg(MsgInsertDTO msgInfo) {
+        int result = 0;
+
+        try{
+            System.out.println("msgInfo: " + msgInfo);
+            msgRepository.save(modelMapper.map(msgInfo, Message.class));
+            result = 1;
+        }catch(Exception e){
+            System.out.println("Exception! " + e);
+        }
+        return (result > 0) ? "쪽지 등록 성공" : "쪽지 등록 실패";
     }
 
 
