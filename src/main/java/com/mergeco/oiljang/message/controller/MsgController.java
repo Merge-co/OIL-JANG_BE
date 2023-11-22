@@ -1,6 +1,7 @@
 package com.mergeco.oiljang.message.controller;
 
 import com.mergeco.oiljang.common.paging.JpqlPagingButton;
+import com.mergeco.oiljang.common.restApi.LoginMessage;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.message.dto.*;
 import com.mergeco.oiljang.message.service.MsgService;
@@ -92,7 +93,7 @@ public class MsgController {
 
     @ApiOperation(value = "쪽지 상세 조회")
     @GetMapping("/messages/{msgCode}")
-    public ResponseEntity<ResponseMessage> selectMsgDetail(@PathVariable int msgCode) {
+    public ResponseEntity<List<MsgProUserInfoDTO>> selectMsgDetail(@PathVariable int msgCode) {
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -106,8 +107,9 @@ public class MsgController {
 
         ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 상세 조회", responesMap);
 
-        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+        return new ResponseEntity<>(msgProUserInfoDTOList, headers, HttpStatus.OK);
     }
+
 
 
     @ApiOperation(value = "쪽지 리스트 조회")
