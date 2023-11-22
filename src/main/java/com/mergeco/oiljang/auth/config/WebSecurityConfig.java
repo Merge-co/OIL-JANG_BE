@@ -63,6 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private OAuth2Config oAuth2Config;
 
 
+
     @Autowired
     public WebSecurityConfig(TokenProvider tokenProvider, BCryptPasswordEncoder passwordEncoder, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler, CustomAuthSuccessHandler customAuthSuccessHandler, CustomAuthFailureHandler customAuthFailureHandler, UserDetailsService userDetailsService, CustomAuthenticationProvider customAuthenticationProvider, OAuth2SuccessHandler oAuth2SuccessHandler, OAuth2DetailsService oAuth2DetailsService) {
         this.tokenProvider = tokenProvider;
@@ -123,9 +124,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorize")
                 .authorizationRequestRepository(authorizationRequestRepository())
-                .and()
-                .redirectionEndpoint()
-                .baseUri("/oauth2/login/callback")
                 .and()
                 .userInfoEndpoint()
                 .userService(oAuth2DetailsService)
