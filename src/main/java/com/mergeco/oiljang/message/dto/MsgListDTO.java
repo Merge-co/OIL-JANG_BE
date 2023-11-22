@@ -15,6 +15,7 @@ public class MsgListDTO {
     private int userCode;
     private String name;
     private String id;
+    private int msgCode;
     private int senderCode;
     private int receiverCode;
     private String msgContent;
