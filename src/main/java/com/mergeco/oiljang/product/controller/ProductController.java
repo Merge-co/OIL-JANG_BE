@@ -131,7 +131,6 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-
         if(!Boolean.parseBoolean(isView) && isView != null) {
             productService.updateViewCount(productCode);
         }
@@ -159,15 +158,15 @@ public class ProductController {
 
     @ApiOperation(value = "관심 목록에 중고 상품 등록")
     @PostMapping("/products/{productCode}/wishLists")
-    public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode, Integer userCode) {
-
+    public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode, @RequestBody ProductDTO productDTO) {
+        System.out.println(productDTO.getRefUserCode() + "11111");
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         WishListDTO wishListDTO = new WishListDTO();
         wishListDTO.setRefProductCode(productCode);
-        wishListDTO.setRefUserCode(2);
+        wishListDTO.setRefUserCode(productDTO.getRefUserCode());
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("result", productService.insertWishList(wishListDTO));
