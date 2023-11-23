@@ -26,9 +26,4 @@ public class ReportsDTO {
     private String processDistinction; // 처리 결과분류 9
     private String reportUserNick; // 신고자 10
     private String nickName; // 판매자 11
-
-
-
-
-
 }
