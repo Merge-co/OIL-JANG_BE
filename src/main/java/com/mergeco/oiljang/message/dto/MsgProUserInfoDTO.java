@@ -28,5 +28,4 @@ public class MsgProUserInfoDTO {
     private String productDesc;
     private int msgDeleteCode;
     private String msgDeleteStatus;
-
 }

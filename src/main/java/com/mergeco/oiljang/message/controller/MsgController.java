@@ -121,7 +121,6 @@ public class MsgController {
             @PathVariable int userCode,
             @RequestParam Boolean isReceived) {
 
-
         if(page == null){
             page = 1;
         }
@@ -154,7 +153,6 @@ public class MsgController {
 
         return new ResponseEntity<>(msgListDTOList, HttpStatus.OK);
     }
-
 
     @ApiOperation(value = "쪽지 삭제(수정)")
     @DeleteMapping("/messages/{msgCode}")

@@ -227,7 +227,6 @@ public class MessageTests {
     }
 
 
-
     /*
      * 1 -> B
      * 2 -> R

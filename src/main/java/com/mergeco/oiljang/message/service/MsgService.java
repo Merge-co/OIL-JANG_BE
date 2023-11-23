@@ -116,7 +116,6 @@ public class MsgService {
                 + "JOIN m.msgDeleteInfo md "
                 + "WHERE m.msgCode = :msgCode";
 
-
         List<MsgProUserInfoDTO> msgProUserList = entityManager.createQuery(jpql, MsgProUserInfoDTO.class)
                 .setParameter("msgCode", msgCode)
                 .getResultList();
