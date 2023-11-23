@@ -72,7 +72,7 @@ public class ProductServiceTests {
     void selectProductList() {
 
         //when
-        List<ProductListDTO> productListDTO = productService.selectProductList(0, 9, 1, "latest", 0, 10000000);
+        List<ProductListDTO> productListDTO = productService.selectProductList(0, 9, 1, "latest", 0, 10000000, null);
 
         //then
         Assertions.assertTrue(productListDTO.size() >= 0);
