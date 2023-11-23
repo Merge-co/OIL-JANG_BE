@@ -109,13 +109,12 @@ public class MsgService {
 
     //내 이름.아이디는 토큰에서 가져오기
     public List<MsgProUserInfoDTO> selectMsgDetail(int msgCode) {
-        String jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgProUserInfoDTO(m.msgCode, m.msgContent, m.msgStatus, m.msgTime, m.senderCode, m.receiverCode, u.userCode, u.id, u.name, p.productCode, p.productName, p.productDesc, md.msgDeleteCode, md.msgDeleteStatus) "
+        String jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgProUserInfoDTO(m.msgCode, m.msgContent, m.msgStatus, m.msgTime, m.senderCode, m.receiverCode, u.userCode, u.id, u.name, m.refProductCode, p.productCode, p.productName, p.productDesc, md.msgDeleteCode, md.msgDeleteStatus) "
                 + "FROM message_and_delete m "
                 + "LEFT JOIN User u ON m.senderCode = u.userCode OR m.receiverCode = u.userCode "
                 + "LEFT JOIN Product p ON m.refProductCode = p.productCode "
                 + "JOIN m.msgDeleteInfo md "
                 + "WHERE m.msgCode = :msgCode";
-
 
         List<MsgProUserInfoDTO> msgProUserList = entityManager.createQuery(jpql, MsgProUserInfoDTO.class)
                 .setParameter("msgCode", msgCode)
