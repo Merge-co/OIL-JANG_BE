@@ -22,6 +22,7 @@ public class MsgProUserInfoDTO {
     private int userCode;
     private String id;
     private String name;
+    private int refProductCode;
     private int productCode;
     private String productName;
     private String productDesc;

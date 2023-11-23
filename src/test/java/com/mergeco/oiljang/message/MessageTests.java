@@ -188,7 +188,7 @@ public class MessageTests {
                 System.out.println("receiverCode : " + detail.getReceiverCode());
                 System.out.println("id : " + detail.getId());
             System.out.println("name : " + detail.getName());
-            System.out.println("productCode: " + detail.getProductCode());
+            System.out.println("productCode: " + detail.getRefProductCode());
             System.out.println("productName : " + detail.getProductName());
             System.out.println("productDesc : " + detail.getProductDesc());
             System.out.println("msgDeleteInfoMsgDeleteDTO : " + detail.getMsgDeleteCode());
