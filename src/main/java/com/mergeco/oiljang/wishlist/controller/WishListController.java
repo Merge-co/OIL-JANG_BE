@@ -19,7 +19,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Api(tags = "관심 목록 관련")
 @RestController
@@ -49,7 +48,7 @@ public class WishListController {
         int offset = limit * (page - 1);
         List<WishListInfoDTO> wishListInfoDTOList = wishListService.selectWishList(offset, limit, userCode);
 
-        double totalItem = Long.valueOf(wishListService.countProductList()).doubleValue();
+        double totalItem = Long.valueOf(wishListService.countWishList(userCode)).doubleValue();
         int totalPage = (int) Math.ceil(totalItem / limit);
 
         if(page >= totalPage) {

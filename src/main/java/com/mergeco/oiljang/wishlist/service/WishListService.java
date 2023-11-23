@@ -1,7 +1,5 @@
 package com.mergeco.oiljang.wishlist.service;
 
-import com.mergeco.oiljang.product.repository.ProImageRepository;
-import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.wishlist.dto.WishListInfoDTO;
 import com.mergeco.oiljang.wishlist.entity.WishList;
 import com.mergeco.oiljang.wishlist.repository.WishListRepository;
@@ -29,9 +27,11 @@ public class WishListService {
         this.wishListRepository = wishListRepository;
     }
 
-    public long countProductList() {
-        Long countPage = wishListRepository.count();
-        return countPage;
+    public Long countWishList(int refUserCode) {
+        String jpql = "SELECT Count(*)" +
+                " FROM WishList w WHERE w.refUserCode = :refUserCode";
+        Long wishListCount = (Long) entityManager.createQuery(jpql).setParameter("refUserCode", refUserCode).getSingleResult();
+        return wishListCount;
     }
 
     public List<WishListInfoDTO> selectWishList(int offset, int limit, int refUserCode) {
@@ -49,7 +49,6 @@ public class WishListService {
     public String deleteWishList(int wishCode) {
         String result = "관심 목록에서 찜 삭제 실패";
         WishList wishList = wishListRepository.findById(wishCode).orElse(null);
-        System.out.println(11111);
         if(wishList != null) {
             wishListRepository.delete(wishList);
         }

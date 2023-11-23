@@ -76,7 +76,6 @@ public class ProductController {
             maxPrice = -1;
         }
 
-
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -101,23 +100,26 @@ public class ProductController {
             limit = limit * page;
         }
 
-        List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice);
-
-        double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice)).doubleValue();
-        int totalPage = (int) Math.ceil(totalItem / limit);
-
-        if (page >= totalPage) {
-            page = totalPage;
-        } else if (page < 1) {
-            page = 1;
-        }
-
-        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
-
-
+        List<ProductListDTO> productListDTOList = productService.selectProductList(offset, limit, categoryCode, sortCondition, minPrice, maxPrice, pageKind);
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("productList", productListDTOList);
-        responseMap.put("pagingBtn", pagingBtn);
+
+        if(!pageKind.equals("main")) {
+            double totalItem = Long.valueOf(productService.countProductList(categoryCode, minPrice, maxPrice, pageKind)).doubleValue();
+            int totalPage = (int) Math.ceil(totalItem / limit);
+
+            if (page >= totalPage) {
+                page = totalPage;
+            } else if (page < 1) {
+                page = 1;
+            }
+
+            Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+            responseMap.put("pagingBtn", pagingBtn);
+        } else {
+            double totalItem = Long.valueOf(productService.countProductList(0, minPrice, maxPrice, pageKind)).doubleValue();
+            responseMap.put("totalItem", totalItem);
+        }
 
         ResponseMessage responseMessage = new ResponseMessage(200, "중고 상품 목록 조회 성공", responseMap);
 
@@ -159,7 +161,6 @@ public class ProductController {
     @ApiOperation(value = "관심 목록에 중고 상품 등록")
     @PostMapping("/products/{productCode}/wishLists")
     public ResponseEntity<ResponseMessage> registWishlist(@PathVariable int productCode, @RequestBody ProductDTO productDTO) {
-        System.out.println(productDTO.getRefUserCode() + "11111");
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));

@@ -31,10 +31,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.text.DecimalFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -87,8 +85,22 @@ public class ProductService {
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
     }
-    public Long countProductList(int categoryCode, int minPrice, int maxPrice) {
-        StringBuilder jpql = new StringBuilder("SELECT COUNT(*) FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
+    public Long countProductList(int categoryCode, int minPrice, int maxPrice, String pageKind) {
+        StringBuilder jpql = new StringBuilder("SELECT COUNT(*) FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE s.sellStatusCode = 1");
+
+        Calendar currentCalendar = Calendar.getInstance();
+        DecimalFormat df = new DecimalFormat("00");
+        currentCalendar.add(currentCalendar.DATE, -7);
+        String strYear7 = Integer.toString(currentCalendar.get(Calendar.YEAR));
+        String strMonth7 = df.format(currentCalendar.get(Calendar.MONTH) + 1);
+        String strDay7 = df.format(currentCalendar.get(Calendar.DATE));
+        String strDate7 = strYear7 + "-" + strMonth7+ "-"  + strDay7;
+
+        if(pageKind.equals("main")) {
+            jpql.append(" AND m.enrollDateTime >= '" + strDate7 + "'");
+        } else {
+            jpql.append(" AND m.Category.categoryCode = :categoryCode");
+        }
 
         if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
@@ -100,7 +112,9 @@ public class ProductService {
 
         TypedQuery query = (TypedQuery) entityManager.createQuery(jpql.toString());
 
-        query.setParameter("categoryCode" ,categoryCode);
+        if(pageKind != null && !pageKind.equals("main")) {
+            query.setParameter("categoryCode" ,categoryCode);
+        }
 
         if(minPrice >= 0) {
             query.setParameter("minPrice" ,minPrice);
@@ -115,9 +129,23 @@ public class ProductService {
         return productListCount;
     }
 
-    public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice) {
+    public List<ProductListDTO> selectProductList(int offset, int limit, int categoryCode, String sortCondition, int minPrice, int maxPrice, String pageKind) {
         StringBuilder jpql = new StringBuilder("SELECT new com.mergeco.oiljang.product.dto.ProductListDTO(m.productCode, m.productThumbAddr, m.productName, m.productPrice, m.enrollDateTime, c.categoryName, m.refUserCode)" +
-                " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE m.Category.categoryCode = :categoryCode AND s.sellStatusCode = 1");
+                " FROM Product m JOIN m.Category c JOIN m.SellStatus s WHERE s.sellStatusCode = 1");
+
+        Calendar currentCalendar = Calendar.getInstance();
+        DecimalFormat df = new DecimalFormat("00");
+        currentCalendar.add(currentCalendar.DATE, -7);
+        String strYear7 = Integer.toString(currentCalendar.get(Calendar.YEAR));
+        String strMonth7 = df.format(currentCalendar.get(Calendar.MONTH) + 1);
+        String strDay7 = df.format(currentCalendar.get(Calendar.DATE));
+        String strDate7 = strYear7 + "-" + strMonth7+ "-"  + strDay7;
+
+        if(pageKind.equals("main")) {
+            jpql.append(" AND m.enrollDateTime >= '" + strDate7 + "'");
+        } else {
+            jpql.append(" AND m.Category.categoryCode = :categoryCode");
+        }
 
         if(minPrice >= 0) {
             jpql.append(" AND m.productPrice >= :minPrice");
@@ -144,7 +172,10 @@ public class ProductService {
 
         TypedQuery<ProductListDTO> query = (TypedQuery<ProductListDTO>) entityManager.createQuery(jpql.toString(), ProductListDTO.class);
 
-        query.setParameter("categoryCode" ,categoryCode);
+        if(!pageKind.equals("main")) {
+            query.setParameter("categoryCode" ,categoryCode);
+        }
+
         query.setFirstResult(offset)
                 .setMaxResults(limit);
 
