@@ -69,11 +69,7 @@ public class ReportController {
         log.info("DTO 받아 오나요 ? : " + reportDTO);
 
         return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "접수된 신고 처리 완료", reportService.modifyReport(reportDTO)));
-
-
     }
-
-
     @ApiOperation(value = "신고처리 상세정보", notes = "관리자가 처리 내용을 확인", tags = {"ReportController"})
     @GetMapping("/processDetail/{reportNo}")
     public ResponseEntity<?> processDetail(@PathVariable int reportNo) {

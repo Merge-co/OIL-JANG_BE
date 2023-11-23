@@ -46,17 +46,16 @@ public class ReportService {
     (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )*/
 
     public List<ReportsDTO> findReports() {
-        log.info("[reportService] selectReport Start ================================================");
-        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportUserNick , (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ), r.productCode.productName, r.processDistinction, r.refReportCategoryNo.reportCategoryCode, r.reportDate) " +
+        log.info("[reportService] selectReport Start ===========================");
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c " +
                 "ORDER BY r.reportNo DESC";
-
-        List<ReportsDTO> management=  manager.createQuery(jpql, ReportsDTO.class).getResultList();
+        List<ReportsDTO> management=  manager.createQuery(jpql).getResultList();
 
         System.out.println("서비스 매니저: " + management );
 
-        log.info("[reportService] selectReport END ================================================");
+        log.info("[reportService] selectReport END =============================");
 
         return management;
     }
@@ -108,6 +107,8 @@ public class ReportService {
         log.info("[ReportService] selectByProcessDetail Start ======================================");
 
         Report report = reportRepository.findById(reportNo).get();
+
+        System.out.println(report);
 
         log.info("[ReportService] selectByProcessDetail END ======================================");
 
