@@ -139,7 +139,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     }
 
     private boolean isOAuth2LoginRequest(HttpServletRequest request) {
-        return request.getRequestURI().startsWith("/oauth2/**") || request.getRequestURI().equals("/oauth2/login");
+        return request.getRequestURI().startsWith("/oauth2/**") || request.getRequestURI().equals("/oauth2/login") || request.getRequestURI().equals("https://accounts.google.com/**") ;
     }
 
 }
