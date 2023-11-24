@@ -210,7 +210,9 @@ public class MsgService {
                 if (isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
                     if (message.getMsgDeleteInfo().getMsgDeleteCode() != 4 && message.getMsgDeleteInfo().getMsgDeleteCode() != 1) {
                         System.out.println("4번");
-                         message = message.msgDeleteInfo(new MsgDeleteInfo(4, "B")).builder();
+                      //   message = message.msgDeleteInfo(new MsgDeleteInfo(4, "B")).builder();
+                        message = message.msgDeleteInfo(new MsgDeleteInfo(4, "B")).builder();
+
                     }
 
                 } else if (isDeletedBySender(sender, message.getMsgDeleteInfo())) {
@@ -228,9 +230,9 @@ public class MsgService {
                 } else {
                     if (message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
                         System.out.println("1번");
-                        if(isDeletedBySender(sender, message.getMsgDeleteInfo())){
+                    if(message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4){
                             message = message.msgDeleteInfo(new MsgDeleteInfo(2, "S")).builder();
-                        } else if(isDeletedByReceiver(receiver, message.getMsgDeleteInfo())){
+                        } else if(message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4){
                             message = message.msgDeleteInfo(new MsgDeleteInfo(3, "R")).builder();
                         }
 

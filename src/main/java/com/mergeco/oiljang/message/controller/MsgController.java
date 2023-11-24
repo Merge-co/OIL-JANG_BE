@@ -156,10 +156,9 @@ public class MsgController {
 
     @ApiOperation(value = "쪽지 삭제(수정)")
     @DeleteMapping("/messages/{msgCode}")
-    public ResponseEntity<ResponseMessage> updateDeleteCode(@PathVariable int msgCode, int senderCode, int receiverCode){
+    public ResponseEntity<ResponseMessage> updateDeleteCode(@PathVariable int msgCode){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
 
 
         int result = msgService.updateDeleteCode(msgCode);
@@ -172,6 +171,7 @@ public class MsgController {
         ResponseMessage responseMessage = new ResponseMessage(200,"쪽지 삭제 성공",responseMap);
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
+
 
 
     @ApiOperation(value = "쪽지 검색 후 리스트 조회")
