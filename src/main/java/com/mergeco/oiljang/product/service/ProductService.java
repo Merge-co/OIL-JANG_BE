@@ -199,7 +199,7 @@ public class ProductService {
         return productDetailDTOS;
     }
     public Map<String, String> selectProductDetailImg(int productCode) {
-        String jpql = "SELECT p.proImageOriginName FROM ProImageInfo p WHERE p.refProductCode = :productCode ORDER BY p.proImageCode ASC";
+        String jpql = "SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = :productCode ORDER BY p.proImageCode ASC";
         List<String> selectProductDetailImgAddr = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
         Map<String, String> selectProductDetailImg = new HashMap<>();
         int detailImgOrder = 1;
