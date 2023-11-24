@@ -216,6 +216,7 @@ public class ProductService {
                 .setParameter("productCode", productCode)
                 .getResultList();
         return wishCode;
+
     }
 
     @Transactional
