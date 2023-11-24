@@ -137,6 +137,8 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        System.out.println("userCode" + userCode);
+        System.out.println("isView" + isView);
         if(!Boolean.parseBoolean(isView) && isView != null) {
             productService.updateViewCount(productCode);
         }
