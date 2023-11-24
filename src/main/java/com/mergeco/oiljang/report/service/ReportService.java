@@ -9,15 +9,13 @@ import com.mergeco.oiljang.report.repository.ReportRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.*;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -123,24 +121,6 @@ public class ReportService {
     }
 
 
-    public List<Object[]> selectByReportProduct() {
-        String jpql = "SELECT r.refReportCategoryNo.reportCategoryCode, r.productCode.productName " +
-                "FROM tbl_report r " +
-                "LEFT JOIN r.refReportCategoryNo c";
-        List<Object[]> categoryList = manager.createQuery(jpql).getResultList();
-
-        return categoryList;
-    }
-
-    public List<Object[]> selectByReportProcess() {
-        String jpql = "SELECT r.refReportCategoryNo.reportCategoryNo, r.productCode.productName, r.reportComment " +
-                "FROM tbl_report r " +
-                "LEFT JOIN r.productCode c";
-        List<Object[]> reportList = manager.createQuery(jpql).getResultList();
-
-        return reportList;
-    }
-
     public List<Object[]> selectByReportManagement() {
         log.info("[reportService] selectReport Start ================================================");
         String jpql = "SELECT r.reportNo, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ), r.productCode.productName, r.sellStatusCode.sellStatus, r.refReportCategoryNo.reportCategoryCode " +
@@ -170,33 +150,46 @@ public class ReportService {
         log.info("[ReportService] selectProejctTotal Start =====");
 
         /* 페이징 처리 결과를 Page 타입으로 반환 받는다.*/
-        List<Report> reportList = reportRepository.findByReportOrderable("Y");
+        List<Report> reportList = reportRepository.findAll();
         log.info("[ReportService] ReportList.size : {}", reportList.size());
         log.info("[ReportService] selectProejctTotal END ======");
 
         return reportList.size();
     }
 
-/*    public Object selectReportListWithPaging(Criteria cri) {
+    public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
 
         log.info("[ReportService] selectReportListWithPaging Start =====");
 
         int index = cri.getPageNum() - 1;
         int count = cri.getAmount();
 
-        Pageable paging = PageRequest.of(index, count, Sort.by("reportNo").descending());
+        Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
-        Page<Report> result = reportRepository.findByReportOrderable("Y", paging);
+      /*  Pageable paging = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
-       List<ReportsDTO> reportsList = result.stream()
-               .map(report -> modelMapper.map(report, ReportsDTO.class))
-               .collect(Collectors.toList());
+        Page<ReportsDTO> result = reportRepository.customQueryForReports(paging);
+        System.out.println("서비스에서 레포지토리 확인 : " +  result);
 
-        for (int i = 0; i < reportsList.size(); i++) {
-            reportsList.get(i);
-        }
+        List<ReportsDTO> reportDTOList = result.stream()
+                .map(report -> modelMapper.map(report, ReportsDTO.class))
+                .collect(Collectors.toList());
+
+        for(int i = 0; i <reportDTOList.size(); i++) {
+            reportDTOList.get(i);
+        }*/
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+                "FROM tbl_report r " +
+                "JOIN r.productCode c " +
+                "ORDER BY r.reportNo DESC";
+        TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
+        List<ReportsDTO> management = query.getResultList();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), management.size());
+        Page<ReportsDTO> reportPage = new PageImpl<>(management.subList(start, end), pageable, management.size());
 
         log.info("[ReportService] selectReportListWithPaging End =====");
-        return reportsList;
-    }*/
+        return reportPage;
+    }
 }

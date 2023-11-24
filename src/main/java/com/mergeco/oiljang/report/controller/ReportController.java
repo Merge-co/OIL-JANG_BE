@@ -36,7 +36,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
+/*    @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
     @GetMapping("/reports")
     public ResponseEntity<?> main() {
 
@@ -46,8 +46,29 @@ public class ReportController {
         responesMap.put("msgProUserList", reportsDTOList);
 
         return new ResponseEntity<>(reportsDTOList, getHeaders(), HttpStatus.OK);
-    }
+    }*/
 
+    @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
+    @GetMapping("/reports")
+    public ResponseEntity<?> selectReportListWithPageing(
+            @RequestParam(name = "offset", defaultValue = "1") String offset) {
+
+        log.info("[ReportController] selectReportListWithPaging Start ====");
+        log.info("[ReportController] selectReportListWithPaging offset : {} ", offset);
+
+        int total = reportService.selectProejctTotal();
+
+        Criteria cri = new Criteria(Integer.valueOf(offset), 10);
+
+        PagingResponseDTO pagingResponseDTO = new PagingResponseDTO();
+//         1. offset의 번호에 맞는 페이지에 뿌려줄 Report
+        pagingResponseDTO.setData(reportService.selectReportListWithPaging(cri));
+//         2. PageDTO : 화면에서 페이징 처리에 필요한 정보들
+        pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
+
+        log.info("[ReportController] selectReportListWithPaging END =====");
+        return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "조회 성공", pagingResponseDTO));
+    }
 
 
     @ApiOperation(value = "신고하기", notes = "유저가 신고를 등록합니다.", tags = {"ReportController"})
@@ -73,6 +94,7 @@ public class ReportController {
 
         return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "접수된 신고 처리 완료", reportService.modifyReport(reportDTO)));
     }
+
     @ApiOperation(value = "신고처리 상세정보", notes = "관리자가 처리 내용을 확인", tags = {"ReportController"})
     @GetMapping("/processDetail/{reportNo}")
     public ResponseEntity<?> processDetail(@PathVariable int reportNo) {
@@ -84,35 +106,17 @@ public class ReportController {
     @GetMapping("/search")
     public ResponseEntity<?> selectSearchReportList(
             @RequestParam(name = "s", defaultValue = "all") String search) {
-        log.info("[ReportController] searchSelectReports Start ======================" );
+        log.info("[ReportController] searchSelectReports Start ======================");
         System.out.println("컨트롤 리퀘스트 파람 : '" + search);
 
-        log.info("[ReportController] searchSelectReports END ======================" );
+        log.info("[ReportController] searchSelectReports END ======================");
 
         return ResponseEntity
                 .ok()
                 .body(new LoginMessage(HttpStatus.OK, "조회 성공", reportService.selectReportList(search)));
     }
 
-  /*  @GetMapping("/")
-    public ResponseEntity<?> selectReportListWithPageing(
-            @RequestParam(name = "offset", defaultValue = "1") String offset){
 
-        log.info("[ReportController] selectReportListWithPaging Start ====");
-        log.info("[ReportController] selectReportListWithPaging offset : {} ", offset);
-
-        int total = reportService.selectProejctTotal();
-
-        Criteria cri = new Criteria(Integer.valueOf(offset), 10);
-
-        PagingResponseDTO pagingResponseDTO = new PagingResponseDTO ();
-        *//* 1. offset의 번호에 맞는 페이지에 뿌려줄 Report *//*
-        pagingResponseDTO.setData(reportService.selectReportListWithPaging(cri));
-        *//* 2. PageDTO : 화면에서 페이징 처리에 필요한 정보들 *//*
-        pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
-
-    }
-*/
 
     //헤더 값
     private HttpHeaders getHeaders() {
