@@ -161,7 +161,6 @@ public class MsgController {
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
 
-
         int result = msgService.updateDeleteCode(msgCode);
 
         System.out.println(result);
