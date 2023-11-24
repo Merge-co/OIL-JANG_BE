@@ -111,9 +111,6 @@ public class ReportController {
         *//* 2. PageDTO : 화면에서 페이징 처리에 필요한 정보들 *//*
         pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
 
-
-
-
     }
 */
 
