@@ -238,7 +238,7 @@ public class MessageTests {
     @DisplayName("쪽지 삭제에 따른 상태값 변경 테스트")
     public void deleteMsg() {
 
-        int msgCode = 6;
+        int msgCode = 76;
 //        int senderCode = 1;
 //        int receiverCode = 3;
         Optional<Message> message = msgRepository.findById(msgCode);

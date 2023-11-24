@@ -156,7 +156,7 @@ public class MsgController {
 
     @ApiOperation(value = "쪽지 삭제(수정)")
     @DeleteMapping("/messages/{msgCode}")
-    public ResponseEntity<ResponseMessage> updateDeleteCode(@PathVariable int msgCode, int senderCode, int receiverCode){
+    public ResponseEntity<ResponseMessage> updateDeleteCode(@PathVariable int msgCode){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
