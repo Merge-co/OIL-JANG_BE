@@ -216,6 +216,7 @@ public class ProductService {
                 .setParameter("productCode", productCode)
                 .getResultList();
         return wishCode;
+
     }
 
     @Transactional
@@ -264,7 +265,7 @@ public class ProductService {
             BufferedImage img = ImageIO.read(imageFiles.get(0).getInputStream());
             Thumbnails.of(imageFiles.get(0).getInputStream()).size(219,166).toFile(thumbnailFile);
 
-            product = product.productThumbAddr(thumbnailFile.toString());
+            product = product.productThumbAddr("/images/product/thumbnail/" + thumbName + ext);
 
             for (MultipartFile imageFile : imageFiles) {
                 System.out.println(productCode);
@@ -273,8 +274,8 @@ public class ProductService {
                 ProImageInfoDTO imageInfo = new ProImageInfoDTO();
                 imageInfo.setRefProductCode(productCode);
                 imageInfo.setProImageOriginName(imageFile.getOriginalFilename());
-                imageInfo.setProImageDbName(imageAddress.substring(imageAddress.lastIndexOf("/") + 1));
-                imageInfo.setProImageOriginAddr(imageAddress);
+                imageInfo.setProImageDbName(imageAddress);
+                imageInfo.setProImageOriginAddr("/images/product/original/" + imageAddress + ext);
                 // 이미지 정보를 데이터베이스에 저장
                 addProImageInfo(imageInfo);
             }
@@ -306,7 +307,7 @@ public class ProductService {
             Path path = Paths.get(filePath);
             Files.write(path, bytes);
             System.out.println(22222);
-            return filePath; // 저장된 이미지 파일 경로 반환
+            return dbFileName; // 저장된 이미지 파일 경로 반환
         } catch (IOException e) {
             //오륲 처리
             System.out.println(22222);
