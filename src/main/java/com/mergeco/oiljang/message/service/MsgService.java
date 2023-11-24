@@ -215,7 +215,6 @@ public class MsgService {
 
                     }
 
-
                 } else if (isDeletedBySender(sender, message.getMsgDeleteInfo())) {
                     if (message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
                         System.out.println("2번");

@@ -173,6 +173,7 @@ public class MsgController {
     }
 
 
+
     @ApiOperation(value = "쪽지 검색 후 리스트 조회")
     @GetMapping("/users/{userCode}/messages/search")
     public ResponseEntity<ResponseMessage> selectMsgLike(
