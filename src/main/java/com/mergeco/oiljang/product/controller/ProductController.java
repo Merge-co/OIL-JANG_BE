@@ -65,15 +65,19 @@ public class ProductController {
         }
 
         if (categoryCode == null) {
-            categoryCode = 6;
+            categoryCode = 0;
         }
 
         if (minPrice == null) {
             minPrice = -1;
+        } else if (minPrice < 0) {
+            minPrice = 0;
         }
 
         if (maxPrice == null) {
             maxPrice = -1;
+        } else if (maxPrice < 0) {
+            maxPrice = 0;
         }
 
         HttpHeaders headers = new HttpHeaders();

@@ -98,7 +98,7 @@ public class ProductService {
 
         if(pageKind.equals("main")) {
             jpql.append(" AND m.enrollDateTime >= '" + strDate7 + "'");
-        } else {
+        } else if(categoryCode != 0) {
             jpql.append(" AND m.Category.categoryCode = :categoryCode");
         }
 
@@ -112,7 +112,7 @@ public class ProductService {
 
         TypedQuery query = (TypedQuery) entityManager.createQuery(jpql.toString());
 
-        if(pageKind != null && !pageKind.equals("main")) {
+        if(pageKind != null && !pageKind.equals("main") && categoryCode != 0) {
             query.setParameter("categoryCode" ,categoryCode);
         }
 
@@ -143,7 +143,7 @@ public class ProductService {
 
         if(pageKind.equals("main")) {
             jpql.append(" AND m.enrollDateTime >= '" + strDate7 + "'");
-        } else {
+        } else if(categoryCode != 0) {
             jpql.append(" AND m.Category.categoryCode = :categoryCode");
         }
 
@@ -172,7 +172,7 @@ public class ProductService {
 
         TypedQuery<ProductListDTO> query = (TypedQuery<ProductListDTO>) entityManager.createQuery(jpql.toString(), ProductListDTO.class);
 
-        if(!pageKind.equals("main")) {
+        if(pageKind != null && !pageKind.equals("main") && categoryCode != 0) {
             query.setParameter("categoryCode" ,categoryCode);
         }
 
