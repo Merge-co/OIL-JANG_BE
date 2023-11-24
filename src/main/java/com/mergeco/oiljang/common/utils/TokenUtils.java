@@ -112,6 +112,7 @@ public class TokenUtils {
         claims.put("userCode", user.getUserCode());
         claims.put("Role", user.getRole());
         claims.put("EnrollType", user.getUser().getEnrollType());
+        claims.put("nickName",user.getUser().getNickname());
 
         return claims;
     }
