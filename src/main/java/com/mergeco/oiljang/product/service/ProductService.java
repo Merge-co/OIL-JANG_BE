@@ -98,7 +98,7 @@ public class ProductService {
 
         if(pageKind.equals("main")) {
             jpql.append(" AND m.enrollDateTime >= '" + strDate7 + "'");
-        } else {
+        } else if(categoryCode != 0) {
             jpql.append(" AND m.Category.categoryCode = :categoryCode");
         }
 
@@ -112,7 +112,7 @@ public class ProductService {
 
         TypedQuery query = (TypedQuery) entityManager.createQuery(jpql.toString());
 
-        if(pageKind != null && !pageKind.equals("main")) {
+        if(pageKind != null && !pageKind.equals("main") && categoryCode != 0) {
             query.setParameter("categoryCode" ,categoryCode);
         }
 
@@ -143,7 +143,7 @@ public class ProductService {
 
         if(pageKind.equals("main")) {
             jpql.append(" AND m.enrollDateTime >= '" + strDate7 + "'");
-        } else {
+        } else if(categoryCode != 0) {
             jpql.append(" AND m.Category.categoryCode = :categoryCode");
         }
 
@@ -172,7 +172,7 @@ public class ProductService {
 
         TypedQuery<ProductListDTO> query = (TypedQuery<ProductListDTO>) entityManager.createQuery(jpql.toString(), ProductListDTO.class);
 
-        if(!pageKind.equals("main")) {
+        if(pageKind != null && !pageKind.equals("main") && categoryCode != 0) {
             query.setParameter("categoryCode" ,categoryCode);
         }
 
@@ -199,7 +199,7 @@ public class ProductService {
         return productDetailDTOS;
     }
     public Map<String, String> selectProductDetailImg(int productCode) {
-        String jpql = "SELECT p.proImageOriginName FROM ProImageInfo p WHERE p.refProductCode = :productCode ORDER BY p.proImageCode ASC";
+        String jpql = "SELECT p.proImageOriginAddr FROM ProImageInfo p WHERE p.refProductCode = :productCode ORDER BY p.proImageCode ASC";
         List<String> selectProductDetailImgAddr = entityManager.createQuery(jpql).setParameter("productCode", productCode).getResultList();
         Map<String, String> selectProductDetailImg = new HashMap<>();
         int detailImgOrder = 1;
