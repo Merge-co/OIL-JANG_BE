@@ -1,5 +1,8 @@
 package com.mergeco.oiljang.report.controller;
 
+import com.mergeco.oiljang.common.paging.Criteria;
+import com.mergeco.oiljang.common.paging.PageDTO;
+import com.mergeco.oiljang.common.paging.PagingResponseDTO;
 import com.mergeco.oiljang.common.restApi.LoginMessage;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.report.dto.ReportDTO;
@@ -91,6 +94,28 @@ public class ReportController {
                 .body(new LoginMessage(HttpStatus.OK, "조회 성공", reportService.selectReportList(search)));
     }
 
+  /*  @GetMapping("/")
+    public ResponseEntity<?> selectReportListWithPageing(
+            @RequestParam(name = "offset", defaultValue = "1") String offset){
+
+        log.info("[ReportController] selectReportListWithPaging Start ====");
+        log.info("[ReportController] selectReportListWithPaging offset : {} ", offset);
+
+        int total = reportService.selectProejctTotal();
+
+        Criteria cri = new Criteria(Integer.valueOf(offset), 10);
+
+        PagingResponseDTO pagingResponseDTO = new PagingResponseDTO ();
+        *//* 1. offset의 번호에 맞는 페이지에 뿌려줄 Report *//*
+        pagingResponseDTO.setData(reportService.selectReportListWithPaging(cri));
+        *//* 2. PageDTO : 화면에서 페이징 처리에 필요한 정보들 *//*
+        pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
+
+
+
+
+    }
+*/
 
     //헤더 값
     private HttpHeaders getHeaders() {

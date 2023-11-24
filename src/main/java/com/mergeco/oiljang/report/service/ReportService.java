@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.report.service;
 
+import com.mergeco.oiljang.common.paging.Criteria;
 import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.report.dto.ReportsDTO;
 import com.mergeco.oiljang.report.entity.Report;
@@ -8,12 +9,17 @@ import com.mergeco.oiljang.report.repository.ReportRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,9 +57,9 @@ public class ReportService {
                 "FROM tbl_report r " +
                 "JOIN r.productCode c " +
                 "ORDER BY r.reportNo DESC";
-        List<ReportsDTO> management=  manager.createQuery(jpql).getResultList();
+        List<ReportsDTO> management = manager.createQuery(jpql).getResultList();
 
-        System.out.println("서비스 매니저: " + management );
+        System.out.println("서비스 매니저: " + management);
 
         log.info("[reportService] selectReport END =============================");
 
@@ -159,4 +165,38 @@ public class ReportService {
 
         return reportListWithSearchValue;
     }
+
+    public int selectProejctTotal() {
+        log.info("[ReportService] selectProejctTotal Start =====");
+
+        /* 페이징 처리 결과를 Page 타입으로 반환 받는다.*/
+        List<Report> reportList = reportRepository.findByReportOrderable("Y");
+        log.info("[ReportService] ReportList.size : {}", reportList.size());
+        log.info("[ReportService] selectProejctTotal END ======");
+
+        return reportList.size();
+    }
+
+/*    public Object selectReportListWithPaging(Criteria cri) {
+
+        log.info("[ReportService] selectReportListWithPaging Start =====");
+
+        int index = cri.getPageNum() - 1;
+        int count = cri.getAmount();
+
+        Pageable paging = PageRequest.of(index, count, Sort.by("reportNo").descending());
+
+        Page<Report> result = reportRepository.findByReportOrderable("Y", paging);
+
+       List<ReportsDTO> reportsList = result.stream()
+               .map(report -> modelMapper.map(report, ReportsDTO.class))
+               .collect(Collectors.toList());
+
+        for (int i = 0; i < reportsList.size(); i++) {
+            reportsList.get(i);
+        }
+
+        log.info("[ReportService] selectReportListWithPaging End =====");
+        return reportsList;
+    }*/
 }
