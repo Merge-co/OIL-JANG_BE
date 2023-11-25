@@ -1,7 +1,14 @@
 package com.mergeco.oiljang.product.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
 import javax.persistence.*;
 
+@AllArgsConstructor
+@Getter
+@ToString
 @Entity(name = "ProImageInfo")
 @Table(name = "pro_image_info")
 public class ProImageInfo {
@@ -49,42 +56,5 @@ public class ProImageInfo {
     }
 
     protected ProImageInfo() {
-    }
-
-    public ProImageInfo(int proImageCode, int refProductCode, String proImageOriginName, String proImageDbName) {
-        this.proImageCode = proImageCode;
-        this.refProductCode = refProductCode;
-        this.proImageOriginName = proImageOriginName;
-        this.proImageDbName = proImageDbName;
-    }
-
-    public int getProImageCode() {
-        return proImageCode;
-    }
-
-    public int getRefProductCode() {
-        return refProductCode;
-    }
-
-    public String getProImageOriginName() {
-        return proImageOriginName;
-    }
-
-    public String getProImageDbName() {
-        return proImageDbName;
-    }
-
-    public String getProImageOriginAddr() {
-        return proImageOriginAddr;
-    }
-
-    @Override
-    public String toString() {
-        return "ProImageInfo{" +
-                "proImageCode=" + proImageCode +
-                ", refProductCode=" + refProductCode +
-                ", proImageOriginName='" + proImageOriginName + '\'' +
-                ", proImageDbName='" + proImageDbName + '\'' +
-                '}';
     }
 }

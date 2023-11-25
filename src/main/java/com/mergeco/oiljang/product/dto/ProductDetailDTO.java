@@ -1,15 +1,13 @@
 package com.mergeco.oiljang.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
@@ -32,7 +30,5 @@ public class ProductDetailDTO {
     private String wishPlaceTrade;
     private int sellStatusCode;
 
-    public ProductDetailDTO() {
-    }
 
 }

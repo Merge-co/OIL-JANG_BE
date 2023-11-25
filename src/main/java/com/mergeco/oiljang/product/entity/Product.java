@@ -1,6 +1,9 @@
 package com.mergeco.oiljang.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,6 +13,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@AllArgsConstructor
+@Getter
+@ToString
 @Entity(name = "Product")
 @Table(name = "product_info")
 public class Product {
@@ -115,70 +121,4 @@ public class Product {
     protected Product() {
     }
 
-    public Product(int productCode, String productThumbAddr, String productName, int productPrice, String productDesc, String wishPlaceTrade, LocalDateTime enrollDateTime, int viewCount, int refUserCode, com.mergeco.oiljang.product.entity.SellStatus sellStatus, com.mergeco.oiljang.product.entity.Category category) {
-        this.productCode = productCode;
-        this.productThumbAddr = productThumbAddr;
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.productDesc = productDesc;
-        this.wishPlaceTrade = wishPlaceTrade;
-        this.enrollDateTime = enrollDateTime;
-        this.viewCount = viewCount;
-        this.refUserCode = refUserCode;
-        SellStatus = sellStatus;
-        Category = category;
-    }
-
-    public int getProductCode() {
-        return productCode;
-    }
-
-    public String getProductThumbAddr() {
-        return productThumbAddr;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public int getProductPrice() {
-        return productPrice;
-    }
-
-    public String getProductDesc() {
-        return productDesc;
-    }
-
-    public String getWishPlaceTrade() {
-        return wishPlaceTrade;
-    }
-
-    public LocalDateTime getEnrollDateTime() {
-        return enrollDateTime;
-    }
-
-    public int getViewCount() {
-        return viewCount;
-    }
-
-    public int getRefUserCode() {
-        return refUserCode;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "productCode=" + productCode +
-                ", productThumbAddr='" + productThumbAddr + '\'' +
-                ", productName='" + productName + '\'' +
-                ", productPrice=" + productPrice +
-                ", productDesc='" + productDesc + '\'' +
-                ", wishPlaceTrade='" + wishPlaceTrade + '\'' +
-                ", enrollDateTime=" + enrollDateTime +
-                ", viewCount=" + viewCount +
-                ", refUserCode=" + refUserCode +
-                ", SellStatus=" + SellStatus +
-                ", Category=" + Category +
-                '}';
-    }
 }

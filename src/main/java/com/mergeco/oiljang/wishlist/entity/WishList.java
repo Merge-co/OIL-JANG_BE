@@ -1,10 +1,14 @@
 package com.mergeco.oiljang.wishlist.entity;
 
 import com.mergeco.oiljang.product.entity.Product;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
 
+@AllArgsConstructor
+@Getter
+@ToString
 @Entity(name = "WishList")
 @Table(name = "wish_list")
 public class WishList {
@@ -24,30 +28,4 @@ public class WishList {
     protected WishList() {
     }
 
-    public WishList(int wishCode, Product product, int refUserCode) {
-        this.wishCode = wishCode;
-        this.product = product;
-        this.refUserCode = refUserCode;
-    }
-
-    public int getWishCode() {
-        return wishCode;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public int getRefUserCode() {
-        return refUserCode;
-    }
-
-    @Override
-    public String toString() {
-        return "WishList{" +
-                "wishCode=" + wishCode +
-                ", product=" + product +
-                ", refUserCode=" + refUserCode +
-                '}';
-    }
 }

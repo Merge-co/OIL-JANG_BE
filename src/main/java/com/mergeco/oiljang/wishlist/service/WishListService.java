@@ -28,10 +28,7 @@ public class WishListService {
     }
 
     public Long countWishList(int refUserCode) {
-        String jpql = "SELECT Count(*)" +
-                " FROM WishList w WHERE w.refUserCode = :refUserCode";
-        Long wishListCount = (Long) entityManager.createQuery(jpql).setParameter("refUserCode", refUserCode).getSingleResult();
-        return wishListCount;
+        return wishListRepository.countByRefUserCode(refUserCode);
     }
 
     public List<WishListInfoDTO> selectWishList(int offset, int limit, int refUserCode) {
