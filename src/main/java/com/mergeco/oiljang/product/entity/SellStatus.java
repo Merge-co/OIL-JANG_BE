@@ -1,7 +1,14 @@
 package com.mergeco.oiljang.product.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
 import javax.persistence.*;
 
+@AllArgsConstructor
+@Getter
+@ToString
 @Entity(name = "SellStatus")
 @Table(name = "sell_status_info")
 public class SellStatus {
@@ -24,26 +31,5 @@ public class SellStatus {
         return this;
     }
     protected SellStatus() {
-    }
-
-    public SellStatus(int sellStatusCode, String sellStatus) {
-        this.sellStatusCode = sellStatusCode;
-        this.sellStatus = sellStatus;
-    }
-
-    public int getSellStatusCode() {
-        return sellStatusCode;
-    }
-
-    public String getSellStatus() {
-        return sellStatus;
-    }
-
-    @Override
-    public String toString() {
-        return "SellStatus{" +
-                "sellStatusCode=" + sellStatusCode +
-                ", sellStatus='" + sellStatus + '\'' +
-                '}';
     }
 }
