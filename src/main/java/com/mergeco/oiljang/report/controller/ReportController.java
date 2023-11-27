@@ -36,18 +36,6 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-/*    @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
-    @GetMapping("/reports")
-    public ResponseEntity<?> main() {
-
-        List<ReportsDTO> reportsDTOList = reportService.findReports();
-
-        Map<String, Object> responesMap = new HashMap<>();
-        responesMap.put("msgProUserList", reportsDTOList);
-
-        return new ResponseEntity<>(reportsDTOList, getHeaders(), HttpStatus.OK);
-    }*/
-
     @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
     @GetMapping("/reports")
     public ResponseEntity<?> selectReportListWithPageing(
@@ -116,6 +104,19 @@ public class ReportController {
                 .body(new LoginMessage(HttpStatus.OK, "조회 성공", reportService.selectReportList(search)));
     }
 
+ /*   @ApiOperation(value = "처리 미처리 검색", notes = "처리 또는 미처리 검색", tags = {"ReportController"})
+    @GetMapping("/processd")
+    public List<Report> getReports(@RequestParam(required = false) Boolean processed, @RequestParam(required = false) String search) {
+        log.info("[ReportController Start ================]");
+
+        boolean isProcessed = processed != null ? processed :true;
+
+        List<Report> reports = reportService.getProcessd(isProcessed, search);
+
+        log.info("[ReportController END ================]");
+
+        return reports;
+    }*/
 
 
     //헤더 값

@@ -49,12 +49,18 @@ public class ReportService {
     }
     (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )*/
 
-    public List<ReportsDTO> findReports() {
+    public List<ReportsDTO> findReports(boolean processed) {
         log.info("[reportService] selectReport Start ===========================");
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
                 "FROM tbl_report r " +
-                "JOIN r.productCode c " +
-                "ORDER BY r.reportNo DESC";
+                "JOIN r.productCode c ";
+
+        if (processed) {
+            jpql += "WHERE r.processDistinction = '처리'";
+        } else {
+            jpql += "WHERE r.processDistinction = '미처리Ï'";
+        }
+        jpql += "ORDER BY r.reportNo DESC";
         List<ReportsDTO> management = manager.createQuery(jpql).getResultList();
 
         System.out.println("서비스 매니저: " + management);
@@ -157,7 +163,7 @@ public class ReportService {
         return reportList.size();
     }
 
-    public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
+    public Page<ReportsDTO> selectReportListWithPaging(Criteria cri ) {
 
         log.info("[ReportService] selectReportListWithPaging Start =====");
 
@@ -166,22 +172,19 @@ public class ReportService {
 
         Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
-      /*  Pageable paging = PageRequest.of(index, count, Sort.by("reportNo").descending());
-
-        Page<ReportsDTO> result = reportRepository.customQueryForReports(paging);
-        System.out.println("서비스에서 레포지토리 확인 : " +  result);
-
-        List<ReportsDTO> reportDTOList = result.stream()
-                .map(report -> modelMapper.map(report, ReportsDTO.class))
-                .collect(Collectors.toList());
-
-        for(int i = 0; i <reportDTOList.size(); i++) {
-            reportDTOList.get(i);
-        }*/
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c " +
-                "ORDER BY r.reportNo DESC";
+                "ORDER BY r.reportNo DESC ";
+
+   /*     if (processed ) {
+            jpql += "WHERE r.processDistinction = '처리'";
+        } else {
+            jpql += "WHERE r.processDistinction = '미처리Ï'";
+        }
+*/
+//        jpql += "ORDER BY r.reportNo DESC";
+
         TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
         List<ReportsDTO> management = query.getResultList();
 
@@ -192,4 +195,9 @@ public class ReportService {
         log.info("[ReportService] selectReportListWithPaging End =====");
         return reportPage;
     }
+
+    /*public List<Report> getProcessd(boolean isProcessed, String search) {
+
+
+    }*/
 }
