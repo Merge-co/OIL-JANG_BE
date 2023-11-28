@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
+    /*@ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
     @GetMapping("/reports")
     public ResponseEntity<?> selectReportListWithPageing(
             @RequestParam(name = "offset", defaultValue = "1") String offset) {
@@ -56,8 +57,50 @@ public class ReportController {
 
         log.info("[ReportController] selectReportListWithPaging END =====");
         return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "조회 성공", pagingResponseDTO));
-    }
+    }*/
 
+    @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
+    @GetMapping("/reports")
+    public ResponseEntity<?> selectReportListWithPageing(
+            @RequestParam(name = "offset", defaultValue = "1") String offset,
+            @RequestParam(name = "s", defaultValue = "all") String search,
+            @RequestParam(name = "p", defaultValue = "all") String processed) {
+
+        log.info("[ReportController] selectReportListWithPagingAndSearch Start ========");
+        log.info("[ReportController] selectReportListWithPagingAndSearch offset : {}", offset);
+        log.info("[ReportController] selectReportListWithPagingAndSearch search : {}", search);
+        log.info("[ReportController] selectReportListWithPagingAndSearch processed : {}", processed);
+
+        try {
+            Criteria cri = new Criteria(Integer.valueOf(offset), 10);
+            PagingResponseDTO pagingResponseDTO = new PagingResponseDTO();
+
+            if (!"all".equals(search)) {
+                // 검색 기능이 활성화 된 경우
+                List<ReportsDTO> searchList = reportService.selectReportList(search);
+                pagingResponseDTO.setData(searchList);
+                pagingResponseDTO.setPageInfo(new PageDTO(cri, searchList.size()));
+            } else if (!"all".equals(processed)){
+                    // 처리 미처리 기능이 활성화 된 경우
+                List<ReportsDTO> processedList = reportService.selectProcessed(processed);
+                pagingResponseDTO.setData(processedList);
+                pagingResponseDTO.setPageInfo(new PageDTO(cri, processedList.size()));
+            }else {
+                //일반 페이징 조회
+                int total = reportService.selectProejctTotal();
+                pagingResponseDTO.setData(reportService.selectReportListWithPaging(cri));
+                pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
+            }
+
+            log.info("[ReportController] selectReportListWithPagingAndSearch END===========");
+
+            return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "조회 성공", pagingResponseDTO));
+        } catch (Exception e) {
+            log.error("요청을 처리하는 동안 오휴 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new LoginMessage(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하는 동안 에러 발생", null));
+        }
+    }
 
     @ApiOperation(value = "신고하기", notes = "유저가 신고를 등록합니다.", tags = {"ReportController"})
     @PostMapping("/report")
@@ -90,32 +133,39 @@ public class ReportController {
         return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "신고처리 상세정보 조회 성공", reportService.selectByProcessDetail(reportNo)));
     }
 
-    @ApiOperation(value = "신고관리 검색", notes = "신고자 검색", tags = {"ReportController"})
+   /* @ApiOperation(value = "신고관리 검색", notes = "신고자 검색", tags = {"ReportController"})
     @GetMapping("/search")
     public ResponseEntity<?> selectSearchReportList(
-            @RequestParam(name = "s", defaultValue = "all") String search) {
+            @RequestParam(name = "s", defaultValue = "all") String search,
+            @RequestParam(name = "p", defaultValue = "all") String processed) {
         log.info("[ReportController] searchSelectReports Start ======================");
+        log.info("Control request parameter: '{}'", search);
+        log.info("RequestParam in report controller: {}", processed);
         System.out.println("컨트롤 리퀘스트 파람 : '" + search);
+        System.out.println("리포트컨트롤러에서 RequestParam : " + processed);
 
-        log.info("[ReportController] searchSelectReports END ======================");
+        try {
+            List<ReportsDTO> reports;
+            String message;
 
-        return ResponseEntity
-                .ok()
-                .body(new LoginMessage(HttpStatus.OK, "조회 성공", reportService.selectReportList(search)));
-    }
-
- /*   @ApiOperation(value = "처리 미처리 검색", notes = "처리 또는 미처리 검색", tags = {"ReportController"})
-    @GetMapping("/processd")
-    public List<Report> getReports(@RequestParam(required = false) Boolean processed, @RequestParam(required = false) String search) {
-        log.info("[ReportController Start ================]");
-
-        boolean isProcessed = processed != null ? processed :true;
-
-        List<Report> reports = reportService.getProcessd(isProcessed, search);
-
-        log.info("[ReportController END ================]");
-
-        return reports;
+            if (!"all".equals(search)) {
+                reports = reportService.selectReportList(search);
+                message = "Query Successful";
+            } else {
+                reports = reportService.selectProcessed(processed);
+                message = "Search Successful";
+            }
+            return ResponseEntity
+                    .ok()
+                    .body(new LoginMessage(HttpStatus.OK, "조회 성공", reports));
+        } catch (Exception e) {
+            log.error("요청을 처리하는 동안 오류 발생", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new LoginMessage(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하는 도중 에러", null));
+        } finally {
+            log.info("[ReportController] searchSelectReports END ======================");
+        }
     }*/
 
 

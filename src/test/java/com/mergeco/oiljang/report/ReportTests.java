@@ -3,6 +3,7 @@ package com.mergeco.oiljang.report;
 import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.report.dto.ReportCategoryDTO;
 import com.mergeco.oiljang.report.dto.ReportDTO;
+import com.mergeco.oiljang.report.dto.ReportsDTO;
 import com.mergeco.oiljang.report.repository.ReportRepository;
 import com.mergeco.oiljang.report.service.ReportService;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 
 import com.mergeco.oiljang.report.entity.Report;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -65,16 +67,10 @@ public class ReportTests {
     public void reportCategoryProductJoin() {
         //given
         //when
-        List<Object[]> categoryList = service.selectByReportProduct();
+        Page<ReportsDTO> categoryList = service.selectReportListWithPaging();
 
         //then
         Assertions.assertNotNull(categoryList);
-        categoryList.forEach(row -> {
-            for (Object col : row) {
-                System.out.print(col + " ");
-            }
-            System.out.println();
-        });
     }
 
     @DisplayName("신고처리 : 신고분류, 판매게시글, 신고사유 조회")
@@ -82,16 +78,10 @@ public class ReportTests {
     public void reportProcess() {
         //given
         //when
-        List<Object[]> reportList = service.selectByReportProcess();
+        String reportList = service.modifyReport();
 
         //then
         Assertions.assertNotNull(reportList);
-        reportList.forEach(row -> {
-            for (Object col : row) {
-                System.out.print(col + " ");
-            }
-            System.out.println();
-        });
     }
 
     @DisplayName("신고 관리페이지 - 신고번호, 판매자ID(닉네임 X), 판매글, 신고분류, 처리완료 조회")

@@ -15,6 +15,6 @@ import java.util.List;
 public interface ReportRepository extends JpaRepository<Report, Integer> {
 
     @Query("SELECT r FROM tbl_report r WHERE r.reportUserNick LIKE %:search% ORDER BY r.reportNo DESC ")
-    List<Report> findByReportUserNickContaining(@Param("search") String search);
-    Page<Report> findAllByReportNo(int reportNo, Pageable pageable);
+    List<ReportsDTO> findByReportUserNickContaining(@Param("search") String search);
+
 }
