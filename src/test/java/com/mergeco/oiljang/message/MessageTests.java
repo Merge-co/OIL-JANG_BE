@@ -96,8 +96,8 @@ public class MessageTests {
     @DisplayName("쪽지 등록 테스트")
     @ParameterizedTest
     @MethodSource("getMsgInfos")
-   void msgInsertTest(String msgContent, String msgStatus,
-                      LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
+    void msgInsertTest(String msgContent, String msgStatus,
+                       LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
 
                        int msgDeleteCode, String msgDeleteStatus){
         MsgInsertDTO msgInfo = new MsgInsertDTO(
@@ -117,7 +117,7 @@ public class MessageTests {
 
         Assertions.assertDoesNotThrow(
                 () -> msgService.insertMsg(msgInfo)
-       );
+        );
 
 
     }
@@ -176,17 +176,17 @@ public class MessageTests {
         int msgCode = 3;
 
         List<MsgProUserInfoDTO> msgDetail = msgService.selectMsgDetail(msgCode);
-            System.out.println("test: " + msgDetail);
+        System.out.println("test: " + msgDetail);
 
 //            Assertions.assertFalse(msgDetail.isEmpty());
-            msgDetail.forEach(detail -> {
-                System.out.println("msgCode: " + detail.getMsgCode());
-                System.out.println("msgContent: " + detail.getMsgContent());
-                System.out.println("msgStatus : " + detail.getMsgStatus());
-                System.out.println("msgTime : " + detail.getMsgTime());
-                System.out.println("senderCode: " + detail.getSenderCode());
-                System.out.println("receiverCode : " + detail.getReceiverCode());
-                System.out.println("id : " + detail.getId());
+        msgDetail.forEach(detail -> {
+            System.out.println("msgCode: " + detail.getMsgCode());
+            System.out.println("msgContent: " + detail.getMsgContent());
+            System.out.println("msgStatus : " + detail.getMsgStatus());
+            System.out.println("msgTime : " + detail.getMsgTime());
+            System.out.println("senderCode: " + detail.getSenderCode());
+            System.out.println("receiverCode : " + detail.getReceiverCode());
+            System.out.println("id : " + detail.getId());
             System.out.println("name : " + detail.getName());
             System.out.println("productCode: " + detail.getRefProductCode());
             System.out.println("productName : " + detail.getProductName());
@@ -214,11 +214,12 @@ public class MessageTests {
     @DisplayName("쪽지함 조회")
     public void selectMsgList(){
         int userCode = 1;
+        int page = Integer.parseInt(null);
         int offset = 0;
         int limit = 9;
+        String keyword = "맥";
 
-
-        List<MsgListDTO> msgList = msgService.getMessages(userCode, offset, limit, false);
+        List<MsgListDTO> msgList = msgService.getMessages(userCode, page, offset, limit, false, keyword);
 
         Assertions.assertTrue(msgList.size() >= 0);
         for (MsgListDTO msgListDTO : msgList) {
@@ -265,20 +266,20 @@ public class MessageTests {
 
 
 
-    @DisplayName("LIKE 연산자를 활용한 조회")
-    @Test
-      public void selectMsgLike(){
-
-        int userCode = 1;
-        int offset = 0;
-        int limit = 9;
-        String keyword = "맥";
-
-        List<MsgListDTO> msgList = msgService.selectMsgLike(userCode, offset, limit, true, keyword);
-
-        msgList.forEach(System.out::println);
-        Assertions.assertNotNull(msgList);
-
-
-    }
+//    @DisplayName("LIKE 연산자를 활용한 조회")
+//    @Test
+//      public void selectMsgLike(){
+//
+//        int userCode = 1;
+//        int offset = 0;
+//        int limit = 9;
+//        String keyword = "맥";
+//
+//        List<MsgListDTO> msgList = msgService.selectMsgLike(userCode, offset, limit, true, keyword);
+//
+//        msgList.forEach(System.out::println);
+//        Assertions.assertNotNull(msgList);
+//
+//
+//    }
 }
