@@ -141,31 +141,46 @@ public class MsgService {
     }
 
 
-    public List<MsgListDTO> getMessages(int userCode, int offset, int limit, Boolean isReceived) {
+    public List<MsgListDTO> getMessages(int userCode, int page, int offset, int limit, Boolean isReceived, String keyword) {
         String jpql;
         if (isReceived != null && isReceived) {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.receiverCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode";
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 3) AND m.senderCode <> u.userCode "
+                    + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
             System.out.println("거치는지 확인");
         } else {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.senderCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
-                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3)";
+                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2) "
+                    + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
         }
+
+        if(keyword == null || keyword.isEmpty()){
+            keyword = "";
+        }
+
+        //if(!keyword.isEmpty()){
+        //     jpql += " AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
+
+        //}
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
         query.setParameter("userCode", userCode);
+        query.setParameter("keyword", keyword);
+
+        query.setFirstResult(offset)
+                .setMaxResults(limit);
 
         return query.getResultList();
     }
 
 
-    public Long countMsgList() {
+    public Long countMsgList(Integer page, int userCode, Boolean isReceived, String keyword) {
         Long countPage = msgRepository.count();
         return countPage;
     }
@@ -177,7 +192,7 @@ public class MsgService {
         return false;
     }
 
-      private boolean isDeletedByReceiver(int receiver, MsgDeleteInfo msgDeleteInfo){
+    private boolean isDeletedByReceiver(int receiver, MsgDeleteInfo msgDeleteInfo){
         if(msgDeleteInfo.getMsgDeleteCode() == 3){
             return true;
         }
@@ -193,132 +208,114 @@ public class MsgService {
         try {
             Message message = msgRepository.findById(msgCode).orElseThrow(IllegalArgumentException::new);
 
-
-            System.out.println("service : " + msgCode);
             int sender = message.getSenderCode();
             int receiver = message.getReceiverCode();
 
-            //MsgDeleteInfo msgDeleteInfo = message.getMsgDeleteInfo();
+            MsgDeleteInfo msgDeleteInfo;
 
-            //builder를 쓰면 새로 받아줘야하고, 현재 영속화 된 엔티티는 Message이기 때문에 , MsgDeleteInfo를 새로 객체생성해서 값을 받아줬으면
-            //해당 값들을 다시 Message엔티티에 세팅해줘야한다.
-
-            System.out.println("sender : " + sender + "receiver :" + receiver);
-            System.out.println("message.getMsgDeleteInfo() : " + message.getMsgDeleteInfo());
-
-
-                if (isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
-                    if (message.getMsgDeleteInfo().getMsgDeleteCode() != 4 && message.getMsgDeleteInfo().getMsgDeleteCode() != 1) {
-                        System.out.println("4번");
-                      //   message = message.msgDeleteInfo(new MsgDeleteInfo(4, "B")).builder();
-                        message = message.msgDeleteInfo(new MsgDeleteInfo(4, "B")).builder();
-
-                    }
-
-                } else if (isDeletedBySender(sender, message.getMsgDeleteInfo())) {
-                    if (message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
-                        System.out.println("2번");
-
-                        message = message.msgDeleteInfo(new MsgDeleteInfo(2, "S")).builder();
-                    }
-                } else if (isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
-                    if (message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
-                        System.out.println("3번");
-                        message = message.msgDeleteInfo(new MsgDeleteInfo(3, "R")).builder();
-                    }
-
+            // MsgDeleteInfo 가져오기
+            if (isDeletedBySender(sender, message.getMsgDeleteInfo()) && isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
+                msgDeleteInfo = (message.getMsgDeleteInfo().getMsgDeleteCode() != 4 && message.getMsgDeleteInfo().getMsgDeleteCode() != 1)
+                        ? msgDeleteRepository.findByMsgDeleteCode(4)
+                        : message.getMsgDeleteInfo();
+            } else if (isDeletedBySender(sender, message.getMsgDeleteInfo())) {
+                msgDeleteInfo = (message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() == 1)
+                        ? msgDeleteRepository.findByMsgDeleteCode(2)
+                        : message.getMsgDeleteInfo();
+            } else if (isDeletedByReceiver(receiver, message.getMsgDeleteInfo())) {
+                msgDeleteInfo = (message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() == 1)
+                        ? msgDeleteRepository.findByMsgDeleteCode(3)
+                        : message.getMsgDeleteInfo();
+            } else {
+                if (message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
+                    msgDeleteInfo = (message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4)
+                            ? msgDeleteRepository.findByMsgDeleteCode(2)
+                            : (message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4)
+                            ? msgDeleteRepository.findByMsgDeleteCode(3)
+                            : message.getMsgDeleteInfo();
                 } else {
-                    if (message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
-                        System.out.println("1번");
-                    if(message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4){
-                            message = message.msgDeleteInfo(new MsgDeleteInfo(2, "S")).builder();
-                        } else if(message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4){
-                            message = message.msgDeleteInfo(new MsgDeleteInfo(3, "R")).builder();
-                        }
-
-                        System.out.println("1번 메시지 : " + message);
-                    }
-
-
+                    msgDeleteInfo = message.getMsgDeleteInfo();
+                }
             }
 
-                    msgRepository.save(message);
-                    result = 1;
+            // 업데이트된 Message 인스턴스 생성
+            Message updatedMessage = message.msgDeleteInfo(msgDeleteInfo).builder();
 
+            // 업데이트된 메시지 저장
+            msgRepository.save(updatedMessage);
+
+            return 1;
         } catch (Exception e) {
             System.out.println("exception!!!!!!!!! " + e);
             throw new RuntimeException(e);
         }
-
-        return (result > 0) ? 1 : 2;
     }
 
 
 
-
-    public List<MsgListDTO> selectMsgLike(int userCode, int offset, int limit, Boolean isReceived, String keyword) {
-        String jpql;
-
-
-        if(keyword == null || keyword.equals("")) {
-            keyword = "";
-            if ((isReceived != null && isReceived)) {
-                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
-                        + "FROM message_and_delete m "
-                        + "LEFT JOIN User u ON m.receiverCode = u.userCode "
-                        + "JOIN m.msgDeleteInfo md "
-                        + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode";
-            } else {
-                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
-                        + "FROM message_and_delete m "
-                        + "LEFT JOIN User u ON m.senderCode = u.userCode "
-                        + "JOIN m.msgDeleteInfo md "
-                        + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3)";
-            }
-
-        }else{
-            if ((isReceived != null && isReceived)) {
-                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
-                        + "FROM message_and_delete m "
-                        + "LEFT JOIN User u ON m.receiverCode = u.userCode "
-                        + "JOIN m.msgDeleteInfo md "
-                        + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 2) AND m.senderCode <> u.userCode "
-                        + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
-
-                System.out.println("확인==================");
-            } else {
-                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
-                        + "FROM message_and_delete m "
-                        + "LEFT JOIN User u ON m.senderCode = u.userCode "
-                        + "JOIN m.msgDeleteInfo md "
-                        + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 3) "
-                        + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
-
-                System.out.println("확인2==================");
-            }
-        }
-
-
-
-
-
-        TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
-        query.setParameter("userCode", userCode);
-        query.setParameter("keyword", keyword);
-
-        List<MsgListDTO> resultList = query.getResultList();
-
-        if (resultList.isEmpty()) {
-            System.out.println("검색 결과가 없습니다. 알림을 표시하세요."); // 여기에서는 간단히 콘솔에 출력하는 예시입니다.
-        }
-
-
-
-
-
-
-        return query.getResultList();
-    }
+//    public List<MsgListDTO> selectMsgLike(int userCode, int offset, int limit, Boolean isReceived, String keyword) {
+//        String jpql;
+//
+//
+//        if(keyword == null || keyword.equals("")) {
+//            keyword = "";
+//            if ((isReceived != null && isReceived)) {
+//                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+//                        + "FROM message_and_delete m "
+//                        + "LEFT JOIN User u ON m.receiverCode = u.userCode "
+//                        + "JOIN m.msgDeleteInfo md "
+//                        + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 3) AND m.senderCode <> u.userCode";
+//            } else {
+//                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+//                        + "FROM message_and_delete m "
+//                        + "LEFT JOIN User u ON m.senderCode = u.userCode "
+//                        + "JOIN m.msgDeleteInfo md "
+//                        + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2)";
+//            }
+//
+//        }else{
+//            if ((isReceived != null && isReceived)) {
+//                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+//                        + "FROM message_and_delete m "
+//                        + "LEFT JOIN User u ON m.receiverCode = u.userCode "
+//                        + "JOIN m.msgDeleteInfo md "
+//                        + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 3) AND m.senderCode <> u.userCode "
+//                        + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
+//
+//                System.out.println("확인==================");
+//            } else {
+//                jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
+//                        + "FROM message_and_delete m "
+//                        + "LEFT JOIN User u ON m.senderCode = u.userCode "
+//                        + "JOIN m.msgDeleteInfo md "
+//                        + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2) "
+//                        + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
+//
+//                System.out.println("확인2==================");
+//            }
+//        }
+//
+//
+//
+//
+//
+//        TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
+//        query.setParameter("userCode", userCode);
+//        query.setParameter("keyword", keyword);
+//
+//        List<MsgListDTO> resultList = query.getResultList();
+//
+//        if (resultList.isEmpty()) {
+//            System.out.println("검색 결과가 없습니다. 알림을 표시하세요."); // 여기에서는 간단히 콘솔에 출력하는 예시입니다.
+//        }
+//
+//
+//
+//
+//
+//
+//        return query.getResultList();
+//    }
 
 
 
