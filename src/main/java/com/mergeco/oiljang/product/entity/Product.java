@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
-@Getter
 @ToString
 @Entity(name = "Product")
 @Table(name = "product_info")
@@ -121,4 +120,39 @@ public class Product {
     protected Product() {
     }
 
+    public int getProductCode() {
+        return productCode;
+    }
+
+    public String getProductThumbAddr() {
+        return productThumbAddr;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public int getProductPrice() {
+        return productPrice;
+    }
+
+    public String getProductDesc() {
+        return productDesc;
+    }
+
+    public String getWishPlaceTrade() {
+        return wishPlaceTrade;
+    }
+
+    public LocalDateTime getEnrollDateTime() {
+        return enrollDateTime;
+    }
+
+    public int getViewCount() {
+        return viewCount;
+    }
+
+    public int getRefUserCode() {
+        return refUserCode;
+    }
 }

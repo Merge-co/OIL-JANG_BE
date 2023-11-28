@@ -393,9 +393,10 @@ public class ProductService {
 
 
 // 내 판매목록 조회
+
     public List<SellingListDTO> selectSellingList(int offset, int limit, int refUserCode) {
         String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = p.productCode), p.SellStatus.sellStatus)" +
-                " FROM Product p WHERE p.refUserCode = :refUserCode ORDER BY p.productCode DESC";
+                " FROM Product p WHERE p.refUserCode = :refUserCode and p.SellStatus.sellStatusCode in(1, 2) ORDER BY p.productCode DESC";
         List<SellingListDTO> wishList = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
                 .setFirstResult(offset)
