@@ -27,6 +27,6 @@ public class JoinDTO {
     private String phone;
     private String email;
     private String verifyStatus;
-    private String profileImageUrl;
+   // private String profileImageUrl;
 
 }

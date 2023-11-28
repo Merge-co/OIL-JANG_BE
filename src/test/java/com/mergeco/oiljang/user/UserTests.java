@@ -163,10 +163,9 @@ public class UserTests {
         FileInputStream fileInputStream = new FileInputStream(imageFile);
         MultipartFile profileImage = new MockMultipartFile("file", imageFile.getName(),"image/*",fileInputStream);
 
-        updateUserDTO.setProfileImage(profileImage);
 
         //when
-        UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO);
+        UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO,profileImage);
 
         //then
         Assertions.assertNotNull(updatedUserDTO);
@@ -191,8 +190,10 @@ public class UserTests {
         updateUserDTO.setNewPassword("test01");
         updateUserDTO.setNewPasswordConfirm("test01");
 
+        MultipartFile profileImage = null;
+
         //when
-        UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO);
+        UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO,profileImage);
 
         //then
         Assertions.assertNotNull(updatedUserDTO);
