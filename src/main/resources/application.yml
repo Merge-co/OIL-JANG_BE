@@ -65,7 +65,7 @@ jwt:
 
 
 file:
-  upload-dir: "C:\\Users\\User\\Desktop\\dir\\upload\\"
+  upload-dir: "D:/OIL-JANG_FE/public/images/userProfile"
 
 
 #logging:

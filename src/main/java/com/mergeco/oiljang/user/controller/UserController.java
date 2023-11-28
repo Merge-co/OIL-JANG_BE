@@ -4,10 +4,7 @@ package com.mergeco.oiljang.user.controller;
 import com.mergeco.oiljang.auth.handler.TokenProvider;
 import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.auth.model.dto.JoinDTO;
-import com.mergeco.oiljang.common.exception.DuplicateNicknameException;
-import com.mergeco.oiljang.common.exception.InvalidPasswordException;
-import com.mergeco.oiljang.common.exception.UserException;
-import com.mergeco.oiljang.common.exception.UserNotFoundException;
+import com.mergeco.oiljang.common.exception.*;
 import com.mergeco.oiljang.common.restApi.LoginMessage;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.user.entity.User;
@@ -45,17 +42,31 @@ public class UserController {
 
     @ApiOperation(value = "회원가입")
     @PostMapping(value = "/join")
-    public ResponseEntity<?> join(@ModelAttribute  JoinDTO joinDTO, @RequestPart("imageFile") MultipartFile imageFile) {
+    public ResponseEntity<?> join(@ModelAttribute  JoinDTO joinDTO, @RequestPart(value = "imageFile",required = false) MultipartFile imageFile) {
+
+        log.debug("JoinDTO : {}",joinDTO.getGender());
+        log.debug("JoinDTO : {}",joinDTO.getNickname());
+        log.debug("imageFile : {}",imageFile);
 
         try {
+
+            log.debug("joinDTO : {}",joinDTO.getId());
+            log.debug("joinDTO : {}",joinDTO.getBirthDate());
+            log.debug("joinDTO : {}",joinDTO.getName());
+            log.debug("joinDTO : {}",joinDTO.getNickname());
+            log.debug("joinDTO : {}",joinDTO.getPwd());
+            log.debug("joinDTO : {}",joinDTO.getGender());
+            log.debug("imageFile : {}",imageFile);
+
             User joinUser = userService.join(joinDTO, imageFile);
 
             return ResponseEntity
                     .ok()
                     .body(new LoginMessage(HttpStatus.OK, "회원 가입 정보", joinUser));
+        } catch (DuplicatedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(400, "Duplicate", null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseMessage(500, "서버 오류", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage(500, "Server Error", null));
         }
 
     }
@@ -132,6 +143,8 @@ public class UserController {
                 // 회원 정보 조회
                 UserDTO user = userService.getUserInfo(userCode);
 
+                log.debug("user",user.getBirthDate());
+
                 if (user != null) {
                     return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "회원 정보 조회 성공", user));
                 } else {
@@ -153,7 +166,15 @@ public class UserController {
 
     @ApiOperation(value = "나의 회원정보 수정")
     @PostMapping("/users/{userCode}")
-    public ResponseEntity<?> updateUserInfo(@PathVariable int userCode, @ModelAttribute UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<?> updateUserInfo(@PathVariable int userCode, @ModelAttribute UpdateUserDTO updateUserDTO ,@RequestPart(value = "profileImage",required = false) MultipartFile profileImage) {
+
+        log.debug("updateUserInfo start ======");
+
+        log.debug("UpdateUserDTO : {}", updateUserDTO.getNewPassword());
+        log.debug("UpdateUserDTO: {}", updateUserDTO.getNickname());
+        log.debug("UpdateUserDTO: {}", updateUserDTO.getNewPassword());
+        log.debug("profileImage: {}", profileImage);
+
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -168,7 +189,7 @@ public class UserController {
                 }
 
 
-                UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO);
+                UserDTO updatedUserDTO = userService.updateUser(userCode, updateUserDTO,profileImage);
 
                 if (updatedUserDTO != null) {
                     return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "나의 정보가 업데이트가 되었습니다.", updatedUserDTO));
@@ -182,7 +203,7 @@ public class UserController {
 
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(404, e.getMessage(), null));
-        } catch (DuplicateNicknameException | InvalidPasswordException e) {
+        } catch (DuplicatedException | InvalidPasswordException e) {
             return ResponseEntity.badRequest().body(new ResponseMessage(400, e.getMessage(), null));
         } catch (Exception e) {
             log.error("Exception occurred", e);

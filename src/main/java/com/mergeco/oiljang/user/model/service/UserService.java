@@ -4,7 +4,7 @@ import com.mergeco.oiljang.auth.handler.CustomAuthenticationProvider;
 import com.mergeco.oiljang.auth.handler.TokenProvider;
 import com.mergeco.oiljang.auth.model.dto.*;
 import com.mergeco.oiljang.common.UserRole;
-import com.mergeco.oiljang.common.exception.DuplicateNicknameException;
+import com.mergeco.oiljang.common.exception.DuplicatedException;
 import com.mergeco.oiljang.common.exception.InvalidPasswordException;
 import com.mergeco.oiljang.common.exception.UserNotFoundException;
 import com.mergeco.oiljang.user.entity.EnrollType;
@@ -68,69 +68,105 @@ public class UserService {
     @Transactional
     public User join(JoinDTO joinDTO, MultipartFile imageFile) throws IOException {
 
+        log.debug("joinDTO : {}",joinDTO.getId());
+        log.debug("joinDTO : {}",joinDTO.getBirthDate());
+        log.debug("joinDTO : {}",joinDTO.getName());
+        log.debug("joinDTO : {}",joinDTO.getNickname());
+        log.debug("joinDTO : {}",joinDTO.getPwd());
+        log.debug("joinDTO : {}",joinDTO.getGender());
+        log.debug("imageFile : {}",imageFile);
+
+        log.debug("join start-------------");
+
         if (!checkUserNicknameExist(joinDTO.getNickname())) {
-            throw new DuplicateNicknameException("이미 사용 중인 닉네임입니다.");
+            throw new DuplicatedException("이미 사용 중인 닉네임입니다.");
         }
+
+        log.debug("checkUserNicknameExist end-------------");
 
         // 중복 아이디 체크
         if (!checkUserIdExist(joinDTO.getId())) {
-            throw new DuplicateNicknameException("이미 사용 중인 아이디입니다.");
+            throw new DuplicatedException("이미 사용 중인 아이디입니다.");
         }
 
+        log.debug("checkUserIdExist end-------------");
 
-        // 파일 업로드 및 경로 저장
-        String originalFileName = joinDTO.getId() + "-original-" + imageFile.getOriginalFilename();
-        String thumbnailFileName = joinDTO.getId() + "-thumbnail-" + imageFile.getOriginalFilename();
-
-        saveProfileImage(imageFile, originalFileName, thumbnailFileName);
-
-        // UserProfile 경로 설정
-        String userProfileOriginPath = Paths.get(uploadDir, originalFileName).toString();
-        String userProfileThumbPath = Paths.get(uploadDir, thumbnailFileName).toString();
+        try {
+            log.debug("join method started at {}", LocalDateTime.now());
 
 
-        //UserProfile 생성
-        UserProfile userProfile = UserProfile.builder()
-                .userImageOriginName(originalFileName)
-                .userImageName(thumbnailFileName)
-                .userImageOriginAddr(userProfileOriginPath)
-                .userImageThumbAddr(userProfileThumbPath)
-                .build();
 
-        //User 생성
-        User user = User.builder()
-                .nickname(joinDTO.getNickname())
-                .name(joinDTO.getName())
-                .id(joinDTO.getId())
-                .pwd(joinDTO.getPwd())
-                .birthDate(joinDTO.getBirthDate())
-                .gender(joinDTO.getGender())
-                .enrollType(EnrollType.NORMAL)
-                .role(UserRole.ROLE_USER)
-                .phone(joinDTO.getPhone())
-                .verifyStatus("Y")
-                .withdrawStatus("N")
-                .email(joinDTO.getEmail())
-                .enrollDate(LocalDateTime.now())
-                .profileImageUrl(userProfileThumbPath)
-                .build();
 
-        user.setUserProfile(userProfile);
+            // 파일 업로드 및 경로 저장
+            String originalFileName = joinDTO.getId() + "-original-" + imageFile.getOriginalFilename();
+            String thumbnailFileName = joinDTO.getId() + "-thumbnail-" + imageFile.getOriginalFilename();
 
-        log.debug("user : {}",user);
+            log.debug("originalFileName, thumbnailFileName", originalFileName,thumbnailFileName);
 
-        user.passwordEncode(passwordEncoder);
+            saveProfileImage(imageFile, originalFileName, thumbnailFileName);
 
-        User joinUser = userRepository.save(user);
+            String thumbnailFolderName = "thumbnail";
+            String originFolderName = "origin";
 
-        userProfile.setRefUserCode(joinUser); // userProfile에서 refUserCode 설정
+            // UserProfile 경로 설정
+            String userProfileOriginPath = Paths.get(uploadDir,originFolderName ,originalFileName).toString();
+            String userProfileThumbPath = Paths.get(uploadDir,thumbnailFolderName ,thumbnailFileName).toString();
 
-        userProfileRepository.save(userProfile);
+            log.debug("userProfileOriginPath, userProfileThumbPath", userProfileOriginPath,userProfileThumbPath);
 
-        return joinUser;
+            //UserProfile 생성
+            UserProfile userProfile = UserProfile.builder()
+                    .userImageOriginName(originalFileName)
+                    .userImageName(thumbnailFileName)
+                    .userImageOriginAddr(userProfileOriginPath)
+                    .userImageThumbAddr(userProfileThumbPath)
+                    .build();
+
+            //User 생성
+            User user = User.builder()
+                    .nickname(joinDTO.getNickname())
+                    .name(joinDTO.getName())
+                    .id(joinDTO.getId())
+                    .pwd(joinDTO.getPwd())
+                    .birthDate(joinDTO.getBirthDate())
+                    .gender(joinDTO.getGender())
+                    .enrollType(EnrollType.NORMAL)
+                    .role(UserRole.ROLE_USER)
+                    .phone(joinDTO.getPhone())
+                    .verifyStatus("Y")
+                    .withdrawStatus("N")
+                    .email(joinDTO.getEmail())
+                    .enrollDate(LocalDateTime.now())
+                    .profileImageUrl(userProfileThumbPath)
+                    .build();
+
+            user.setUserProfile(userProfile);
+
+            log.debug("user : {}",user);
+
+            user.passwordEncode(passwordEncoder);
+
+            User joinUser = userRepository.save(user);
+
+            log.debug("joinUser",joinUser);
+
+            userProfile.setRefUserCode(joinUser); // userProfile에서 refUserCode 설정
+
+            userProfileRepository.save(userProfile);
+
+            return joinUser;
+        }catch (Exception e){
+            log.error("Exception in join method: {}", e.getMessage(), e);
+            throw e; // 예외를 상위로 전파
+        }
+
     }
 
     private void saveProfileImage(MultipartFile file, String originalFilename, String thumbnailFilename) throws IOException {
+
+        log.debug("saveProfileImage start-------------");
+
+
         // 파일 업로드 경로 설정
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         File uploadDir = new File(uploadPath.toString());
@@ -215,7 +251,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO updateUser(int userCode, UpdateUserDTO updateUserDTO) throws IOException {
+    public UserDTO updateUser(int userCode, UpdateUserDTO updateUserDTO, MultipartFile profileImage) throws IOException {
 
         User user = userRepository.findById(userCode)
                 .orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
@@ -225,11 +261,16 @@ public class UserService {
         System.out.println(user);
         System.out.println(profile);
 
-        User updatedUser = null;
+        log.debug("profileImage: {}",profileImage );
 
-        UserProfile updatedUserProfile = null;
+        User updatedUser = findUserByCode(userCode);
 
-        if (updateUserDTO.getNickname() != null) {
+        UserProfile updatedUserProfile = userProfileRepository.findByUser(user);
+
+        if (updateUserDTO.getNickname() != null && !("".equals(updateUserDTO.getNickname()))) {
+
+            log.debug("Nickname Change Start================ " );
+
             validateNickname(userCode, updateUserDTO.getNickname());
             updatedUser = User.builder()
                     .userCode(user.getUserCode())
@@ -249,11 +290,14 @@ public class UserService {
                     .profileImageUrl(user.getProfileImageUrl())
                     .userProfile(user.getUserProfile())
                     .build();
+
+            userRepository.save(updatedUser);
+
+            log.debug("Nickname Change End================ " );
         }
 
 
-        if (updateUserDTO.getProfileImage() != null) {
-            MultipartFile profileImage = updateUserDTO.getProfileImage();
+        if (profileImage != null ) {
 
 
             if (updatedUser.getUserProfile() != null) {
@@ -284,7 +328,8 @@ public class UserService {
             }
         }
 
-        if (updateUserDTO.getNewPassword() != null) {
+        if (updateUserDTO.getNewPassword() != null && !("".equals(updateUserDTO.getNewPassword()))) {
+            log.debug("NewPassword Change Start================ " );
             validatePasswordUpdate(updatedUser, updateUserDTO.getNewPassword(), updateUserDTO.getNewPasswordConfirm());
             updatedUser = User.builder()
                     .userCode(user.getUserCode())
@@ -305,13 +350,18 @@ public class UserService {
                     .userProfile(user.getUserProfile())
                     .build();
             updatePasswordAndSave(updatedUser);
+
+            userRepository.save(updatedUser);
+
+            log.debug("NewPassword Change End================ " );
+
         }else {
             userRepository.save(updatedUser);
         }
 
-        User finalUpdatedUser = userRepository.save(updatedUser != null ? updatedUser : user);
+        log.debug("updatedUser : {}",updatedUser);
 
-        return UserDTO.fromEntity(finalUpdatedUser);
+        return UserDTO.fromEntity(updatedUser);
     }
 
     private void updateProfileImage(User updatedUser, UserProfile userProfile, MultipartFile profileImage) throws IOException {
@@ -321,14 +371,18 @@ public class UserService {
         String originalFilename = userProfile.getRefUserCode().getId() + "-original-" + profileImage.getOriginalFilename();
         String thumbnailFilename = userProfile.getRefUserCode().getId() + "-thumbnail-" + profileImage.getOriginalFilename();
 
+
+        String thumbnailFolderName = "thumbnail";
+        String originFolderName = "origin";
+
         saveProfileImage(profileImage, originalFilename, thumbnailFilename);
 
         UserProfile updatedUserProfile = userProfile.builder()
                 .profileCode(userProfile.getProfileCode())
                 .userImageOriginName(originalFilename)
                 .userImageName(thumbnailFilename)
-                .userImageOriginAddr(Paths.get(uploadDir, originalFilename).toString())
-                .userImageThumbAddr(Paths.get(uploadDir, thumbnailFilename).toString())
+                .userImageOriginAddr(Paths.get(uploadDir,originFolderName, originalFilename).toString())
+                .userImageThumbAddr(Paths.get(uploadDir, thumbnailFolderName, thumbnailFilename).toString())
                 .build();
 
         updatedUserProfile.setRefUserCode(updatedUser);
@@ -336,7 +390,7 @@ public class UserService {
         userProfileRepository.save(updatedUserProfile);
         System.out.println(Paths.get(uploadDir, thumbnailFilename).toString());
         System.out.println(updatedUser.getUserCode());
-        userRepository.editProfileUrl(Paths.get(uploadDir, thumbnailFilename).toString(), updatedUser.getUserCode());
+        userRepository.editProfileUrl(Paths.get(uploadDir,thumbnailFolderName, thumbnailFilename).toString(), updatedUser.getUserCode());
     }
 
     private void deleteProfileImage(String userImageOriginAddr) {
@@ -351,14 +405,26 @@ public class UserService {
     }
 
     private void validateNickname(int userCode, String newNickname) {
+
+        log.debug("validateNickname Change Start================ " );
+
+        log.debug("validateNickname userCode : {} ", userCode );
+        log.debug("validateNickname newNickname : {} ", newNickname );
+
         User existingUser = userRepository.findByNickname(newNickname);
         if (existingUser != null && existingUser.getUserCode() != userCode) {
-            throw new DuplicateNicknameException("이미 사용 중인 닉네임입니다.");
+            throw new DuplicatedException("이미 사용 중인 닉네임입니다.");
         }
     }
 
     // 비밀번호 변경 유효성 검사 메소드
     private void validatePasswordUpdate(User user, String newPassword, String newPasswordConfirm) {
+
+        log.debug("updatePasswordAndSave Change Start================ " );
+
+        log.debug("validatePasswordUpdate newPassword : {} ", newPassword );
+        log.debug("validatePasswordUpdate newPasswordConfirm : {} ", newPasswordConfirm );
+
         if (!newPassword.equals(newPasswordConfirm)) {
             throw new InvalidPasswordException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
@@ -366,6 +432,11 @@ public class UserService {
 
 
     private void updatePasswordAndSave(User user) {
+
+        log.debug("updatePasswordAndSave Change Start================ " );
+
+        log.debug("updatePasswordAndSave User : {} ", user );
+
         user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
