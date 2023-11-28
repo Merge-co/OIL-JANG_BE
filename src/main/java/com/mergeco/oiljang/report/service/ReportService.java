@@ -139,17 +139,53 @@ public class ReportService {
         return managment;
     }
 
-    public List<Report> selectReportList(String search) {
+    public List<ReportsDTO> selectReportList(String searchs) {
         log.info("[ReportService] selectReportList Start =================");
-        log.info("[ReportService] search : {}", search);
+        log.info("[ReportService] search : {}", searchs);
 
-        List<Report> reportListWithSearchValue = reportRepository.findByReportUserNickContaining(search);
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (" +
+                "r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, " +
+                "r.productCode.productName, r.processDate, r.sellStatusCode.sellStatus, " +
+                "r.reportComment, r.processComment, r.processDistinction, r.reportUserNick, " +
+                "(SELECT u.nickname FROM User u WHERE u.userCode = r.productCode.refUserCode) " +
+                ") " +
+                "FROM tbl_report r " +
+                "WHERE r.reportUserNick LIKE :search " +
+                "ORDER BY r.reportNo DESC";
 
-        System.out.println("서비스 값다아옴 : " + reportListWithSearchValue);
+        TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
+        query.setParameter("search", "%" + searchs + "%");
 
+        System.out.println("서비스 값다아옴 : " + query);
         log.info("[ReportService] selectReportList END ===================");
+        return query.getResultList();
+    }
 
-        return reportListWithSearchValue;
+    public List<ReportsDTO> selectProcessed(String processed) {
+
+        log.info("[ReportService] selectProcessedList Start ==========");
+        log.info("[ReportService] process: {}", processed);
+
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+                "FROM tbl_report r " +
+                "JOIN r.productCode c ";
+
+        //처리 상태에 따른 WHERE 조건 추가
+        if ("처리".equals(processed)) {
+            jpql += "WHERE r.processDistinction = '처리' ";
+        } else if ("미처리".equals(processed)) {
+            jpql += "WHERE r.processDistinction = '미처리' ";
+        }
+        jpql += "ORDER BY r.reportNo DESC ";
+
+        TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
+        List<ReportsDTO> management = query.getResultList();
+
+        System.out.println("서비스에서 쿼리문 뭘 갖고 오나 ? : " + management);
+
+        log.info("[ReportService] selectProcessedList END ==========");
+
+        return management;
     }
 
     public int selectProejctTotal() {
@@ -163,7 +199,7 @@ public class ReportService {
         return reportList.size();
     }
 
-    public Page<ReportsDTO> selectReportListWithPaging(Criteria cri ) {
+    public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
 
         log.info("[ReportService] selectReportListWithPaging Start =====");
 
@@ -177,14 +213,6 @@ public class ReportService {
                 "JOIN r.productCode c " +
                 "ORDER BY r.reportNo DESC ";
 
-   /*     if (processed ) {
-            jpql += "WHERE r.processDistinction = '처리'";
-        } else {
-            jpql += "WHERE r.processDistinction = '미처리Ï'";
-        }
-*/
-//        jpql += "ORDER BY r.reportNo DESC";
-
         TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
         List<ReportsDTO> management = query.getResultList();
 
@@ -196,8 +224,14 @@ public class ReportService {
         return reportPage;
     }
 
-    /*public List<Report> getProcessd(boolean isProcessed, String search) {
+
+    public Page<ReportsDTO> selectReportListWithPaging() {
+        return null;
+    }
+
+    public String modifyReport() {
+        return null;
+    }
 
 
-    }*/
 }
