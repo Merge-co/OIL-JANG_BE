@@ -1,7 +1,9 @@
 package com.mergeco.oiljang.report.service;
 
 import com.mergeco.oiljang.common.paging.Criteria;
+import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.entity.SellStatus;
+import com.mergeco.oiljang.product.repository.ProductRepository;
 import com.mergeco.oiljang.report.dto.ReportsDTO;
 import com.mergeco.oiljang.report.entity.Report;
 import com.mergeco.oiljang.report.dto.ReportDTO;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ReportService {
+    private final ProductRepository productRepository;
 
     @PersistenceContext
     private final EntityManager manager;
@@ -29,10 +32,12 @@ public class ReportService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ReportService(EntityManager manager, ReportRepository reportRepository, ModelMapper modelMapper) {
+    public ReportService(EntityManager manager, ReportRepository reportRepository, ModelMapper modelMapper,
+                         ProductRepository productRepository) {
         this.manager = manager;
         this.reportRepository = reportRepository;
         this.modelMapper = modelMapper;
+        this.productRepository = productRepository;
     }
 
  /*   public List<Report> findReports() {
@@ -96,7 +101,8 @@ public class ReportService {
 
         try {
             Report report = reportRepository.findById(reportDTO.getReportNo()).orElseThrow(IllegalArgumentException::new);
-
+            Product product = productRepository.findById(report.getProductCode().getProductCode()).orElse(null);
+            log.info("상품 정보 코드 확인 : ", reportDTO.getProductCode());
             log.info("Repository Check : " + report);
             report = report
                     .processDistinction(reportDTO.getProcessDistinction())
@@ -105,6 +111,12 @@ public class ReportService {
                     .sellStatusCode(new SellStatus(reportDTO.getSellStatusCode(), null))
                     .build();
             result = 1;
+            System.out.println("리포트 변경값 : " + report);
+
+            product = product
+                    .sellStatus(reportDTO.getSellStatusCode()).builder();
+
+            System.out.println("상품 변경값 : " + product);
 
         } catch (Exception e) {
             log.info("[Report update] Exception !!" + e);
@@ -112,7 +124,6 @@ public class ReportService {
         log.info("[reportService] updateReport END ================================");
         return (result > 0) ? "처리 완료" : "처리 실패";
     }
-
     public Report selectByProcessDetail(int reportNo) {
         log.info("[ReportService] selectByProcessDetail Start ======================================");
 
@@ -139,9 +150,14 @@ public class ReportService {
         return managment;
     }
 
-    public List<ReportsDTO> selectReportList(String searchs) {
+    public Page<ReportsDTO> selectReportList(Criteria cri, String searchs) {
         log.info("[ReportService] selectReportList Start =================");
         log.info("[ReportService] search : {}", searchs);
+
+        int index = cri.getPageNum() - 1;
+        int count = cri.getAmount();
+
+        Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (" +
                 "r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, " +
@@ -155,21 +171,28 @@ public class ReportService {
 
         TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
         query.setParameter("search", "%" + searchs + "%");
+        List<ReportsDTO> management = query.getResultList();
 
-        System.out.println("서비스 값다아옴 : " + query);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), management.size());
+        Page<ReportsDTO> reportPage = new PageImpl<>(management.subList(start, end), pageable, management.size());
+
         log.info("[ReportService] selectReportList END ===================");
-        return query.getResultList();
+        return reportPage;
     }
 
-    public List<ReportsDTO> selectProcessed(String processed) {
+    public Page<ReportsDTO>selectProcessed(Criteria cri, String processed) {
 
         log.info("[ReportService] selectProcessedList Start ==========");
-        log.info("[ReportService] process: {}", processed);
+
+        int index = cri.getPageNum() - 1 ;
+        int count = cri.getAmount();
+
+        Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c ";
-
         //처리 상태에 따른 WHERE 조건 추가
         if ("처리".equals(processed)) {
             jpql += "WHERE r.processDistinction = '처리' ";
@@ -181,11 +204,12 @@ public class ReportService {
         TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
         List<ReportsDTO> management = query.getResultList();
 
-        System.out.println("서비스에서 쿼리문 뭘 갖고 오나 ? : " + management);
-
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), management.size());
+        Page<ReportsDTO> reportPage = new PageImpl<>(management.subList(start, end), pageable, management.size());
         log.info("[ReportService] selectProcessedList END ==========");
 
-        return management;
+        return reportPage;
     }
 
     public int selectProejctTotal() {
@@ -199,7 +223,32 @@ public class ReportService {
         return reportList.size();
     }
 
-    public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
+   /* public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
+
+        log.info("[ReportService] selectReportListWithPaging Start =====");
+
+        int index = cri.getPageNum() - 1;
+        int count = cri.getAmount();
+
+        Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
+
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+                "FROM tbl_report r " +
+                "JOIN r.productCode c " +
+                "ORDER BY r.reportNo DESC ";
+
+        TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
+        List<ReportsDTO> management = query.getResultList();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), management.size());
+        Page<ReportsDTO> reportPage = new PageImpl<>(management.subList(start, end), pageable, management.size());
+
+        log.info("[ReportService] selectReportListWithPaging End =====");
+        return reportPage;
+    }*/
+
+     public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
 
         log.info("[ReportService] selectReportListWithPaging Start =====");
 
@@ -223,7 +272,6 @@ public class ReportService {
         log.info("[ReportService] selectReportListWithPaging End =====");
         return reportPage;
     }
-
 
     public Page<ReportsDTO> selectReportListWithPaging() {
         return null;

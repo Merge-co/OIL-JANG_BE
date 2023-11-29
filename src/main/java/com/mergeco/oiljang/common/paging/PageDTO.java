@@ -1,9 +1,11 @@
 package com.mergeco.oiljang.common.paging;
 
 
+import com.mergeco.oiljang.report.dto.ReportsDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.domain.Page;
 
 @Getter
 @Setter
@@ -43,9 +45,5 @@ public class PageDTO {
 
         /* 다음 버튼 값 초기화 */
         this.next = this.pageEnd < realEnd;
-
-
     }
-
-
 }
