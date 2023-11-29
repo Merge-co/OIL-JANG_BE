@@ -29,15 +29,27 @@ public class MyCalendarService {
                 .collect(Collectors.toList());
     }
 
-    public void insertMyCalendar(MyCalendarDTO myCalendarDTO) {
+    @Transactional
+    public String registMyCalendar(MyCalendarDTO myCalendarDTO) {
+        String result = "캘린더에 내용 등록 실패";
+
         myCalendarRepository.save(modelMapper.map(myCalendarDTO, MyCalendar.class));
+
+        result = "캘린더에 내용 등록 성공";
+        return result;
     }
 
     @Transactional
-    public void updateMyCalendar(MyCalendarDTO myCalendarDTO) {
+    public String updateMyCalendar(MyCalendarDTO myCalendarDTO) {
+        String result = "캘린더에 내용 수정 실패";
+
         MyCalendar myCalendar = myCalendarRepository.findById(myCalendarDTO.getMyCalendarCode()).orElseThrow(IllegalAccessError::new);
+
         myCalendar = myCalendar = myCalendar.calendarContent(myCalendarDTO.getCalendarContent())
                 .calendarDate(myCalendarDTO.getCalendarDate()).builder();
+
+        result = "캘린더에 내용 수정 성공";
+        return result;
     }
 
     @Transactional

@@ -137,8 +137,6 @@ public class ProductController {
 
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        System.out.println("userCode" + userCode);
-        System.out.println("isView" + isView);
         if(!Boolean.parseBoolean(isView) && isView != null) {
             productService.updateViewCount(productCode);
         }
@@ -178,7 +176,7 @@ public class ProductController {
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("result", productService.insertWishList(wishListDTO));
 
-        ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록 등록 성공", responseMap);
+        ResponseMessage responseMessage = new ResponseMessage(200, "관심 목록 등록", responseMap);
 
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }

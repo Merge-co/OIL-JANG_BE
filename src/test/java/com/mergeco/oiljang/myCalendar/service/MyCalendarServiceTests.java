@@ -22,7 +22,7 @@ public class MyCalendarServiceTests {
     private MyCalendarRepository myCalendarRepository;
 
     @Test
-    void CalendarServiceExist() {
+    void myCalendarServiceExist() {
 
         //then
         Assertions.assertNotNull(myCalendarService);
@@ -53,7 +53,7 @@ public class MyCalendarServiceTests {
         myCalendarDTO.setCalendarContent("테스트 내용");
 
         //when
-        myCalendarService.insertMyCalendar(myCalendarDTO);
+        myCalendarService.registMyCalendar(myCalendarDTO);
         Long afterCount = myCalendarRepository.count();
 
         //then
@@ -88,7 +88,7 @@ public class MyCalendarServiceTests {
         myCalendarDTO.setRefUserCode(2);
         myCalendarDTO.setCalendarDate(LocalDate.now());
         myCalendarDTO.setCalendarContent("테스트 내용");
-        myCalendarService.insertMyCalendar(myCalendarDTO);
+        myCalendarService.registMyCalendar(myCalendarDTO);
         int myCalendarCode = 1;
 
         //when
