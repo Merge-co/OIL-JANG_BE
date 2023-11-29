@@ -21,8 +21,8 @@ public class MyCalendarService {
         this.modelMapper = modelMapper;
     }
 
-    public List<MyCalendarDTO> selectCalendarList(int refUserCode) {
-        List<MyCalendar> myCalendarList = myCalendarRepository.findByRefUserCode(refUserCode);
+    public List<MyCalendarDTO> selectCalendarList(int userCode) {
+        List<MyCalendar> myCalendarList = myCalendarRepository.findByRefUserCode(userCode);
 
         return myCalendarList.stream()
                 .map(myCalendar -> modelMapper.map(myCalendar, MyCalendarDTO.class))
@@ -40,10 +40,10 @@ public class MyCalendarService {
     }
 
     @Transactional
-    public String updateMyCalendar(MyCalendarDTO myCalendarDTO) {
+    public String updateMyCalendar(int myCalendarCode, MyCalendarDTO myCalendarDTO) {
         String result = "캘린더에 내용 수정 실패";
 
-        MyCalendar myCalendar = myCalendarRepository.findById(myCalendarDTO.getMyCalendarCode()).orElseThrow(IllegalAccessError::new);
+        MyCalendar myCalendar = myCalendarRepository.findById(myCalendarCode).orElseThrow(IllegalAccessError::new);
 
         myCalendar = myCalendar = myCalendar.calendarContent(myCalendarDTO.getCalendarContent())
                 .calendarDate(myCalendarDTO.getCalendarDate()).builder();
@@ -53,10 +53,15 @@ public class MyCalendarService {
     }
 
     @Transactional
-    public void deleteMyCalendar(int myCalendarCode) {
+    public String deleteMyCalendar(int myCalendarCode) {
+        String result = "캘린더에 내용 삭제 실패";
+
         MyCalendar myCalendar = myCalendarRepository.findById(myCalendarCode).orElse(null);
         if(myCalendar != null) {
             myCalendarRepository.delete(myCalendar);
         }
+
+        result = "캘린더에 내용 삭제 성공";
+        return result;
     }
 }

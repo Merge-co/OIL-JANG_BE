@@ -66,12 +66,12 @@ public class MyCalendarServiceTests {
 
         //given
         MyCalendarDTO myCalendarDTO = new MyCalendarDTO();
-        myCalendarDTO.setMyCalendarCode(1);
+        int myCalendarCode = 1;
         myCalendarDTO.setCalendarDate(LocalDate.of(2023, 11, 20));
         myCalendarDTO.setCalendarContent("테스트 업데이트");
 
         //when
-        myCalendarService.updateMyCalendar(myCalendarDTO);
+        myCalendarService.updateMyCalendar(myCalendarCode, myCalendarDTO);
         MyCalendar myCalendar = myCalendarRepository.findById(1).orElseThrow(IllegalAccessError::new);
 
         //then

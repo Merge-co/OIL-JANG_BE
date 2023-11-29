@@ -28,10 +28,10 @@ public class MyCalendarControllerTests {
     void controllerSelectMyCalendar() {
 
         //given
-        int refUserCode = 2;
+        int userCode = 2;
 
         //when
-        ResponseEntity<ResponseMessage> result = myCalendarController.selectCalendarList(refUserCode);
+        ResponseEntity<ResponseMessage> result = myCalendarController.selectCalendarList(userCode);
 
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
@@ -63,12 +63,14 @@ public class MyCalendarControllerTests {
     void controllerUpdateCalendar() {
 
         //given
+        int myCalendarCode = 1;
         MyCalendarDTO myCalendarDTO = new MyCalendarDTO();
         myCalendarDTO.setMyCalendarCode(1);
         myCalendarDTO.setCalendarContent("테스트 입니다.");
         myCalendarDTO.setCalendarDate(LocalDate.of(2023,11,20));
+
         //when
-        ResponseEntity<ResponseMessage> result = myCalendarController.updateCalendar(myCalendarDTO);
+        ResponseEntity<ResponseMessage> result = myCalendarController.updateCalendar(myCalendarCode, myCalendarDTO);
 
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
@@ -80,6 +82,15 @@ public class MyCalendarControllerTests {
     @Transactional
     void controllerDeleteCalendar() {
 
-        //
+        //given
+        int myCalendarCode = 1;
+
+        //when
+        ResponseEntity<ResponseMessage> result = myCalendarController.deleteCalendar(myCalendarCode);
+
+        //then
+        Assertions.assertEquals(result.getStatusCodeValue(), 200);
+        Assertions.assertEquals(result.getBody().getMessage(), "회원의 캘린더 내용 삭제");
+        Assertions.assertTrue(result.getBody().getResults().get("result").equals("캘린더에 내용 삭제 성공"));
     }
 }
