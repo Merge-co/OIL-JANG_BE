@@ -110,7 +110,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/", "/login", "/join").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
-                .antMatchers("/users/**").hasAnyRole("USER")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
