@@ -54,7 +54,7 @@ public class Message {
     @Column(name = "receiver_code")
     private int receiverCode;
 
-    @JoinColumn(name = "msg_delete_code", insertable = false, updatable = false)
+    @JoinColumn(name = "msg_delete_code")
     @ManyToOne
     private MsgDeleteInfo msgDeleteInfo;
 

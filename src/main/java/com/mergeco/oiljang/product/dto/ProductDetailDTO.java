@@ -26,9 +26,9 @@ public class ProductDetailDTO {
     private int refUserCode;
     private String userImageThumbAddr;
     private String nickName;
+    private String name;
+    private String id;
     private String productDesc;
     private String wishPlaceTrade;
     private int sellStatusCode;
-
-
 }

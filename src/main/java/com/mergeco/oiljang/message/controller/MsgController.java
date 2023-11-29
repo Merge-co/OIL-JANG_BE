@@ -73,25 +73,28 @@ public class MsgController {
 //            return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
 //    }
 
-    @ApiOperation(value = "쪽지 모달 조회")
-    @GetMapping("/messages")
-    public ResponseEntity<ResponseMessage> selectReceiver(@RequestBody MsgReceiverDTO msgReceiverDTO) {
-
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        List<MsgReceiverDTO> msgReceiverList = msgService.selectReceiver();
-        System.out.println("controller: " + msgReceiverList);
-
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("msgReceiveList", msgReceiverList);
-
-        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 모달 receiver", responseMap);
-
-        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
-
-    }
+//    @ApiOperation(value = "쪽지 모달 조회")
+//    @GetMapping("/users/{userCode}/products/{productCode}/messages")
+//    public ResponseEntity<ResponseMessage> selectReceiver(
+//            @PathVariable int userCode,
+//            @PathVariable int productCode
+//    ) {
+//
+//        HttpHeaders headers = new HttpHeaders();
+//
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//
+//        List<MsgReceiverDTO> msgReceiverList = msgService.selectReceiver(userCode, productCode);
+//        System.out.println("controller: " + msgReceiverList);
+//
+//        Map<String, Object> responseMap = new HashMap<>();
+//        responseMap.put("msgReceiveList", msgReceiverList);
+//
+//        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 모달 receiver", responseMap);
+//
+//        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+//
+//    }
 
     @ApiOperation(value = "쪽지 상세 조회")
     @GetMapping("/messages/{msgCode}")

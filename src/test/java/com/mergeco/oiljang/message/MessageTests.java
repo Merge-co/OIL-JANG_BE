@@ -98,7 +98,6 @@ public class MessageTests {
     @MethodSource("getMsgInfos")
     void msgInsertTest(String msgContent, String msgStatus,
                        LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
-
                        int msgDeleteCode, String msgDeleteStatus){
         MsgInsertDTO msgInfo = new MsgInsertDTO(
                 msgContent,
@@ -148,25 +147,28 @@ public class MessageTests {
 //    }
 
 
-    @Test
-    @DisplayName("쪽지 모달 receiver 조회 테스트")
-    public void selectReceiver(){
-
-        List<MsgReceiverDTO> receiver = msgService.selectReceiver();
-
-        Assertions.assertFalse(receiver.isEmpty());
-        receiver.forEach(row -> {
-            for(MsgReceiverDTO msgReceiverDTO : receiver){
-                System.out.println("msgCode : " + msgReceiverDTO.getMsgCode());
-                System.out.println("receiverCode : " + msgReceiverDTO.getReceiverCode());
-                System.out.println("productCode : " + msgReceiverDTO.getProductCode());
-                System.out.println("userCode : " + msgReceiverDTO.getUserCode());
-                System.out.println("userName : " + msgReceiverDTO.getName());
-                System.out.println("id : " + msgReceiverDTO.getId());
-            }
-        });
-
-    }
+//    @Test
+//    @DisplayName("쪽지 모달 receiver 조회 테스트")
+//    public void selectReceiver(){
+//
+//        int msgCode = 1;
+//        int userCode = 1;
+//        int productCode = 1;
+//
+//        List<MsgReceiverDTO> receiver = msgService.selectReceiver(userCode, productCode);
+//
+//        Assertions.assertFalse(receiver.isEmpty());
+//        receiver.forEach(row -> {
+//            for(MsgReceiverDTO msgReceiverDTO : receiver){
+//                System.out.println("receiverCode : " + msgReceiverDTO.getReceiverCode());
+//                System.out.println("productCode : " + msgReceiverDTO.getProductCode());
+//                System.out.println("userCode : " + msgReceiverDTO.getUserCode());
+//                System.out.println("userName : " + msgReceiverDTO.getName());
+//                System.out.println("id : " + msgReceiverDTO.getId());
+//            }
+//        });
+//
+//    }
 
 
     @Test
