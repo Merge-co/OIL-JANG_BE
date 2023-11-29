@@ -335,12 +335,15 @@ public class ProductService {
         existingProduct.productName(updatedProductDTO.getProductName());
         existingProduct.productPrice(updatedProductDTO.getProductPrice());
         existingProduct.productDesc(updatedProductDTO.getProductDesc());
+        System.out.println(updatedProductDTO.getWishPlaceTrade());
+        existingProduct.wishPlaceTrade(updatedProductDTO.getWishPlaceTrade());
+        existingProduct.category(updatedProductDTO.getRefCategoryCode());
 
         String productDesc = updatedProductDTO.getProductDesc();
         if (productDesc != null) {
             existingProduct.productDesc(productDesc);
         }
-
+        System.out.println(existingProduct);
         //상품 업데이트
         productRepository.save(existingProduct);
     }
