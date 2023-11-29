@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Api(tags = "회원")
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -73,17 +72,21 @@ public class UserController {
 
     @ApiOperation(value = "중복 체크")
     @GetMapping("/users/checkId")
-    public ResponseEntity<ResponseMessage> checkUserIdExist(@RequestParam String id) {
+    public ResponseEntity<?> checkUserIdExist(@RequestParam String id) {
+
+        log.debug("checkUserIdExist start~~~~~~");
 
         try {
+            log.debug("checkUserIdExist check start~~~~~~");
+
             boolean check = userService.checkUserIdExist(id);
             if (check) {
                 // 사용 가능
-                return ResponseEntity.ok().body(new ResponseMessage(200, "사용 가능한 ID입니다.", null));
+                return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "사용 가능한 ID입니다.", null));
             } else {
 
                 //중복된 경우
-                return ResponseEntity.ok().body(new ResponseMessage(200, "중복된 ID입니다.", null));
+                return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "중복된 ID입니다.", null));
             }
         } catch (UserException e) {
             // 예외가 발생한 경우

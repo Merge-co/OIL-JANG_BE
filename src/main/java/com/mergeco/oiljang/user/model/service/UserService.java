@@ -204,8 +204,9 @@ public class UserService {
 
         if (userId != null) {
             return false;
-        } else
+        } else {
             return true;
+        }
     }
 
 

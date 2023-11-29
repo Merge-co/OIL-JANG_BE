@@ -38,7 +38,11 @@ public class DetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
+        log.debug("loadUserByUsername start ~~~~");
+
         try {
+            log.debug("loadUserByUsername check start ~~~~");
+
 
             EnrollType enrollType = oAuth2DetailsService.getEnrollType(userId);
 
