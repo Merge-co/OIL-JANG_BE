@@ -64,47 +64,42 @@ public class MsgService {
 //
 //    }
 
-    public List<MsgReceiverDTO> selectReceiver() {
-        String query = "SELECT m.msg_code, m.receiver_code, p.product_code, u.user_code, u.name, u.id "
-                + "FROM message m "
-                + "LEFT JOIN user_info u ON m.receiver_code = u.user_code "
-                + "RIGHT JOIN product_info p ON u.user_code = p.ref_user_code ";
-
-        List<Object[]> resultList = entityManager.createNativeQuery(query).getResultList();
-        System.out.println("resultList : " + resultList);
-        List<MsgReceiverDTO> receiverList = new ArrayList<>();
-
-        for(Object[] result : resultList){
-            MsgReceiverDTO dto = new MsgReceiverDTO();
-            dto.setMsgCode((Integer) result[0]);
-            dto.setReceiverCode((Integer) result[1]);
-            dto.setProductCode((Integer) result[2]);
-            dto.setUserCode((Integer) result[3]);
-            dto.setName((String) result[4]);
-            dto.setId((String) result[5]);
-
-            System.out.println("result[0] : " + result[0]);
-            System.out.println("result[1] : " + result[1]);
-            System.out.println("result[2] : " + result[2]);
-            System.out.println("result[3] : " + result[3]);
-            System.out.println("result[4] : " + result[4]);
-            System.out.println("result[5] : " + result[5]);
-
-//            dto.setMsgCode(dto.getMsgCode());
-//            dto.setReceiverCode(dto.getReceiverCode());
-//            dto.setProductCode(dto.getProductCode());
-//            dto.setUserCode(dto.getUserCode());
-//            dto.setName(dto.getName());
-//            dto.setId(dto.getId());
-
-            System.out.println("result!!!:" + Arrays.toString(result));
-
-            receiverList.add(dto);
 
 
-        }
-        return receiverList;
-    }
+
+
+//    public List<MsgReceiverDTO> selectReceiver(int userCode, int productCode) {
+//        String query = "SELECT m.receiver_code, m.ref_product_code, p.product_code, u.user_code, u.name, u.id "
+//                + "FROM message m "
+//                + "LEFT JOIN user_info u ON m.receiver_code = u.user_code "
+//                + "LEFT JOIN product_info p ON m.ref_product_code = p.product_code "
+//                + "WHERE m.receiver_code = :userCode AND p.product_code = :productCode";
+//
+//        List<Object[]> resultList = entityManager.createNativeQuery(query)
+//                .setParameter("productCode", productCode)
+//                .setParameter("userCode", userCode)
+//                .getResultList();
+//        System.out.println("resultList : " + resultList);
+//        List<MsgReceiverDTO> receiverList = new ArrayList<>();
+//        System.out.println("userCode : ===================="+ userCode);
+//
+//        for(Object[] result : resultList){
+//            MsgReceiverDTO dto = new MsgReceiverDTO();
+//            dto.setReceiverCode((Integer) result[1]);
+//            dto.setRefProductCode((Integer) result[2]);
+//            dto.setProductCode((Integer) result[3]);
+//            dto.setUserCode((Integer) result[4]);
+//            dto.setName((String) result[5]);
+//            dto.setId((String) result[6]);
+//
+//            System.out.println("result!!!:" + Arrays.toString(result));
+//
+//            receiverList.add(dto);
+//
+//
+//        }
+//        return receiverList;
+//    }
 
 
     //내 이름.아이디는 토큰에서 가져오기
@@ -146,15 +141,15 @@ public class MsgService {
         if (isReceived != null && isReceived) {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.receiverCode = u.userCode "
+                    + "LEFT JOIN User u ON m.senderCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 3) AND m.senderCode <> u.userCode "
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 3) "
                     + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
             System.out.println("거치는지 확인");
         } else {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
-                    + "LEFT JOIN User u ON m.senderCode = u.userCode "
+                    + "LEFT JOIN User u ON m.receiverCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
                     + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2) "
                     + "AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
@@ -163,11 +158,6 @@ public class MsgService {
         if(keyword == null || keyword.isEmpty()){
             keyword = "";
         }
-
-        //if(!keyword.isEmpty()){
-        //     jpql += " AND (m.msgContent LIKE CONCAT('%', :keyword, '%') OR u.name LIKE CONCAT('%', :keyword, '%'))";
-
-        //}
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
         query.setParameter("userCode", userCode);
@@ -230,9 +220,11 @@ public class MsgService {
                 if (message.getMsgDeleteInfo().getMsgDeleteCode() == 1) {
                     msgDeleteInfo = (message.getMsgDeleteInfo().getMsgDeleteCode() != 2 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4)
                             ? msgDeleteRepository.findByMsgDeleteCode(2)
-                            : (message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4)
-                            ? msgDeleteRepository.findByMsgDeleteCode(3)
-                            : message.getMsgDeleteInfo();
+                            : (
+                                    (message.getMsgDeleteInfo().getMsgDeleteCode() != 3 && message.getMsgDeleteInfo().getMsgDeleteCode() != 4)
+                                    ? msgDeleteRepository.findByMsgDeleteCode(3)
+                                    : message.getMsgDeleteInfo()
+                            );
                 } else {
                     msgDeleteInfo = message.getMsgDeleteInfo();
                 }

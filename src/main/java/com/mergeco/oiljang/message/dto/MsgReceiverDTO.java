@@ -10,8 +10,8 @@ import java.util.UUID;
 @Setter
 @ToString
 public class MsgReceiverDTO {
-    private int msgCode;
     private int receiverCode;
+    private int refProductCode;
     private int productCode;
     private int userCode;
     private String name;
