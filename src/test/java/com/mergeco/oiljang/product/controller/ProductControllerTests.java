@@ -79,9 +79,11 @@ public class ProductControllerTests {
     @Transactional
     void controllerRegistWishList() {
 
-        //when
+        //given
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductCode(2);
+
+        //when
         ResponseEntity<ResponseMessage> result = productController.registWishlist(2, productDTO);
 
         //then
