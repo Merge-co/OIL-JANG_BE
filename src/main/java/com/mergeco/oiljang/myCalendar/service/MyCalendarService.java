@@ -30,13 +30,11 @@ public class MyCalendarService {
     }
 
     @Transactional
-    public String registMyCalendar(MyCalendarDTO myCalendarDTO) {
-        String result = "캘린더에 내용 등록 실패";
+    public MyCalendarDTO registMyCalendar(MyCalendarDTO myCalendarDTO) {
+        MyCalendar myCalendar = modelMapper.map(myCalendarDTO, MyCalendar.class);
+        myCalendarRepository.save(myCalendar);
 
-        myCalendarRepository.save(modelMapper.map(myCalendarDTO, MyCalendar.class));
-
-        result = "캘린더에 내용 등록 성공";
-        return result;
+        return modelMapper.map(myCalendar, MyCalendarDTO.class);
     }
 
     @Transactional

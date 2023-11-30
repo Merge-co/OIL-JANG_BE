@@ -55,7 +55,7 @@ public class MyCalendarControllerTests {
         //then
         Assertions.assertEquals(result.getStatusCodeValue(), 200);
         Assertions.assertEquals(result.getBody().getMessage(), "회원의 캘린더 내용 등록");
-        Assertions.assertTrue(result.getBody().getResults().get("result").equals("캘린더에 내용 등록 성공"));
+        Assertions.assertTrue(result.getBody().getResults().get("result") != null);
     }
 
     @Test
