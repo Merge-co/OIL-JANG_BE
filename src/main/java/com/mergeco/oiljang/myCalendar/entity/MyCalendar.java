@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @AllArgsConstructor
 @Getter
@@ -27,6 +28,8 @@ public class MyCalendar {
 
     @Column(name = "calendar_date")
     private LocalDate calendarDate;
+    @Column(name = "calendar_time")
+    private LocalTime calendarTime;
 
     protected MyCalendar() {
     }
@@ -41,8 +44,13 @@ public class MyCalendar {
         return this;
     }
 
+    public MyCalendar calendarTime(LocalTime val) {
+        calendarTime = val;
+        return this;
+    }
+
     public MyCalendar builder() {
-        return new MyCalendar(myCalendarCode, refUserCode, calendarContent, calendarDate);
+        return new MyCalendar(myCalendarCode, refUserCode, calendarContent, calendarDate, calendarTime);
     }
 
 }

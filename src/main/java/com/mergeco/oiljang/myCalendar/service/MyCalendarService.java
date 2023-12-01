@@ -44,7 +44,7 @@ public class MyCalendarService {
         MyCalendar myCalendar = myCalendarRepository.findById(myCalendarCode).orElseThrow(IllegalAccessError::new);
 
         myCalendar = myCalendar = myCalendar.calendarContent(myCalendarDTO.getCalendarContent())
-                .calendarDate(myCalendarDTO.getCalendarDate()).builder();
+                .calendarDate(myCalendarDTO.getCalendarDate()).calendarTime(myCalendarDTO.getCalendarTime()).builder();
 
         result = "캘린더에 내용 수정 성공";
         return result;
