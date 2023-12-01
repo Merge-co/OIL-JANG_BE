@@ -4,6 +4,7 @@ import com.mergeco.oiljang.common.paging.Criteria;
 import com.mergeco.oiljang.product.entity.Product;
 import com.mergeco.oiljang.product.entity.SellStatus;
 import com.mergeco.oiljang.product.repository.ProductRepository;
+import com.mergeco.oiljang.report.dto.ProcessDetailDTO;
 import com.mergeco.oiljang.report.dto.ReportsDTO;
 import com.mergeco.oiljang.report.entity.Report;
 import com.mergeco.oiljang.report.dto.ReportDTO;
@@ -40,20 +41,6 @@ public class ReportService {
         this.productRepository = productRepository;
     }
 
- /*   public List<Report> findReports() {
-        log.info("[reportService] selectReport  Start==================================");
-        String jpql = "SELECT r " +
-                "FROM tbl_report r " +
-                "RIGHT JOIN r.productCode c ";
-        List<Report> managment = manager.createQuery(jpql, Report.class).getResultList();
-        System.out.println("???? : "+ managment);
-
-        log.info("[reportService] selectReport  END ====================================");
-        return reportRepository.findAll();
-        return managment;
-    }
-    (SELECT u.nickname FROM User u WHERE u.userCode =  r.product.refUserCode )*/
-
     public List<ReportsDTO> findReports(boolean processed) {
         log.info("[reportService] selectReport Start ===========================");
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
@@ -75,7 +62,6 @@ public class ReportService {
         return management;
     }
 
-
     @Transactional
     public String registReport(ReportDTO reportInfo) {
         log.info("[reportService] insertReport Start ==================================================");
@@ -91,7 +77,6 @@ public class ReportService {
         log.info("[reportService] insertReport END ==================================================");
         return (result > 0) ? "신고하기 완료" : "신고하기 실패";
     }
-
 
     @Transactional
     public String modifyReport(@RequestBody ReportDTO reportDTO) {
@@ -124,6 +109,38 @@ public class ReportService {
         log.info("[reportService] updateReport END ================================");
         return (result > 0) ? "처리 완료" : "처리 실패";
     }
+
+    public List<ProcessDetailDTO> selectByProcessingDetail(int reportNo, int userCode) {
+
+        log.info("[ReportService] selectByProcessDetail Start ======================================");
+        log.info("[ReportService] reportNo : {}", reportNo);
+        log.info("[ReportService] reportNo : {}", userCode);
+
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ProcessDetailDTO ( r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, " +
+                "r.productCode.refUserCode, r.productCode.productName, r.reportComment, " +
+                "(SELECT u.nickname " +
+                "FROM User u " +
+                "WHERE u.userCode = r.productCode.refUserCode)," +
+                "(SELECT u.id " +
+                "FROM User u " +
+                "WHERE u.userCode = r.productCode.refUserCode)," +
+                "(SELECT COUNT (r) " +
+                "FROM tbl_report r " +
+                "WHERE r.sellStatusCode.sellStatusCode = 3 " +
+                "AND r.reportUserCode = :userCode)) " +
+                "FROM tbl_report r " +
+                "WHERE r.reportNo = :reportNo";
+
+        TypedQuery<ProcessDetailDTO> query = manager.createQuery(jpql, ProcessDetailDTO.class);
+        query.setParameter("userCode", userCode);
+        query.setParameter("reportNo", reportNo);
+        List<ProcessDetailDTO> management = query.getResultList();
+
+        log.info("[ReportService] selectByProcessDetail END ======================================");
+
+        return management;
+    }
+
     public Report selectByProcessDetail(int reportNo) {
         log.info("[ReportService] selectByProcessDetail Start ======================================");
 
@@ -133,14 +150,17 @@ public class ReportService {
 
         log.info("[ReportService] selectByProcessDetail END ======================================");
 
-
         return report;
     }
 
-
     public List<Object[]> selectByReportManagement() {
         log.info("[reportService] selectReport Start ================================================");
-        String jpql = "SELECT r.reportNo, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ), r.productCode.productName, r.sellStatusCode.sellStatus, r.refReportCategoryNo.reportCategoryCode " +
+        String jpql = "SELECT r.reportNo, " +
+                "(SELECT u.nickname " +
+                "FROM User u " +
+                "WHERE u.userCode =  r.productCode.refUserCode ), " +
+                "r.productCode.productName, r.sellStatusCode.sellStatus, " +
+                "r.refReportCategoryNo.reportCategoryCode " +
                 "FROM tbl_report r " +
                 "RIGHT JOIN r.productCode c";
         List<Object[]> managment = manager.createQuery(jpql).getResultList();
@@ -163,6 +183,7 @@ public class ReportService {
                 "r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, " +
                 "r.productCode.productName, r.processDate, r.sellStatusCode.sellStatus, " +
                 "r.reportComment, r.processComment, r.processDistinction, r.reportUserNick, " +
+                "r.reportUserCode, " +
                 "(SELECT u.nickname FROM User u WHERE u.userCode = r.productCode.refUserCode) " +
                 ") " +
                 "FROM tbl_report r " +
@@ -181,16 +202,20 @@ public class ReportService {
         return reportPage;
     }
 
-    public Page<ReportsDTO>selectProcessed(Criteria cri, String processed) {
+    public Page<ReportsDTO> selectProcessed(Criteria cri, String processed) {
 
         log.info("[ReportService] selectProcessedList Start ==========");
 
-        int index = cri.getPageNum() - 1 ;
+        int index = cri.getPageNum() - 1;
         int count = cri.getAmount();
 
         Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
-        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO " +
+                "(r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, " +
+                "r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, r.reportUserCode, " +
+                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )" +
+                ") " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c ";
         //처리 상태에 따른 WHERE 조건 추가
@@ -223,7 +248,7 @@ public class ReportService {
         return reportList.size();
     }
 
-   /* public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
+    public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
 
         log.info("[ReportService] selectReportListWithPaging Start =====");
 
@@ -232,32 +257,10 @@ public class ReportService {
 
         Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
-        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
-                "FROM tbl_report r " +
-                "JOIN r.productCode c " +
-                "ORDER BY r.reportNo DESC ";
-
-        TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
-        List<ReportsDTO> management = query.getResultList();
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), management.size());
-        Page<ReportsDTO> reportPage = new PageImpl<>(management.subList(start, end), pageable, management.size());
-
-        log.info("[ReportService] selectReportListWithPaging End =====");
-        return reportPage;
-    }*/
-
-     public Page<ReportsDTO> selectReportListWithPaging(Criteria cri) {
-
-        log.info("[ReportService] selectReportListWithPaging Start =====");
-
-        int index = cri.getPageNum() - 1;
-        int count = cri.getAmount();
-
-        Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
-
-        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO " +
+                "(r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, " +
+                "r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, r.reportUserCode, " +
+                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c " +
                 "ORDER BY r.reportNo DESC ";
@@ -280,6 +283,7 @@ public class ReportService {
     public String modifyReport() {
         return null;
     }
+
 
 
 }

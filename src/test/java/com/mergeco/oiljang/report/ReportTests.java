@@ -164,8 +164,6 @@ public class ReportTests {
                 null
         );
         //when
-        System.out.println("===========================================");
-        System.out.println("담겼냐 ? ; " + reportInsert);
         //then
         Assertions.assertDoesNotThrow(
                 () -> service.registReport(reportInsert)

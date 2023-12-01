@@ -55,6 +55,9 @@ public class Report {
     @ManyToOne
     private ReportCategory refReportCategoryNo;// 신고분류 코드 FK
 
+    @Column(name = "report_user_Code")
+    private int reportUserCode;
+
     public Report(int reportNo, String reportUserNick, String reportComment, LocalDateTime reportDate, String processDistinction, String processComment, LocalDateTime processDate, Product productCode, SellStatus sellStatusCode, ReportCategory refReportCategoryNo) {
         this.reportNo = reportNo;
         this.reportComment = reportComment;

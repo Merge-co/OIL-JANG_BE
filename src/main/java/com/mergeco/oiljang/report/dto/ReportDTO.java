@@ -27,5 +27,7 @@ public class ReportDTO {
     private String processComment; // 처리 내용  null
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime processDate; // 처리 일시 null
+    private int reportUserCode;
+
 
 }
