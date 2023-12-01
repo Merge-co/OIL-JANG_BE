@@ -112,11 +112,15 @@ public class ReportController {
         return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "신고처리 상세정보 조회 성공", reportService.selectByProcessDetail(reportNo)));
     }
 
+    @ApiOperation(value = "신고처리 정보조회", notes = "접수된 신고를 처리 하기위한 정보조회", tags = {"ReportController"})
+    @GetMapping("/processingDetail/{reportNo}")
+    public ResponseEntity<?> processingDetail(@PathVariable int reportNo, @RequestParam(name = "user", defaultValue = "1") int userCode) {
+        return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "신고처리를 위한 정보 조회", reportService.selectByProcessingDetail(reportNo, userCode)));
+    }
     //헤더 값
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         return httpHeaders;
     }
-
 }
