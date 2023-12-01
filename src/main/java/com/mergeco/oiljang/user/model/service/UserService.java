@@ -331,7 +331,7 @@ public class UserService {
 
         if (updateUserDTO.getNewPassword() != null && !("".equals(updateUserDTO.getNewPassword()))) {
             log.debug("NewPassword Change Start================ " );
-            validatePasswordUpdate(updatedUser, updateUserDTO.getNewPassword(), updateUserDTO.getNewPasswordConfirm());
+            validatePasswordUpdate(updateUserDTO.getNewPassword(), updateUserDTO.getNewPasswordConfirm());
             updatedUser = User.builder()
                     .userCode(user.getUserCode())
                     .nickname(user.getNickname())
@@ -419,7 +419,7 @@ public class UserService {
     }
 
     // 비밀번호 변경 유효성 검사 메소드
-    private void validatePasswordUpdate(User user, String newPassword, String newPasswordConfirm) {
+    private void validatePasswordUpdate(String newPassword, String newPasswordConfirm) {
 
         log.debug("updatePasswordAndSave Change Start================ " );
 
@@ -454,4 +454,63 @@ public class UserService {
     }
 
 
+    public String findId(UserDTO userDTO) {
+
+        System.out.println("UserDTO : "+ userDTO);
+
+        String name = userDTO.getName();
+        String gender = userDTO.getGender();
+        String birthDate = userDTO.getBirthDate();
+
+        System.out.println("name : " + name);
+        System.out.println("gender : " + gender);
+        System.out.println("birthDate : " + birthDate);
+
+        String id = userRepository.findId(name,gender,birthDate);
+
+        System.out.println("id : " + id);
+
+        return id;
+
+    }
+
+    @Transactional
+    public void changePwd(UpdateUserDTO updateUserDTO) {
+
+        String id = updateUserDTO.getId();
+        System.out.println("id : " + id);
+        String newPwd = updateUserDTO.getNewPassword();
+        System.out.println("newPwd : " + newPwd);
+        String newPwdConfirm = updateUserDTO.getNewPasswordConfirm();
+        System.out.println("newPwdConfirm : " + newPwdConfirm);
+
+        User user = userRepository.findByUserId(id);
+
+        if (newPwd != null && !("".equals(newPwd))) {
+            validatePasswordUpdate(newPwd, newPwdConfirm);
+
+            User updatedUser = User.builder()
+                    .userCode(user.getUserCode())
+                    .nickname(user.getNickname())
+                    .name(user.getName())
+                    .id(user.getId())
+                    .pwd(newPwd)
+                    .birthDate(user.getBirthDate())
+                    .gender(user.getGender())
+                    .enrollType(user.getEnrollType())
+                    .role(user.getRole())
+                    .phone(user.getPhone())
+                    .verifyStatus(user.getVerifyStatus())
+                    .withdrawStatus(user.getWithdrawStatus())
+                    .email(user.getEmail())
+                    .enrollDate(user.getEnrollDate())
+                    .profileImageUrl(user.getProfileImageUrl())
+                    .userProfile(user.getUserProfile())
+                    .build();
+
+            updatePasswordAndSave(updatedUser);
+
+        }
+
+    }
 }

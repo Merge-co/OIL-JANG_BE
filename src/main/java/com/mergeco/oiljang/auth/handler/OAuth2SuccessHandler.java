@@ -25,10 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -49,36 +46,93 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, IOException {
         if (authentication.getPrincipal() instanceof DefaultOAuth2User) {
 
+            log.debug("request : {}", request);
+            log.debug("response : {}", response);
+
 
             DefaultOAuth2User userDetails = (DefaultOAuth2User) authentication.getPrincipal();
 
-            log.debug("userDetails info : {}",userDetails);
+            log.debug("userDetails info : {}", userDetails);
 
-            User user = userRepository.findByEmailFromOAuth2(userDetails.getAttribute("email"));
+            log.debug("google userDetails getName : {}", userDetails.getName());
+            log.debug("naver userDetails getName : {}", userDetails.getName());
 
-            log.debug("detailsUser info : {}",user);
+            Object nameAttribute = userDetails.getAttribute("name");
+            log.debug("nameAttribute : {}", nameAttribute);
+            //log.debug("nameAttribute type : {}", nameAttribute.getClass());
 
-            TokenDTO token = tokenProvider.generateTokenDTO(user);
+            if (nameAttribute instanceof String || nameAttribute != null) {
 
-            log.debug("token info : {}",token);
+                log.debug("google start~~~~~");
 
-            Cookie cookie = new Cookie("accessToken", token.getAccessToken());
-            cookie.setPath("/");
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 만료 시간 (초)
-            response.addCookie(cookie);
+                // 구글 로그인일 경우
+                String email = userDetails.getAttribute("email");
+                User user = userRepository.findByEmailFromOAuth2(email);
 
-            // 응답 헤더 설정
-            response.addHeader("accessToken", token.getAccessToken());
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType("application/json;charset=UTF-8");
+                log.debug("detailsUser info: {}", user);
 
-            response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE);
-            response.getWriter().write("<script>window.close(); window.opener.location.href='http://localhost:3000'; window.location.reload();</script>");
+                if (user != null) {
+                    TokenDTO token = tokenProvider.generateTokenDTO(user);
 
-        } else {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("Authentication failed");
+                    log.debug("token info: {}", token);
+
+                    Cookie cookie = new Cookie("accessToken", token.getAccessToken());
+                    cookie.setPath("/");
+                    cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 만료 시간 (초)
+                    response.addCookie(cookie);
+
+                    // 응답 헤더 설정
+                    response.addHeader("accessToken", token.getAccessToken());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("application/json;charset=UTF-8");
+
+                    response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE);
+                    response.getWriter().write("<script>window.close(); window.opener.location.href='http://localhost:3000'; window.location.reload();</script>");
+
+                } else {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.getWriter().write("Authentication failed");
+                }
+
+
+            } else if (nameAttribute instanceof List || nameAttribute == null) {
+
+                log.debug("naver start~~~~~");
+
+                String id = ((Map<String, Object>) userDetails.getAttribute("response")).get("id").toString();
+                User user = userRepository.findByUserId(id);
+
+                log.debug("detailsUser info: {}", user);
+
+                if (user != null) {
+                    // user가 null이 아닌 경우에 대한 로직 추가
+                    TokenDTO token = tokenProvider.generateTokenDTO(user);
+
+                    log.debug("token info: {}", token);
+
+                    Cookie cookie = new Cookie("accessToken", token.getAccessToken());
+                    cookie.setPath("/");
+                    cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 만료 시간 (초)
+                    response.addCookie(cookie);
+
+                    // 응답 헤더 설정
+                    response.addHeader("accessToken", token.getAccessToken());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("application/json;charset=UTF-8");
+
+                    response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML_VALUE);
+                    response.getWriter().write("<script>window.close(); window.opener.location.href='http://localhost:3000'; window.location.reload();</script>");
+                } else {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.getWriter().write("Authentication failed");
+                }
+
+            } else {
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.getWriter().write("Authentication failed");
+            }
+
+
         }
     }
-
 }

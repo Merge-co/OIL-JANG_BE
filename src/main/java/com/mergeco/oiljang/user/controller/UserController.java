@@ -228,5 +228,39 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "아이디 찾기")
+    @PostMapping("/users/findId")
+    public ResponseEntity<?> findId(@RequestBody UserDTO userDTO ){
+
+        System.out.println("UserDTO : "+ userDTO);
+
+        try{
+            String id = userService.findId(userDTO);
+            return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "정상적으로 조회가 되었습니다.",id));
+        }catch (UserNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(404,e.getMessage(),null));
+        }catch (Exception e){
+            log.error("Exception occurred", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage(500,"서버 오류",null));
+        }
+    }
+
+    @ApiOperation(value = "비밀번호 변경")
+    @PutMapping("/users/changePwd")
+    public ResponseEntity<?> changePwd(@RequestBody UpdateUserDTO updateUserDTO ){
+
+        System.out.println("UpdateUserDTO : "+ updateUserDTO);
+
+        try{
+            userService.changePwd(updateUserDTO);
+                return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "정상적으로 변경되었습니다.",null));
+        }catch (UserNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(404,e.getMessage(),null));
+        }catch (Exception e){
+            log.error("Exception occurred", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage(500,"서버 오류",null));
+        }
+    }
+
 
 }

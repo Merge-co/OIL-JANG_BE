@@ -114,6 +114,7 @@ public class OAuth2Config {
                 .tokenUri(naverTokenUri)
                 .userInfoUri(naverUserInfoUri)
                 .userNameAttributeName(naverUserNameAttribute)
+                .clientName("Naver")
                 .build();
     }
 
