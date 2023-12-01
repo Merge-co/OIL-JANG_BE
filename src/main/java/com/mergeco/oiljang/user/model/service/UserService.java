@@ -16,7 +16,6 @@ import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +40,7 @@ public class UserService {
     @Value("${spring.google.client_secret}")
     String clientSecret;*/
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    private String uploadDir = "C:/OIL-JANG_FE";
 
 
     @PersistenceContext
@@ -67,6 +65,12 @@ public class UserService {
 
     @Transactional
     public User join(JoinDTO joinDTO, MultipartFile imageFile) throws IOException {
+
+        if (System.getProperty("os.name").indexOf("Windows") != -1 ){
+            uploadDir = "C:/OIL-JANG_FE/public/images/userProfile";
+        } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
+            uploadDir = "/Users/OIL-JANG_FE/public/images/userProfile";
+        }
 
         log.debug("joinDTO : {}",joinDTO.getId());
         log.debug("joinDTO : {}",joinDTO.getBirthDate());
@@ -163,6 +167,12 @@ public class UserService {
     }
 
     private void saveProfileImage(MultipartFile file, String originalFilename, String thumbnailFilename) throws IOException {
+
+        if (System.getProperty("os.name").indexOf("Windows") != -1 ){
+            uploadDir = "C:/OIL-JANG_FE/public/images/userProfile";
+        } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
+            uploadDir = "/Users/OIL-JANG_FE/public/images/userProfile";
+        }
 
         log.debug("saveProfileImage start-------------");
 
@@ -366,6 +376,13 @@ public class UserService {
     }
 
     private void updateProfileImage(User updatedUser, UserProfile userProfile, MultipartFile profileImage) throws IOException {
+
+        if (System.getProperty("os.name").indexOf("Windows") != -1 ){
+            uploadDir = "C:/OIL-JANG_FE/public/images/userProfile";
+        } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
+            uploadDir = "/Users/OIL-JANG_FE/public/images/userProfile";
+        }
+
         deleteProfileImage(userProfile.getUserImageOriginAddr());
         deleteProfileImage(userProfile.getUserImageThumbAddr());
 
@@ -513,4 +530,5 @@ public class UserService {
         }
 
     }
+
 }

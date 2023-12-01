@@ -63,10 +63,6 @@ jwt:
     header: Authorization-refresh
 
 
-file:
-  upload-dir: "D:/OIL-JANG_FE/public/images/userProfile"
-
-
 #logging:
 #  level:
 #    root: DEBUG

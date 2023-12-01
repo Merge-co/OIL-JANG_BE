@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Service
@@ -76,6 +77,8 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         }catch (OAuth2AuthenticationException e){
             log.debug("OAuth2AuthenticationException : {} ",e);
             throw new OAuth2AuthenticationException("OAuth2AuthenticationException");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }

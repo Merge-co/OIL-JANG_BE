@@ -8,16 +8,30 @@ import com.mergeco.oiljang.user.entity.UserProfile;
 import com.mergeco.oiljang.user.repository.UserProfileRepository;
 import com.mergeco.oiljang.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,8 +39,7 @@ import java.util.Optional;
 @Slf4j
 public class OAuth2Service {
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    private String uploadDir = "C:/OIL-JANG_FE/public/images/userProfile";
 
     private final UserRepository userRepository;
 
@@ -41,7 +54,7 @@ public class OAuth2Service {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User joinFromGoogle(OAuth2User oauth2User) {
+    public User joinFromGoogle(OAuth2User oauth2User) throws IOException {
 
         String email = oauth2User.getAttribute("email");
 
@@ -57,7 +70,7 @@ public class OAuth2Service {
 
     }
 
-    public User joinFromNaver(OAuth2User oauth2User) {
+    public User joinFromNaver(OAuth2User oauth2User) throws IOException {
 
         log.debug("oauth2User : {}", oauth2User);
 
@@ -79,7 +92,13 @@ public class OAuth2Service {
 
     }
 
-    private User buildUserFromOAuth2User(OAuth2User oauth2User) {
+    private User buildUserFromOAuth2User(OAuth2User oauth2User) throws IOException {
+
+        if (System.getProperty("os.name").indexOf("Windows") != -1 ){
+            uploadDir = "C:/OIL-JANG_FE/public/images/userProfile";
+        } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
+            uploadDir = "/Users/OIL-JANG_FE/public/images/userProfile";
+        }
 
         String userId = oauth2User.getAttribute("sub");
         String familyName = oauth2User.getAttribute("family_name");
@@ -88,11 +107,37 @@ public class OAuth2Service {
         String email = oauth2User.getAttribute("email");
         String pwd = generateRandomString(16);
 
-        String originalFileName = userId + "-original-" + "basicImage";
-        String thumbnailFileName = userId + "-thumbnail-" + "basicImage";
+        String defaultImageDir = uploadDir + "/default/";
+        String defaultImageFileName = "default.jpg";
 
-        String userProfileOriginPath = Paths.get(uploadDir, originalFileName).toString();
-        String userProfileThumbPath = Paths.get(uploadDir, thumbnailFileName).toString();
+        Path defaultImagePath = Paths.get(defaultImageDir, defaultImageFileName);
+
+        String originalFileName = userId + "-original-" + defaultImageFileName;
+        String thumbnailFileName = userId + "-thumbnail-" + defaultImageFileName;
+
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        File uploadDirFile = new File(uploadPath.toString());
+        File originDir = new File(uploadPath.resolve("origin").toString());
+        File thumbnailDir = new File(uploadPath.resolve("thumbnail").toString());
+
+        String originFolderPath = Paths.get(uploadDir, "origin").toString();
+        String thumbnailFolderPath = Paths.get(uploadDir, "thumbnail").toString();
+
+        if (!uploadDirFile.exists()) {
+            uploadDirFile.mkdirs();
+        }
+        if (!originDir.exists()) {
+            originDir.mkdirs();
+        }
+        if (!thumbnailDir.exists()) {
+            thumbnailDir.mkdirs();
+        }
+
+        String userProfileOriginPath = Paths.get(originFolderPath, originalFileName).toString();
+        String userProfileThumbPath = Paths.get(thumbnailFolderPath, thumbnailFileName).toString();
+
+        Files.copy(defaultImagePath, Paths.get(userProfileOriginPath), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(defaultImagePath, Paths.get(userProfileThumbPath), StandardCopyOption.REPLACE_EXISTING);
 
         UserProfile newUserProfile = UserProfile.builder()
                 .userImageOriginName(originalFileName)
@@ -135,9 +180,13 @@ public class OAuth2Service {
         return joinUser;
     }
 
+    private User buildUserFromNaver(OAuth2User oauth2User) throws IOException {
 
-
-    private User buildUserFromNaver(OAuth2User oauth2User) {
+        if (System.getProperty("os.name").indexOf("Windows") != -1 ){
+            uploadDir = "C:/OIL-JANG_FE/public/images/userProfile";
+        } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
+            uploadDir = "/Users/OIL-JANG_FE/public/images/userProfile";
+        }
 
         log.debug("buildUserFromNaver start~~~~~~~");
         log.debug("oauth2User : {}", oauth2User);
@@ -165,20 +214,42 @@ public class OAuth2Service {
         String birthyear = ((Map<String, Object>) oauth2User.getAttribute("response")).get("birthyear").toString();
         log.debug("oauth2User : {}", ((Map<String, Object>) oauth2User.getAttribute("response")).get("birthyear").toString());
 
-
-        //String birthday = ((Map<String, Object>) oauth2User.getAttribute("response")).get("birthday").toString();
-        //log.debug("oauth2User : {}", ((Map<String, Object>) oauth2User.getAttribute("response")).get("birthday").toString());
-
         String pwd = generateRandomString(16);
 
         System.out.println("birthyear : " + birthyear);
         log.debug("birthyear : {}" , birthyear);
 
-        String originalFileName = userId + "-original-" + "basicImage";
-        String thumbnailFileName = userId + "-thumbnail-" + "basicImage";
+        String defaultImageDir = uploadDir + "/default/";
+        String defaultImageFileName = "default.jpg";
 
-        String userProfileOriginPath = Paths.get(uploadDir, originalFileName).toString();
-        String userProfileThumbPath = Paths.get(uploadDir, thumbnailFileName).toString();
+        Path defaultImagePath = Paths.get(defaultImageDir, defaultImageFileName);
+
+        String originalFileName = userId + "-original-" + defaultImageFileName;
+        String thumbnailFileName = userId + "-thumbnail-" + defaultImageFileName;
+
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        File uploadDirFile = new File(uploadPath.toString());
+        File originDir = new File(uploadPath.resolve("origin").toString());
+        File thumbnailDir = new File(uploadPath.resolve("thumbnail").toString());
+
+        String originFolderPath = Paths.get(uploadDir, "origin").toString();
+        String thumbnailFolderPath = Paths.get(uploadDir, "thumbnail").toString();
+
+        if (!uploadDirFile.exists()) {
+            uploadDirFile.mkdirs();
+        }
+        if (!originDir.exists()) {
+            originDir.mkdirs();
+        }
+        if (!thumbnailDir.exists()) {
+            thumbnailDir.mkdirs();
+        }
+
+        String userProfileOriginPath = Paths.get(originFolderPath, originalFileName).toString();
+        String userProfileThumbPath = Paths.get(thumbnailFolderPath, thumbnailFileName).toString();
+
+        Files.copy(defaultImagePath, Paths.get(userProfileOriginPath), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(defaultImagePath, Paths.get(userProfileThumbPath), StandardCopyOption.REPLACE_EXISTING);
 
         UserProfile newUserProfile = UserProfile.builder()
                 .userImageOriginName(originalFileName)

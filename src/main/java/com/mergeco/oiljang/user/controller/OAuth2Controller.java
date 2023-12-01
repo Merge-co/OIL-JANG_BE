@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -57,7 +58,7 @@ public class OAuth2Controller {
     @GetMapping("/login/google/callback")
     public ResponseEntity<?> googleCallback(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient,
                                             @AuthenticationPrincipal OAuth2User oauth2User
-    ){
+    ) throws IOException {
         // OAuth2 사용자 정보를 기반으로 User 생성
         oAuth2Service.joinFromGoogle(oauth2User);
 
@@ -82,7 +83,7 @@ public class OAuth2Controller {
 
     @GetMapping("/login/naver/callback")
     public ResponseEntity<?> naverCallback(@RegisteredOAuth2AuthorizedClient("naver") OAuth2AuthorizedClient authorizedClient,
-                                            @AuthenticationPrincipal OAuth2User oauth2User){
+                                            @AuthenticationPrincipal OAuth2User oauth2User) throws IOException {
 
         // OAuth2 사용자 정보를 기반으로 User 생성
         oAuth2Service.joinFromNaver(oauth2User);
