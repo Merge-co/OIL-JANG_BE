@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @SpringBootTest
@@ -51,6 +52,7 @@ public class MyCalendarServiceTests {
         myCalendarDTO.setRefUserCode(2);
         myCalendarDTO.setCalendarDate(LocalDate.now());
         myCalendarDTO.setCalendarContent("테스트 내용");
+        myCalendarDTO.setCalendarTime(LocalTime.MAX);
 
         //when
         myCalendarService.registMyCalendar(myCalendarDTO);
@@ -69,14 +71,16 @@ public class MyCalendarServiceTests {
         int myCalendarCode = 1;
         myCalendarDTO.setCalendarDate(LocalDate.of(2023, 11, 20));
         myCalendarDTO.setCalendarContent("테스트 업데이트");
+        myCalendarDTO.setCalendarTime(LocalTime.MAX);
 
         //when
         myCalendarService.updateMyCalendar(myCalendarCode, myCalendarDTO);
-        MyCalendar myCalendar = myCalendarRepository.findById(1).orElseThrow(IllegalAccessError::new);
+        MyCalendar myCalendar = myCalendarRepository.findById(myCalendarCode).orElseThrow(IllegalAccessError::new);
 
         //then
         Assertions.assertEquals(myCalendar.getCalendarContent(),"테스트 업데이트");
         Assertions.assertEquals(myCalendar.getCalendarDate(),LocalDate.of(2023, 11, 20));
+        Assertions.assertEquals(myCalendar.getCalendarTime(),LocalTime.MAX);
     }
 
     @Test

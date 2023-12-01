@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @SpringBootTest
 public class MyCalendarControllerTests {
@@ -47,6 +48,7 @@ public class MyCalendarControllerTests {
         MyCalendarDTO myCalendarDTO = new MyCalendarDTO();
         myCalendarDTO.setCalendarContent("테스트 입니다.");
         myCalendarDTO.setCalendarDate(LocalDate.of(2023,11,20));
+        myCalendarDTO.setCalendarTime(LocalTime.MAX);
         myCalendarDTO.setRefUserCode(2);
 
         //when
@@ -65,7 +67,7 @@ public class MyCalendarControllerTests {
         //given
         int myCalendarCode = 1;
         MyCalendarDTO myCalendarDTO = new MyCalendarDTO();
-        myCalendarDTO.setMyCalendarCode(1);
+        myCalendarDTO.setMyCalendarCode(myCalendarCode);
         myCalendarDTO.setCalendarContent("테스트 입니다.");
         myCalendarDTO.setCalendarDate(LocalDate.of(2023,11,20));
 
