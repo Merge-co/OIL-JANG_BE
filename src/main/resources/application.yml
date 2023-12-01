@@ -34,8 +34,7 @@ spring:
             redirect-uri: http://localhost:8000/oauth2/login/naver/callback
             client-authentication-method: post
             authorization-grant-type: authorization_code
-            scope: name,nickname,email,profile_image,id
-            client-name: Naver
+            scope: name,nickname,email,mobile,gender,birthyear,birthday
 
           google:
             client-id: 634314389152-hvham3k7rguk6i36b190d2adr0pi2ddb.apps.googleusercontent.com

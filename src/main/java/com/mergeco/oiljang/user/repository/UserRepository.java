@@ -15,6 +15,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT up.id FROM User up WHERE up.id = :id")
     Optional<User> findById(String id);
 
+    @Query("SELECT up FROM User up WHERE up.id = :id")
+    Optional<User> findByOAuth2Id(String id);
+
 
     @Query("SELECT up.nickname FROM User up WHERE up.nickname = :nickname")
     String checkUserNicknameExist(String nickname);
@@ -39,4 +42,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT up FROM User up WHERE up.email = :email")
     User findByEmailFromOAuth2(String email);
 
+    @Query("SELECT up.id FROM User up WHERE up.name = :name and up.gender = :gender and up.birthDate = :birthDate")
+    String findId(String name, String gender, String birthDate);
 }
