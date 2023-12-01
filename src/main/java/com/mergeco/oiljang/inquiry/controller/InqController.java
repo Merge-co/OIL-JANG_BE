@@ -94,13 +94,20 @@ public class InqController {
     public ResponseEntity<ResponseMessage> inqSelectList(
             @RequestParam(required = false) Integer page,
             @PathVariable int userCode,
-            @RequestParam UserRole role,
+            @RequestParam (required = false) Integer inqCateCode,
+            @RequestParam (required = false) String inqStatus,
+            @RequestParam (required = false) String role,
             @RequestParam(required = false) String keyword
-          ){
+    ){
 
         if(page == null){
             page = 1;
         }
+
+        if (inqCateCode == null) {
+            inqCateCode = 0;
+        }
+
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -109,13 +116,13 @@ public class InqController {
         int limit = 10;
         int offset = limit * (page - 1);
 
-        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqList(page, userCode, role, offset, limit, keyword);
+        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqList(page, userCode, inqCateCode, inqStatus, role, offset, limit, keyword);
 
 
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("inqSelectListDTOList", inqSelectListDTOList);
-        double totalInq = Long.valueOf(inqService.countMsgList1(page, userCode, role, keyword)).doubleValue();
+        double totalInq = Long.valueOf(inqService.countMsgList1(page, userCode, inqCateCode, inqStatus, role, keyword)).doubleValue();
         int totalPage = (int) Math.ceil(totalInq / limit);
 
         if(page >= totalPage){
@@ -127,7 +134,7 @@ public class InqController {
         Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
 
         responseMap.put("totalInq", totalInq);
-        responseMap.put("pageingBtn", pagingBtn);
+        responseMap.put("pagingBtn", pagingBtn);
 
         ResponseMessage responseMessage = new ResponseMessage(200, "문의 리스트 조회 성공", responseMap);
 
@@ -136,100 +143,100 @@ public class InqController {
 
 
 
-    @ApiOperation(value = "문의 카테고리로 조회")
-    @GetMapping("/users/{userCode}/inquiries/categories/{inqCateCode}")
-    public ResponseEntity<ResponseMessage> inqSelectCategory(
-            @RequestParam(required = false) Integer page,
-            @PathVariable int userCode,
-            @RequestParam String role,
-            @PathVariable int inqCateCode){
-
-        if(page == null){
-            page = 1;
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        int limit = 10;
-        int offset = limit * (page - 1);
-
-        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqListCate(page, userCode, inqCateCode, role,offset, limit);
-
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("inqSelectListDTOList", inqSelectListDTOList);
-        double totalInq = Long.valueOf(inqService.countMsgList2(page, userCode, inqCateCode, role)).doubleValue();
-        int totalPage = (int) Math.ceil(totalInq / limit);
-
-        if(page >= totalPage){
-            page = totalPage;
-        }else if(page < 1){
-            page = 1;
-        }
-
-        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
-
-
-        responseMap.put("totalInq", totalInq);
-        responseMap.put("pageingBtn", pagingBtn);
-
-        ResponseMessage responseMessage = new ResponseMessage(200, "문의 카테고리별 리스트 조회 성공", responseMap);
-
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-    }
-
-
-    @ApiOperation(value = "답변 여부로 조회")
-    @GetMapping("/users/{userCode}/inquiries/status/{inqStatus}")
-    public ResponseEntity<ResponseMessage> inqSelectStatus(
-            @RequestParam(required = false) Integer page,
-            @PathVariable int userCode,
-            @PathVariable String inqStatus,
-            @RequestParam String role
-    ){
-
-        if(page == null){
-            page = 1;
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        int limit = 10;
-        int offset = limit * (page - 1);
-
-        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqStatus(page, userCode, inqStatus, role, offset, limit);
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("inqSelectListDTOList", inqSelectListDTOList);
-
-        double totalInq = Long.valueOf(inqService.countMsgList3(page, userCode, inqStatus, role)).doubleValue();
-        int totalPage = (int) Math.ceil(totalInq / limit);
-
-        if(page >= totalPage){
-            page = totalPage;
-        }else if(page < 1){
-            page = 1;
-        }
-
-        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
-
-
-        responseMap.put("totalInq", totalInq);
-        responseMap.put("pageingBtn", pagingBtn);
-
-        ResponseMessage responseMessage = new ResponseMessage(200, "문의 답변여부별 리스트 조회 성공", responseMap);
-
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-    }
+//    @ApiOperation(value = "문의 카테고리로 조회")
+//    @GetMapping("/users/{userCode}/inquiries/categories/{inqCateCode}")
+//    public ResponseEntity<ResponseMessage> inqSelectCategory(
+//            @RequestParam(required = false) Integer page,
+//            @PathVariable int userCode,
+//            @RequestParam String role,
+//            @PathVariable int inqCateCode){
+//
+//        if(page == null){
+//            page = 1;
+//        }
+//
+//        HttpHeaders headers = new HttpHeaders();
+//
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//
+//        int limit = 10;
+//        int offset = limit * (page - 1);
+//
+//        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqListCate(page, userCode, inqCateCode, role,offset, limit);
+//
+//        Map<String, Object> responseMap = new HashMap<>();
+//        responseMap.put("inqSelectListDTOList", inqSelectListDTOList);
+//        double totalInq = Long.valueOf(inqService.countMsgList2(page, userCode, inqCateCode, role)).doubleValue();
+//        int totalPage = (int) Math.ceil(totalInq / limit);
+//
+//        if(page >= totalPage){
+//            page = totalPage;
+//        }else if(page < 1){
+//            page = 1;
+//        }
+//
+//        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+//
+//
+//        responseMap.put("totalInq", totalInq);
+//        responseMap.put("pageingBtn", pagingBtn);
+//
+//        ResponseMessage responseMessage = new ResponseMessage(200, "문의 카테고리별 리스트 조회 성공", responseMap);
+//
+//        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+//    }
+//
+//
+//    @ApiOperation(value = "답변 여부로 조회")
+//    @GetMapping("/users/{userCode}/inquiries/status/{inqStatus}")
+//    public ResponseEntity<ResponseMessage> inqSelectStatus(
+//            @RequestParam(required = false) Integer page,
+//            @PathVariable int userCode,
+//            @PathVariable String inqStatus,
+//            @RequestParam String role
+//    ){
+//
+//        if(page == null){
+//            page = 1;
+//        }
+//
+//        HttpHeaders headers = new HttpHeaders();
+//
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//
+//        int limit = 10;
+//        int offset = limit * (page - 1);
+//
+//        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqStatus(page, userCode, inqStatus, role, offset, limit);
+//        Map<String, Object> responseMap = new HashMap<>();
+//        responseMap.put("inqSelectListDTOList", inqSelectListDTOList);
+//
+//        double totalInq = Long.valueOf(inqService.countMsgList3(page, userCode, inqStatus, role)).doubleValue();
+//        int totalPage = (int) Math.ceil(totalInq / limit);
+//
+//        if(page >= totalPage){
+//            page = totalPage;
+//        }else if(page < 1){
+//            page = 1;
+//        }
+//
+//        Map<String, Map<String, Integer>> pagingBtn = JpqlPagingButton.JpqlPagingNumCount(page, totalPage);
+//
+//
+//        responseMap.put("totalInq", totalInq);
+//        responseMap.put("pageingBtn", pagingBtn);
+//
+//        ResponseMessage responseMessage = new ResponseMessage(200, "문의 답변여부별 리스트 조회 성공", responseMap);
+//
+//        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+//    }
 
 
 
 
     @ApiOperation(value = "문의 수정")
     @PutMapping("/users/{userCode}/inquiries/{inqCode}")
-        public ResponseEntity<ResponseMessage> updateInq(@RequestBody InqDTO inqDTO, @PathVariable int userCode, @PathVariable int inqCode){
+    public ResponseEntity<ResponseMessage> updateInq(@RequestBody InqDTO inqDTO, @PathVariable int userCode, @PathVariable int inqCode){
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));

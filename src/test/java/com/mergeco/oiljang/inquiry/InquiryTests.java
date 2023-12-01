@@ -6,6 +6,7 @@ import com.mergeco.oiljang.inquiry.entity.InqCategory;
 import com.mergeco.oiljang.inquiry.entity.Inquiry;
 import com.mergeco.oiljang.inquiry.repository.InqRepository;
 import com.mergeco.oiljang.inquiry.service.InqService;
+import com.mergeco.oiljang.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -89,18 +90,21 @@ public class InquiryTests {
     @Test
     @DisplayName("문의 리스트 조회")
     public void selectInqListUser(){
-        int userCode = 4;
-        UserRole role = UserRole.valueOf("ROLE_ADMIN");
+        int userCode = 1;
+        Integer inqCateCode = 1;
+        String inqStatus = "N";
+        String role = UserRole.ROLE_ADMIN.getRole();
+        //String role = UserRole.ROLE_USER.getRole();
         //int page = Integer.parseInt(null);
         int page = 1;
         int offset = 0;
         int limit = 9;
         String keyword = "문";
 
-        List<InqSelectListDTO> inqList = inqService.selectInqList(page, userCode, role, offset, limit, keyword);
+        List<InqSelectListDTO> inqList = inqService.selectInqList(page, userCode, inqCateCode, inqStatus, role, offset, limit, keyword);
         //log.info("문의 상세조회 테스트 : {}", inqList);
         System.out.println("문의 리스트 조회 테스트 : " + inqList);
-
+        System.out.println("role: " + role);
 
         Assertions.assertTrue(inqList.size() >= 0);
     }
@@ -110,40 +114,40 @@ public class InquiryTests {
 
 
 
-    @Test
-    @DisplayName("카테고리로 리스트 조회")
-    public void selectListCategory(){
-        int userCode = 1;
-        int inqCateCode = 1;
-        String role = "ROLE_ADMIN";
-        int offset = 0;
-        int limit = 9;
-       // int page = Integer.parseInt(null);
-        int page = 1;
-
-        List<InqSelectListDTO> inqListCate = inqService.selectInqListCate(page, userCode, inqCateCode ,role, offset, limit);
-        System.out.println("카테고리로 리스트 조회 : " + inqListCate);
-
-        Assertions.assertTrue(inqListCate.size() >= 0);
-    }
-
-
-    @Test
-    @DisplayName("답변여부 리스트 조회-관리자")
-    public void selectInqStatus(){
-        int userCode = 4;
-        String inqStatus = "N";
-        String role = "ROLE_ADMIN";
-        int offset = 0;
-        int limit = 9;
-        //int page = Integer.parseInt(null);
-        int page = 1;
-
-        List<InqSelectListDTO> inqStatusY = inqService.selectInqStatus(page, userCode, inqStatus,role, offset, limit);
-        System.out.println("답변완료 : " + inqStatusY);
-
-        Assertions.assertTrue(inqStatusY.size() >= 0);
-    }
+//    @Test
+//    @DisplayName("카테고리로 리스트 조회")
+//    public void selectListCategory(){
+//        int userCode = 1;
+//        int inqCateCode = 1;
+//        String role = "ROLE_ADMIN";
+//        int offset = 0;
+//        int limit = 9;
+//       // int page = Integer.parseInt(null);
+//        int page = 1;
+//
+//        List<InqSelectListDTO> inqListCate = inqService.selectInqListCate(page, userCode, inqCateCode ,role, offset, limit);
+//        System.out.println("카테고리로 리스트 조회 : " + inqListCate);
+//
+//        Assertions.assertTrue(inqListCate.size() >= 0);
+//    }
+//
+//
+//    @Test
+//    @DisplayName("답변여부 리스트 조회-관리자")
+//    public void selectInqStatus(){
+//        int userCode = 4;
+//        String inqStatus = "N";
+//        String role = "ROLE_ADMIN";
+//        int offset = 0;
+//        int limit = 9;
+//        //int page = Integer.parseInt(null);
+//        int page = 1;
+//
+//        List<InqSelectListDTO> inqStatusY = inqService.selectInqStatus(page, userCode, inqStatus,role, offset, limit);
+//        System.out.println("답변완료 : " + inqStatusY);
+//
+//        Assertions.assertTrue(inqStatusY.size() >= 0);
+//    }
 
 
 
@@ -154,15 +158,15 @@ public class InquiryTests {
 
 
         InqDTO inqDTO = new InqDTO();
-                inqDTO.setInqCode(1);
-                inqDTO.setInqTitle("문의문의");
-                inqDTO.setInqContent("로그인또안돼요");
-                inqDTO.setInqAnswer(" ");
-                inqDTO.setInqTime(LocalDate.now());
-                inqDTO.setRefUserCode(1);
-                inqDTO.setInqCateCode(3);
-                inqDTO.setInqCateName("기타");
-                inqDTO.setInqStatus("N");
+        inqDTO.setInqCode(1);
+        inqDTO.setInqTitle("문의문의");
+        inqDTO.setInqContent("로그인또안돼요");
+        inqDTO.setInqAnswer(" ");
+        inqDTO.setInqTime(LocalDate.now());
+        inqDTO.setRefUserCode(1);
+        inqDTO.setInqCateCode(3);
+        inqDTO.setInqCateName("기타");
+        inqDTO.setInqStatus("N");
 
         int userCode = 4;
         int inqCode = 1;

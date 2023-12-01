@@ -68,7 +68,7 @@ public class InqService {
     }
 
     //현재 로그인 상태에 따른 내 이름. 아이디 정보같은 것들은 토큰에서 가져와야 할 것 같다...
-    public List<InqSelectListDTO> selectInqList(int page, int userCode, UserRole role, int offset, int limit, String keyword) {
+    public List<InqSelectListDTO> selectInqList(int page, int userCode, Integer inqCateCode, String inqStatus, String role, int offset, int limit, String keyword) {
         String jpql;
 
         if ("ROLE_ADMIN".equals(role)) { // userCode가 4번인 경우 ADMIN이라고 가정
@@ -76,8 +76,12 @@ public class InqService {
                     + "FROM inquiry_and_category i "
                     + "LEFT JOIN User u ON i.refUserCode = u.userCode "
                     + "JOIN i.inqCategory c "
-                    + "WHERE (u.userCode != :userCode "
-                    + "AND (u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR c.inqCateName LIKE :keyword))";
+                    + "WHERE (i.refUserCode != :userCode "
+                    + "OR (:inqStatus IS NULL OR i.inqStatus = :inqStatus) "
+                    + "OR (:inqCateCode IS NULL OR c.inqCateCode = :inqCateCode) "
+                    + "AND (u.name LIKE CONCAT('%', :keyword, '%') OR i.inqTitle LIKE CONCAT('%', :keyword, '%') OR c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
+            System.out.println("\"ROLE_ADMIN\".equals(role)" + "ROLE_ADMIN".equals(role));
+
         } else {
             System.out.println(" 거쳐가는지?================================================");
             jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
@@ -85,14 +89,21 @@ public class InqService {
                     + "LEFT JOIN User u ON i.refUserCode = u.userCode "
                     + "JOIN i.inqCategory c "
                     + "WHERE (i.refUserCode = :userCode "
-                    + "AND (u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR c.inqCateName LIKE :keyword))";
+                    + "OR (:inqStatus IS NULL OR i.inqStatus = :inqStatus) "
+                    + "OR (:inqCateCode IS NULL OR c.inqCateCode = :inqCateCode) "
+                    + "AND (u.name LIKE CONCAT('%', :keyword, '%') OR i.inqTitle LIKE CONCAT('%', :keyword, '%') OR c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
             System.out.println(" 거쳐가는지?================================================");
         }
 
+        if(keyword == null || keyword.isEmpty()){
+            keyword = "";
+        }
 
         List<InqSelectListDTO> inqSelectListDTOList = entityManager.createQuery(jpql, InqSelectListDTO.class)
                 .setParameter("userCode", userCode)
                 .setParameter("keyword", keyword)
+                .setParameter("inqCateCode", inqCateCode)
+                .setParameter("inqStatus", inqStatus)
                 .getResultList();
 
         System.out.println("inqSelectList 서비스 : " + inqSelectListDTOList);
@@ -104,68 +115,59 @@ public class InqService {
         return inqSelectListDTOList;
     }
 
-    public long countMsgList1(int page, int userCode, UserRole role, String keyword) {
+    public long countMsgList1(int page, int userCode, int inqCateCode, String inqStatus, String role, String keyword) {
         Long countPage = inqRepository.countByRefUserCode(userCode);
         return countPage;
     }
 
-    public long countMsgList2(int page, int userCode, int inqCateCode, String role) {
-        Long countPage = inqRepository.countByRefUserCode(userCode);
-        return countPage;
-    }
 
-    public long countMsgList3(int page, int userCode, String inqStatus, String role) {
-        Long countPage = inqRepository.countByRefUserCode(userCode);
-        return countPage;
-    }
-
-    public List<InqSelectListDTO> selectInqListCate(int page, int userCode, int inqCateCode,  String role, int offset, int limit) {
-
-        String jpql;
-        if ("ROLE_ADMIN".equals(role)) { // userCode가 4번인 경우 ADMIN이라고 가정
-            jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
-                    + "FROM inquiry_and_category i "
-                    + "LEFT JOIN User u ON i.refUserCode = u.userCode "
-                    + "JOIN i.inqCategory c "
-                    + "WHERE u.userCode != :userCode AND c.inqCateCode = :inqCateCode";
-        } else {
-            System.out.println(" 거쳐가는지?================================================");
-            jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
-                    + "FROM inquiry_and_category i "
-                    + "LEFT JOIN User u ON i.refUserCode = u.userCode "
-                    + "JOIN i.inqCategory c "
-                    + "WHERE i.refUserCode = :userCode AND c.inqCateCode = :inqCateCode";
-            System.out.println(" 거쳐가는지?================================================");
-        }
-
-        List<InqSelectListDTO> inqSelectListDTOList = entityManager.createQuery(jpql, InqSelectListDTO.class)
-                .setParameter("userCode", userCode)
-                .setParameter("inqCateCode", inqCateCode)
-                .getResultList();
-
-        return inqSelectListDTOList;
-    }
-
-    public List<InqSelectListDTO> selectInqStatus(int page, int userCode, String inqStatus, String role, int offset, int limit) {
-
-       String jpql;
-
-
-       jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
-                + "FROM inquiry_and_category i "
-                + "LEFT JOIN User u ON i.refUserCode = u.userCode "
-                + "JOIN i.inqCategory c "
-                + "WHERE u.userCode != :userCode AND i.inqStatus = :inqStatus";
-
-
-        List<InqSelectListDTO> inqSelectListDTOList = entityManager.createQuery(jpql, InqSelectListDTO.class)
-                .setParameter("userCode", userCode)
-                .setParameter("inqStatus", inqStatus)
-                .getResultList();
-
-        return inqSelectListDTOList;
-
-    }
+//    public List<InqSelectListDTO> selectInqListCate(int page, int userCode, int inqCateCode,  String role, int offset, int limit) {
+//
+//        String jpql;
+//        if ("ROLE_ADMIN".equals(role)) { // userCode가 4번인 경우 ADMIN이라고 가정
+//            jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
+//                    + "FROM inquiry_and_category i "
+//                    + "LEFT JOIN User u ON i.refUserCode = u.userCode "
+//                    + "JOIN i.inqCategory c "
+//                    + "WHERE u.userCode != :userCode AND c.inqCateCode = :inqCateCode";
+//        } else {
+//            System.out.println(" 거쳐가는지?================================================");
+//            jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
+//                    + "FROM inquiry_and_category i "
+//                    + "LEFT JOIN User u ON i.refUserCode = u.userCode "
+//                    + "JOIN i.inqCategory c "
+//                    + "WHERE i.refUserCode = :userCode AND c.inqCateCode = :inqCateCode";
+//            System.out.println(" 거쳐가는지?================================================");
+//        }
+//
+//        List<InqSelectListDTO> inqSelectListDTOList = entityManager.createQuery(jpql, InqSelectListDTO.class)
+//                .setParameter("userCode", userCode)
+//
+//                .getResultList();
+//
+//        return inqSelectListDTOList;
+//    }
+//
+//    public List<InqSelectListDTO> selectInqStatus(int page, int userCode, String inqStatus, String role, int offset, int limit) {
+//
+//       String jpql;
+//
+//
+//       jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
+//                + "FROM inquiry_and_category i "
+//                + "LEFT JOIN User u ON i.refUserCode = u.userCode "
+//                + "JOIN i.inqCategory c "
+//                + "WHERE u.userCode != :userCode AND i.inqStatus = :inqStatus";
+//
+//
+//        List<InqSelectListDTO> inqSelectListDTOList = entityManager.createQuery(jpql, InqSelectListDTO.class)
+//                .setParameter("userCode", userCode)
+//
+//                .getResultList();
+//
+//        return inqSelectListDTOList;
+//
+//    }
 
 
 //    public List<InqSelectListDTO> selectInqLike(int userCode, int page, int offset, int limit, String keyword) {
