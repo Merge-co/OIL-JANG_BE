@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.inquiry.dto;
 
+import com.mergeco.oiljang.common.UserRole;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,8 +17,8 @@ public class InqSelectListDTO {
     private int userCode;
     private String name;
     private String id;
+    private UserRole role;
     private String inqTitle;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate inqTime;
     private String inqStatus;

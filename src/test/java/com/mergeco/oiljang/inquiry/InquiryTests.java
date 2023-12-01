@@ -1,5 +1,6 @@
 package com.mergeco.oiljang.inquiry;
 
+import com.mergeco.oiljang.common.UserRole;
 import com.mergeco.oiljang.inquiry.dto.*;
 import com.mergeco.oiljang.inquiry.entity.InqCategory;
 import com.mergeco.oiljang.inquiry.entity.Inquiry;
@@ -66,6 +67,13 @@ public class InquiryTests {
     }
 
     @Test
+    void selectCategory(){
+        List<InqCategoryDTO> inqCategoryList = inqService.findAllCategory();
+
+        Assertions.assertNotNull(inqCategoryList);
+    }
+
+    @Test
     @DisplayName("문의 정보 상세 조회")
     public void selectAnsInqInfo(){
         int inqCode = 5;
@@ -82,16 +90,23 @@ public class InquiryTests {
     @DisplayName("문의 리스트 조회")
     public void selectInqListUser(){
         int userCode = 4;
+        UserRole role = UserRole.valueOf("ROLE_ADMIN");
+        //int page = Integer.parseInt(null);
+        int page = 1;
         int offset = 0;
         int limit = 9;
+        String keyword = "문";
 
-        List<InqSelectListDTO> inqList = inqService.selectInqList(userCode, offset, limit);
+        List<InqSelectListDTO> inqList = inqService.selectInqList(page, userCode, role, offset, limit, keyword);
         //log.info("문의 상세조회 테스트 : {}", inqList);
-        System.out.println("문의 상세조회 테스트 : " + inqList);
+        System.out.println("문의 리스트 조회 테스트 : " + inqList);
 
 
         Assertions.assertTrue(inqList.size() >= 0);
     }
+
+
+
 
 
 
@@ -100,10 +115,13 @@ public class InquiryTests {
     public void selectListCategory(){
         int userCode = 1;
         int inqCateCode = 1;
+        String role = "ROLE_ADMIN";
         int offset = 0;
         int limit = 9;
+       // int page = Integer.parseInt(null);
+        int page = 1;
 
-        List<InqSelectListDTO> inqListCate = inqService.selectInqListCate(userCode, inqCateCode ,offset, limit);
+        List<InqSelectListDTO> inqListCate = inqService.selectInqListCate(page, userCode, inqCateCode ,role, offset, limit);
         System.out.println("카테고리로 리스트 조회 : " + inqListCate);
 
         Assertions.assertTrue(inqListCate.size() >= 0);
@@ -115,30 +133,18 @@ public class InquiryTests {
     public void selectInqStatus(){
         int userCode = 4;
         String inqStatus = "N";
+        String role = "ROLE_ADMIN";
         int offset = 0;
         int limit = 9;
+        //int page = Integer.parseInt(null);
+        int page = 1;
 
-        List<InqSelectListDTO> inqStatusY = inqService.selectInqStatus(userCode, inqStatus, offset, limit);
+        List<InqSelectListDTO> inqStatusY = inqService.selectInqStatus(page, userCode, inqStatus,role, offset, limit);
         System.out.println("답변완료 : " + inqStatusY);
 
         Assertions.assertTrue(inqStatusY.size() >= 0);
     }
 
-
-    @Test
-    @DisplayName("LIKE 연산자로 검색하여 리스트 조회")
-    public void selectInqLike(){
-
-        int userCode = 1;
-        int offset = 0;
-        int limit = 9;
-        String keyword = "문";
-
-        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqLike(userCode, offset, limit, keyword);
-
-        inqSelectListDTOList.forEach(System.out::println);
-        Assertions.assertNotNull(inqSelectListDTOList);
-    }
 
 
 
@@ -182,9 +188,10 @@ public class InquiryTests {
     @DisplayName("문의 삭제")
     public void deleteInq(){
 
-        int inqCode = 1;
+        int inqCode = 4;
+        int userCode = 1;
 
-        int result = inqService.deleteInq(inqCode);
+        int result = inqService.deleteInq(inqCode, userCode);
 
         Assertions.assertEquals(1, result);
     }
