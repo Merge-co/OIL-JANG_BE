@@ -57,14 +57,14 @@ public class ReportController {
             if (!"all".equals(search)) {
                 // 검색 기능이 활성화 된 경우
                 int total = reportService.selectProejctTotal();
-                pagingResponseDTO.setData(reportService.selectReportList(cri, search));
+                pagingResponseDTO.setData(reportService.selectReportList(cri, search, processed));
                 pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
-            } else if (!"all".equals(processed)){
-                    // 처리 미처리 기능이 활성화 된 경우
+            } else if (!"all".equals(processed)) {
+                // 처리 미처리 기능이 활성화 된 경우
                 int total = reportService.selectProejctTotal();
                 pagingResponseDTO.setData(reportService.selectProcessed(cri, processed));
                 pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
-            }else {
+            } else {
                 //일반 페이징 조회
                 int total = reportService.selectProejctTotal();
                 pagingResponseDTO.setData(reportService.selectReportListWithPaging(cri));
@@ -80,6 +80,44 @@ public class ReportController {
                     .body(new LoginMessage(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하는 동안 에러 발생", null));
         }
     }
+
+   /* @ApiOperation(value = "신고관리", notes = "신고관리 페이지입니다.", tags = {"ReportController"})
+    @GetMapping("/reports")
+    public ResponseEntity<?> selectReportListWithPageing(
+            @RequestParam(name = "offset", defaultValue = "1") String offset,
+            @RequestParam(name = "s", defaultValue = "all") String search,
+            @RequestParam(name = "p", defaultValue = "all") String processed) {
+
+        log.info("[ReportController] selectReportListWithPagingAndSearch Start ========");
+        log.info("[ReportController] selectReportListWithPagingAndSearch offset : {}", offset);
+        log.info("[ReportController] selectReportListWithPagingAndSearch search : {}", search);
+        log.info("[ReportController] selectReportListWithPagingAndSearch processed : {}", processed);
+
+        try {
+            Criteria cri = new Criteria(Integer.valueOf(offset), 10);
+            PagingResponseDTO pagingResponseDTO = new PagingResponseDTO();
+
+            if (!"all".equals(search)) {
+                // 검색 기능이 활성화 된 경우
+                int total = reportService.selectProejctTotal();
+                pagingResponseDTO.setData(reportService.selectReportList(cri, search, processed));
+                pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
+            } else {
+                //일반 페이징 조회
+                int total = reportService.selectProejctTotal();
+                pagingResponseDTO.setData(reportService.selectReportListWithPaging(cri));
+                pagingResponseDTO.setPageInfo(new PageDTO(cri, total));
+            }
+
+            log.info("[ReportController] selectReportListWithPagingAndSearch END===========");
+
+            return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "조회 성공", pagingResponseDTO));
+        } catch (Exception e) {
+            log.error("요청을 처리하는 동안 오휴 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new LoginMessage(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하는 동안 에러 발생", null));
+        }
+    }*/
 
     @ApiOperation(value = "신고하기", notes = "유저가 신고를 등록합니다.", tags = {"ReportController"})
     @PostMapping("/report")
@@ -117,6 +155,7 @@ public class ReportController {
     public ResponseEntity<?> processingDetail(@PathVariable int reportNo, @RequestParam(name = "user", defaultValue = "1") int userCode) {
         return ResponseEntity.ok().body(new LoginMessage(HttpStatus.OK, "신고처리를 위한 정보 조회", reportService.selectByProcessingDetail(reportNo, userCode)));
     }
+
     //헤더 값
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
