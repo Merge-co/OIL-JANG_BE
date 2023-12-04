@@ -248,16 +248,16 @@ public class ProductService {
 
     public void addProductImage(int productCode, List<MultipartFile> imageFiles) throws IOException {
         if(imageFiles != null && imageFiles.size() <= 5) {
-
+            System.out.println("너 이미지 들어갔니?");
             Product product = productRepository.findById(productCode).orElseThrow(null);
             String ostype = "C:/images/";
-            String thumbName = UUID.randomUUID().toString();
+            String thumbName = UUID.randomUUID().toString().replace("-","");
             String ext = imageFiles.get(0).getOriginalFilename().substring(imageFiles.get(0).getOriginalFilename().lastIndexOf("."));
 
             if (System.getProperty("os.name").indexOf("Windows") != -1 ){
-                ostype = "C:/images/";
+                ostype = "C:/OIL-JANG_FE/public/images/product/thumbnail/";
             } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
-                ostype = "/Users/minbumkim/Desktop/test/";
+                ostype = "/Users/OIL-JANG_FE/public/images/product/thumbnail/";
             }
 
             File thumbnailFile = new File(ostype + thumbName + ext);
@@ -269,13 +269,15 @@ public class ProductService {
 
             for (MultipartFile imageFile : imageFiles) {
                 System.out.println(productCode);
+                System.out.println("너 이미지 들어갔지?");
                 //이미지 업로드 및 정보 저장
                 String imageAddress = saveImage(imageFile);
                 ProImageInfoDTO imageInfo = new ProImageInfoDTO();
                 imageInfo.setRefProductCode(productCode);
                 imageInfo.setProImageOriginName(imageFile.getOriginalFilename());
+                String ext2 = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf("."));
                 imageInfo.setProImageDbName(imageAddress);
-                imageInfo.setProImageOriginAddr("/images/product/original/" + imageAddress + ext);
+                imageInfo.setProImageOriginAddr("/images/product/original/" + imageAddress + ext2);
                 // 이미지 정보를 데이터베이스에 저장
                 addProImageInfo(imageInfo);
             }
@@ -294,12 +296,12 @@ public class ProductService {
             System.out.println(imageFile.getOriginalFilename());
             String ext = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf("."));
             System.out.println(ext);
-            String dbFileName = UUID.randomUUID().toString();
-            String ostype = "C:/images/";
+            String dbFileName = UUID.randomUUID().toString().replace("-","");
+            String ostype = "C:/OIL-JANG_FE/public/images/product/original/";
             if (System.getProperty("os.name").indexOf("Windows") != -1 ){
-                ostype = "C:/images/";
+                ostype = "C:/OIL-JANG_FE/public/images/product/original/";
             } else if (System.getProperty("os.name").indexOf("Mac") != -1) {
-                ostype = "/Users/minbumkim/Desktop/test/";
+                ostype = "/Users/OIL-JANG_FE/public/images/product/original/";
             }
             String filePath = ostype + dbFileName + ext;
             System.out.println(System.getProperty("os.name"));
