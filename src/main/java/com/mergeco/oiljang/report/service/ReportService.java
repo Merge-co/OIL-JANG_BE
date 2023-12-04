@@ -127,7 +127,7 @@ public class ReportService {
                 "(SELECT COUNT (r) " +
                 "FROM tbl_report r " +
                 "WHERE r.sellStatusCode.sellStatusCode = 3 " +
-                "AND r.reportUserCode = :userCode)) " +
+                "AND r.reportUserCode = :userCode),r.productCode.productCode, r.reportUserCode) " +
                 "FROM tbl_report r " +
                 "WHERE r.reportNo = :reportNo";
 
@@ -185,7 +185,7 @@ public class ReportService {
                 "r.reportComment, r.processComment, r.processDistinction, r.reportUserNick, " +
                 "r.reportUserCode, " +
                 "(SELECT u.nickname FROM User u WHERE u.userCode = r.productCode.refUserCode) " +
-                ") " +
+                "), r.productCode.refUserCode " +
                 "FROM tbl_report r " +
                 "WHERE r.reportUserNick LIKE :search " +
                 "ORDER BY r.reportNo DESC";
@@ -213,9 +213,9 @@ public class ReportService {
 
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO " +
                 "(r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, " +
-                "r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, r.reportUserCode, " +
+                "r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, r.reportUserCode," +
                 "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )" +
-                ") " +
+                "), r.productCode.refUserCode  " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c ";
         //처리 상태에 따른 WHERE 조건 추가
@@ -260,7 +260,7 @@ public class ReportService {
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO " +
                 "(r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, " +
                 "r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, r.reportUserCode, " +
-                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ),r.productCode.refUserCode ) " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c " +
                 "ORDER BY r.reportNo DESC ";

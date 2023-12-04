@@ -27,4 +27,5 @@ public class ReportsDTO {
     private String reportUserNick; // 신고자 10
     private int reportUserCode;
     private String nickName; // 판매자 11
+    private int userCode ;// 사용자 코드
 }
