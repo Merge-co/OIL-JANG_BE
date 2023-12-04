@@ -21,4 +21,6 @@ public class ProcessDetailDTO {
     private String nickName; // 닉네임
     private String id; // 아이디
     private Long count; // 삭제된게시글에 대한 사용자 삭제 횟수
+    private int productCode; // 판매게시글 번호
+    private int reportUserCode; // 신고자번호
 }

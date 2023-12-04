@@ -127,7 +127,7 @@ public class ReportService {
                 "(SELECT COUNT (r) " +
                 "FROM tbl_report r " +
                 "WHERE r.sellStatusCode.sellStatusCode = 3 " +
-                "AND r.reportUserCode = :userCode)) " +
+                "AND r.reportUserCode = :userCode),r.productCode.productCode, r.reportUserCode) " +
                 "FROM tbl_report r " +
                 "WHERE r.reportNo = :reportNo";
 
@@ -170,9 +170,53 @@ public class ReportService {
         return managment;
     }
 
-    public Page<ReportsDTO> selectReportList(Criteria cri, String searchs) {
+    /* public Page<ReportsDTO> selectReportList(Criteria cri, String searchs, String processed ) {
+         log.info("[ReportService] selectReportList Start =================");
+         log.info("[ReportService] search : {}", searchs);
+         log.info("[ReportService] processed : {}", processed);
+
+         int index = cri.getPageNum() - 1;
+         int count = cri.getAmount();
+
+         Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
+
+         StringBuilder jpql = new StringBuilder();
+         jpql.append("SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (")
+                 .append("r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, ")
+                 .append("r.productCode.productName, r.processDate, r.sellStatusCode.sellStatus, ")
+                 .append("r.reportComment, r.processComment, r.processDistinction, r.reportUserNick, ")
+                 .append("r.reportUserCode, ")
+                 .append("(SELECT u.nickname FROM User u WHERE u.userCode = r.productCode.refUserCode), ")
+                 .append("r.productCode.refUserCode) ")
+                 .append("FROM tbl_report r ")
+                 .append("WHERE 1=1 ");
+
+         // 상태에 따라 WHERE 조건 추가
+         if (!"all".equals(searchs)) {
+             jpql.append("AND (r.reportUserNick LIKE :search OR r.productCode.productName LIKE :search) ");
+         }
+         if ("처리".equals(processed)) {
+             jpql.append("AND r.processDistinction = '처리' ");
+         } else if ("미처리".equals(processed)) {
+             jpql.append("AND r.processDistinction = '미처리' ");
+         }
+
+         TypedQuery<ReportsDTO> query = manager.createQuery(jpql.toString(), ReportsDTO.class);
+         query.setParameter("search", "%" + searchs + "%");
+         System.out.println("서비스에서 보여지는쿼리문 "+query);
+         List<ReportsDTO> management = query.getResultList();
+
+         int start = (int) pageable.getOffset();
+         int end = Math.min((start + pageable.getPageSize()), management.size());
+         Page<ReportsDTO> reportPage = new PageImpl<>(management.subList(start, end), pageable, management.size());
+
+         log.info("[ReportService] selectReportList END ===================");
+         return reportPage;
+     } */
+    public Page<ReportsDTO> selectReportList(Criteria cri, String searchs, String processed) {
         log.info("[ReportService] selectReportList Start =================");
         log.info("[ReportService] search : {}", searchs);
+        log.info("[ReportService] processed : {}", processed);
 
         int index = cri.getPageNum() - 1;
         int count = cri.getAmount();
@@ -184,14 +228,15 @@ public class ReportService {
                 "r.productCode.productName, r.processDate, r.sellStatusCode.sellStatus, " +
                 "r.reportComment, r.processComment, r.processDistinction, r.reportUserNick, " +
                 "r.reportUserCode, " +
-                "(SELECT u.nickname FROM User u WHERE u.userCode = r.productCode.refUserCode) " +
-                ") " +
+                "(SELECT u.nickname FROM User u WHERE u.userCode = r.productCode.refUserCode), " +
+                "r.productCode.refUserCode) " +
                 "FROM tbl_report r " +
                 "WHERE r.reportUserNick LIKE :search " +
                 "ORDER BY r.reportNo DESC";
 
         TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
         query.setParameter("search", "%" + searchs + "%");
+        System.out.println("서비스에서 보여지는쿼리문 " + query);
         List<ReportsDTO> management = query.getResultList();
 
         int start = (int) pageable.getOffset();
@@ -212,9 +257,20 @@ public class ReportService {
         Pageable pageable = PageRequest.of(index, count, Sort.by("reportNo").descending());
 
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO " +
-                "(r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, " +
-                "r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, r.reportUserCode, " +
-                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )" +
+                "(" +
+                "r.reportNo, " +
+                "r.reportDate, " +
+                "r.refReportCategoryNo.reportCategoryCode, " +
+                "r.productCode.productName," +
+                "r.processDate, " +
+                "r.sellStatusCode.sellStatus, " +
+                "r.reportComment, " +
+                "r.processComment," +
+                "r.processDistinction," +
+                "r.reportUserNick, " +
+                "r.reportUserCode," +
+                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )," +
+                "r.productCode.refUserCode" +
                 ") " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c ";
@@ -260,7 +316,7 @@ public class ReportService {
         String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO " +
                 "(r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, " +
                 "r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, r.reportUserCode, " +
-                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
+                "(SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode ),r.productCode.refUserCode ) " +
                 "FROM tbl_report r " +
                 "JOIN r.productCode c " +
                 "ORDER BY r.reportNo DESC ";
@@ -283,7 +339,6 @@ public class ReportService {
     public String modifyReport() {
         return null;
     }
-
 
 
 }
