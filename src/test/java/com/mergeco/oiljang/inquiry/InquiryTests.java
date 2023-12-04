@@ -156,6 +156,9 @@ public class InquiryTests {
     @DisplayName("문의 수정(사용자/관리자)")
     public void updateInquiry(){
 
+        int userCode = 3;
+        int inqCode = 1;
+//        String role = UserRole.ROLE_ADMIN.getRole();
 
         InqDTO inqDTO = new InqDTO();
         inqDTO.setInqCode(1);
@@ -168,11 +171,10 @@ public class InquiryTests {
         inqDTO.setInqCateName("기타");
         inqDTO.setInqStatus("N");
 
-        int userCode = 4;
-        int inqCode = 1;
+
 
         System.out.println("테스트 inqDTO: " + inqDTO);
-        int inq = inqService.updateInq(inqDTO, userCode, inqCode);
+        int inq = inqService.updateInq(inqDTO, inqCode, userCode);
 
 
         //inqService.updateInqStatus(1);

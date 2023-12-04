@@ -9,6 +9,7 @@ import com.mergeco.oiljang.inquiry.repository.InqRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.mergeco.oiljang.user.entity.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -202,14 +203,16 @@ public class InqService {
 
 
     @Transactional
-    public int updateInq(InqDTO inqDTO, int userCode, int inqCode) {
+    public int updateInq(InqDTO inqDTO, int inqCode, int userCode) {
         int result = 0;
+
+        String role = UserRole.ROLE_ADMIN.getRole();
 
         try{
             Inquiry inquiry = inqRepository.findById(inqDTO.getInqCode()).get();
             System.out.println("서비스 inquiry: " + inquiry);
 
-            if(userCode == 4){
+            if("ROLE_ADMIN".equals(role)){
                 inquiry = inquiry.inqCode(inqDTO.getInqCode())
                         .inqTitle(inqDTO.getInqTitle())
                         .inqContent(inqDTO.getInqContent())
