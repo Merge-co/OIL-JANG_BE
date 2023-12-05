@@ -41,12 +41,14 @@ public class MyCalendarService {
     public String updateMyCalendar(int myCalendarCode, MyCalendarDTO myCalendarDTO) {
         String result = "캘린더에 내용 수정 실패";
 
-        MyCalendar myCalendar = myCalendarRepository.findById(myCalendarCode).orElseThrow(IllegalAccessError::new);
+        MyCalendar myCalendar = myCalendarRepository.findById(myCalendarCode).orElse(null);
 
-        myCalendar = myCalendar = myCalendar.calendarContent(myCalendarDTO.getCalendarContent())
-                .calendarDate(myCalendarDTO.getCalendarDate()).calendarTime(myCalendarDTO.getCalendarTime()).builder();
+        if(myCalendar != null) {
+            myCalendar = myCalendar = myCalendar.calendarContent(myCalendarDTO.getCalendarContent())
+                    .calendarDate(myCalendarDTO.getCalendarDate()).calendarTime(myCalendarDTO.getCalendarTime()).builder();
+            result = "캘린더에 내용 수정 성공";
+        }
 
-        result = "캘린더에 내용 수정 성공";
         return result;
     }
 
