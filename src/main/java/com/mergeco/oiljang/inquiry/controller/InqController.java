@@ -193,7 +193,7 @@ public class InqController {
 //            @RequestParam(required = false) Integer page,
 //            @PathVariable int userCode,
 //            @PathVariable String inqStatus,
-//            @RequestParam String role
+//            @RequestParam(required = false) String keyword
 //    ){
 //
 //        if(page == null){
@@ -207,11 +207,11 @@ public class InqController {
 //        int limit = 10;
 //        int offset = limit * (page - 1);
 //
-//        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqStatus(page, userCode, inqStatus, role, offset, limit);
+//        List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqStatus(page, userCode, inqStatus, offset, limit, keyword);
 //        Map<String, Object> responseMap = new HashMap<>();
 //        responseMap.put("inqSelectListDTOList", inqSelectListDTOList);
 //
-//        double totalInq = Long.valueOf(inqService.countMsgList3(page, userCode, inqStatus, role)).doubleValue();
+//        double totalInq = Long.valueOf(inqService.countMsgList3(page, userCode, inqStatus, keyword)).doubleValue();
 //        int totalPage = (int) Math.ceil(totalInq / limit);
 //
 //        if(page >= totalPage){
@@ -224,7 +224,7 @@ public class InqController {
 //
 //
 //        responseMap.put("totalInq", totalInq);
-//        responseMap.put("pageingBtn", pagingBtn);
+//        responseMap.put("pagingBtn", pagingBtn);
 //
 //        ResponseMessage responseMessage = new ResponseMessage(200, "문의 답변여부별 리스트 조회 성공", responseMap);
 //
