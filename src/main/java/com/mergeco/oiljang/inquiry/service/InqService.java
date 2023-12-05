@@ -13,6 +13,7 @@ import com.mergeco.oiljang.user.entity.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,9 +55,9 @@ public class InqService {
     //내 이름. 아이디는 토큰에서 가져오기...?
     public List<InqSelectDetailDTO> selectInqDetail(int inqCode) {
         String jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectDetailDTO(i.inqCode, i.refUserCode, u.name, u.id, i.inqTitle, i.inqContent, i.inqTime, i.inqAnswer, i.inqStatus, c.inqCateCode, c.inqCateName) "
-                + "FROM inquiry_and_category i "
-                + "LEFT JOIN User u ON i.refUserCode = u.userCode "
-                + "JOIN i.inqCategory c "
+                + "FROM inquiry_and_category AS i "
+                + "LEFT JOIN User AS u ON i.refUserCode = u.userCode "
+                + "JOIN i.inqCategory AS c "
                 + "WHERE i.inqCode = :inqCode";
 
         List<InqSelectDetailDTO> selectDetailDTOList = entityManager.createQuery(jpql, InqSelectDetailDTO.class)
@@ -74,14 +75,43 @@ public class InqService {
 
         if ("ROLE_ADMIN".equals(role)) { // userCode가 4번인 경우 ADMIN이라고 가정
             jpql = "SELECT new com.mergeco.oiljang.inquiry.dto.InqSelectListDTO(i.inqCode, i.refUserCode, u.userCode, u.name, u.id, u.role, i.inqTitle, i.inqTime, i.inqStatus, c.inqCateCode, c.inqCateName) "
-                    + "FROM inquiry_and_category i "
-                    + "LEFT JOIN User u ON i.refUserCode = u.userCode "
-                    + "JOIN i.inqCategory c "
-                    + "WHERE (i.refUserCode != :userCode "
-                    + "OR (:inqStatus IS NULL OR i.inqStatus = :inqStatus) "
-                    + "OR (:inqCateCode IS NULL OR c.inqCateCode = :inqCateCode) "
-                    + "AND (u.name LIKE CONCAT('%', :keyword, '%') OR i.inqTitle LIKE CONCAT('%', :keyword, '%') OR c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
-            System.out.println("\"ROLE_ADMIN\".equals(role)" + "ROLE_ADMIN".equals(role));
+                    + "FROM inquiry_and_category AS i "
+                    + "LEFT JOIN User AS u ON i.refUserCode = u.userCode "
+                    + "JOIN i.inqCategory AS c "
+                    + "WHERE i.refUserCode != :userCode ";
+//                    + "OR (:inqStatus IS NULL OR i.inqStatus = :inqStatus) "
+//                    + "OR (:inqCateCode IS NULL OR c.inqCateCode = :inqCateCode) "
+//                    + "AND ((u.name LIKE CONCAT('%', :keyword, '%')) OR (i.inqTitle LIKE CONCAT('%', :keyword, '%')) OR (c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
+
+            if(inqStatus != null && inqStatus != "") {
+                jpql += "AND i.inqStatus = :inqStatus";
+                Query query = entityManager.createQuery(jpql, InqSelectListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("inqStatus", inqStatus);
+                List<InqSelectListDTO> inqSelectListDTOList = query.getResultList();
+                return inqSelectListDTOList;
+            }
+
+            if(inqCateCode != null && inqCateCode != 0){
+                jpql += "AND c.inqCateCode = :inqCateCode";
+                Query query = entityManager.createQuery(jpql, InqSelectListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("inqCateCode", inqCateCode);
+                List<InqSelectListDTO> inqSelectListDTOList = query.getResultList();
+                return inqSelectListDTOList;
+            }
+
+            if(keyword != null && keyword != ""){
+                jpql += "AND u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR (c.inqCateName LIKE :keyword) ";
+                Query query = entityManager.createQuery(jpql, InqSelectListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("keyword", "%" + keyword + "%");
+                List<InqSelectListDTO> inqSelectListDTOList = query.getResultList();
+                return inqSelectListDTOList;
+            }
+
+
+            System.out.println("ROLE_ADMIN.equals(role)" + "ROLE_ADMIN".equals(role));
 
         } else {
             System.out.println(" 거쳐가는지?================================================");
@@ -89,10 +119,42 @@ public class InqService {
                     + "FROM inquiry_and_category i "
                     + "LEFT JOIN User u ON i.refUserCode = u.userCode "
                     + "JOIN i.inqCategory c "
-                    + "WHERE (i.refUserCode = :userCode "
-                    + "OR (:inqStatus IS NULL OR i.inqStatus = :inqStatus) "
-                    + "OR (:inqCateCode IS NULL OR c.inqCateCode = :inqCateCode) "
-                    + "AND (u.name LIKE CONCAT('%', :keyword, '%') OR i.inqTitle LIKE CONCAT('%', :keyword, '%') OR c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
+                    + "WHERE i.refUserCode = :userCode ";
+//                    + "OR (:inqStatus IS NULL OR i.inqStatus = :inqStatus) "
+//                    + "OR (:inqCateCode IS NULL OR c.inqCateCode = :inqCateCode) "
+//                    + "AND ((u.name LIKE CONCAT('%', :keyword, '%')) OR (i.inqTitle LIKE CONCAT('%', :keyword, '%')) OR (c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
+
+            if(inqStatus != null && !inqStatus.isEmpty()) {
+                jpql += "AND i.inqStatus = :inqStatus ";
+                Query query  = entityManager.createQuery(jpql, InqSelectListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("inqStatus", inqStatus);
+                List<InqSelectListDTO> inqSelectListDTOList = query.getResultList();
+                return inqSelectListDTOList;
+            }
+            System.out.println("inqStatus" + inqStatus);
+
+            if(inqCateCode != null && inqCateCode != 0){
+                jpql += "AND c.inqCateCode = :inqCateCode ";
+                Query query = entityManager.createQuery(jpql, InqSelectListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("inqCateCode", inqCateCode);
+                List<InqSelectListDTO> inqSelectListDTOList = query.getResultList();
+                return inqSelectListDTOList;
+            }
+            System.out.println("inqCateCode" + inqCateCode);
+
+            if(keyword != null && !keyword.isEmpty()){
+                jpql += "AND u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR (c.inqCateName LIKE :keyword) ";
+                Query query = entityManager.createQuery(jpql, InqSelectListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("keyword", "%" + keyword + "%");
+                List<InqSelectListDTO> inqSelectListDTOList = query.getResultList();
+                return inqSelectListDTOList;
+            }
+            System.out.println("keyword" + keyword);
+
+
             System.out.println(" 거쳐가는지?================================================");
         }
 
@@ -102,9 +164,9 @@ public class InqService {
 
         List<InqSelectListDTO> inqSelectListDTOList = entityManager.createQuery(jpql, InqSelectListDTO.class)
                 .setParameter("userCode", userCode)
-                .setParameter("keyword", keyword)
-                .setParameter("inqCateCode", inqCateCode)
-                .setParameter("inqStatus", inqStatus)
+//                .setParameter("keyword", keyword)
+//                .setParameter("inqCateCode", inqCateCode)
+//                .setParameter("inqStatus", inqStatus)
                 .getResultList();
 
         System.out.println("inqSelectList 서비스 : " + inqSelectListDTOList);
@@ -149,7 +211,7 @@ public class InqService {
 //        return inqSelectListDTOList;
 //    }
 //
-//    public List<InqSelectListDTO> selectInqStatus(int page, int userCode, String inqStatus, String role, int offset, int limit) {
+//    public List<InqSelectListDTO> selectInqStatus(int page, int userCode, String inqStatus, int offset, int limit, String keyword) {
 //
 //       String jpql;
 //
@@ -158,18 +220,24 @@ public class InqService {
 //                + "FROM inquiry_and_category i "
 //                + "LEFT JOIN User u ON i.refUserCode = u.userCode "
 //                + "JOIN i.inqCategory c "
-//                + "WHERE u.userCode != :userCode AND i.inqStatus = :inqStatus";
+//                + "WHERE u.userCode != :userCode AND i.inqStatus = :inqStatus "
+//                + "AND ((u.name LIKE CONCAT('%', :keyword, '%')) OR (i.inqTitle LIKE CONCAT('%', :keyword, '%')) OR (c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
 //
 //
 //        List<InqSelectListDTO> inqSelectListDTOList = entityManager.createQuery(jpql, InqSelectListDTO.class)
 //                .setParameter("userCode", userCode)
-//
+//                .setParameter("inqStatus", inqStatus)
+//                .setParameter("keyword", keyword)
 //                .getResultList();
 //
 //        return inqSelectListDTOList;
 //
 //    }
 
+//    public long countMsgList3(Integer page, int userCode, String inqStatus, String keyword) {
+//        Long countPage = inqRepository.countByRefUserCode(userCode);
+//        return countPage;
+//    }
 
 //    public List<InqSelectListDTO> selectInqLike(int userCode, int page, int offset, int limit, String keyword) {
 //
@@ -271,6 +339,8 @@ public class InqService {
                 .map(category -> modelMapper.map(category, InqCategoryDTO.class))
                 .collect(Collectors.toList());
     }
+
+
 
 
 //    @Transactional

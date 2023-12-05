@@ -137,13 +137,14 @@ public class InquiryTests {
 //    public void selectInqStatus(){
 //        int userCode = 4;
 //        String inqStatus = "N";
-//        String role = "ROLE_ADMIN";
+//       // String role = UserRole.ROLE_ADMIN.getRole();
 //        int offset = 0;
 //        int limit = 9;
 //        //int page = Integer.parseInt(null);
 //        int page = 1;
+//        String keyword = "왜";
 //
-//        List<InqSelectListDTO> inqStatusY = inqService.selectInqStatus(page, userCode, inqStatus,role, offset, limit);
+//        List<InqSelectListDTO> inqStatusY = inqService.selectInqStatus(page, userCode, inqStatus, offset, limit, keyword);
 //        System.out.println("답변완료 : " + inqStatusY);
 //
 //        Assertions.assertTrue(inqStatusY.size() >= 0);
