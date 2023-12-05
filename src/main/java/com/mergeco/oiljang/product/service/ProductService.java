@@ -228,9 +228,16 @@ public class ProductService {
 
     @Transactional
     public Integer insertWishList(WishListDTO wishListDTO) {
-        wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
-
         String jpql = "SELECT w.wishCode FROM WishList w WHERE w.refUserCode = :refUserCode AND w.product.productCode = :productCode";
+
+        List<Integer> isWishCode = entityManager.createQuery(jpql)
+                .setParameter("refUserCode", wishListDTO.getRefUserCode())
+                .setParameter("productCode", wishListDTO.getRefProductCode())
+                .getResultList();
+
+        if(isWishCode.size() == 0) {
+            wishListRepository.save(modelMapper.map(wishListDTO, WishList.class));
+        }
 
         List<Integer> wishCode = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", wishListDTO.getRefUserCode())
