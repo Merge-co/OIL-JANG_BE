@@ -23,4 +23,5 @@ public class ProcessDetailDTO {
     private Long count; // 삭제된게시글에 대한 사용자 삭제 횟수
     private int productCode; // 판매게시글 번호
     private int reportUserCode; // 신고자번호
+    private int sellStatusCode; // 처리 여부
 }

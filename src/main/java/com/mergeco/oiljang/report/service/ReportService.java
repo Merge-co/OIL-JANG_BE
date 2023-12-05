@@ -41,27 +41,6 @@ public class ReportService {
         this.productRepository = productRepository;
     }
 
-    public List<ReportsDTO> findReports(boolean processed) {
-        log.info("[reportService] selectReport Start ===========================");
-        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ReportsDTO (r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, r.productCode.productName,r.processDate, r.sellStatusCode.sellStatus, r.reportComment, r.processComment,r.processDistinction,r.reportUserNick, (SELECT u.nickname FROM User u WHERE u.userCode =  r.productCode.refUserCode )) " +
-                "FROM tbl_report r " +
-                "JOIN r.productCode c ";
-
-        if (processed) {
-            jpql += "WHERE r.processDistinction = '처리'";
-        } else {
-            jpql += "WHERE r.processDistinction = '미처리Ï'";
-        }
-        jpql += "ORDER BY r.reportNo DESC";
-        List<ReportsDTO> management = manager.createQuery(jpql).getResultList();
-
-        System.out.println("서비스 매니저: " + management);
-
-        log.info("[reportService] selectReport END =============================");
-
-        return management;
-    }
-
     @Transactional
     public String registReport(ReportDTO reportInfo) {
         log.info("[reportService] insertReport Start ==================================================");
@@ -116,7 +95,8 @@ public class ReportService {
         log.info("[ReportService] reportNo : {}", reportNo);
         log.info("[ReportService] reportNo : {}", userCode);
 
-        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ProcessDetailDTO ( r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, " +
+        String jpql = "SELECT new com.mergeco.oiljang.report.dto.ProcessDetailDTO ( " +
+                "r.reportNo, r.reportDate, r.refReportCategoryNo.reportCategoryCode, " +
                 "r.productCode.refUserCode, r.productCode.productName, r.reportComment, " +
                 "(SELECT u.nickname " +
                 "FROM User u " +
@@ -124,10 +104,11 @@ public class ReportService {
                 "(SELECT u.id " +
                 "FROM User u " +
                 "WHERE u.userCode = r.productCode.refUserCode)," +
-                "(SELECT COUNT (r) " +
-                "FROM tbl_report r " +
-                "WHERE r.sellStatusCode.sellStatusCode = 3 " +
-                "AND r.reportUserCode = :userCode),r.productCode.productCode, r.reportUserCode) " +
+                "(SELECT COUNT (p) " +
+                "FROM Product p " +
+                "WHERE p.SellStatus.sellStatusCode = 3 " +
+                "AND p.refUserCode = :userCode ),"  +
+                "r.productCode.productCode, r.reportUserCode, r.productCode.SellStatus.sellStatusCode) " +
                 "FROM tbl_report r " +
                 "WHERE r.reportNo = :reportNo";
 

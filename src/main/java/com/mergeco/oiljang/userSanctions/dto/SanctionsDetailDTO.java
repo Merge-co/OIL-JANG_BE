@@ -1,23 +1,21 @@
 package com.mergeco.oiljang.userSanctions.dto;
 
-
-import com.mergeco.oiljang.user.entity.User;
 import lombok.*;
-import org.springframework.stereotype.Service;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Getter
 @Setter
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor
-public class UserSanctionsDTO {
+public class SanctionsDetailDTO {
 
     private int sanctionsCode;// ㅅㅏ용자 제제 코드
     private LocalDateTime sanctionsDate; // 사용자 제제날짜
-    private User refUserCode; // 사용자 코드
-
+    private int refUserCode; // 사용자 코드
+    private String userId; //유저 아이디
+    private String nickName; //유저 별명
+    private long count ; // 신고 제제당한 횟수
 }
