@@ -407,7 +407,7 @@ public class ProductService {
 // 내 판매목록 조회
 
     public List<SellingListDTO> selectSellingList(int offset, int limit, int refUserCode) {
-        String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = p.productCode), p.SellStatus.sellStatus)" +
+        String jpql = "SELECT new com.mergeco.oiljang.product.dto.SellingListDTO(p.productCode, p.productThumbAddr, p.productName, p.productPrice,(SELECT Count(w.wishCode) FROM WishList w WHERE w.product.productCode = p.productCode), (SELECT s.sellStatus from SellStatus s WHERE s.sellStatusCode = p.SellStatus.sellStatusCode))" +
                 " FROM Product p WHERE p.refUserCode = :refUserCode and p.SellStatus.sellStatusCode in(1, 2) ORDER BY p.productCode DESC";
         List<SellingListDTO> wishList = entityManager.createQuery(jpql)
                 .setParameter("refUserCode", refUserCode)
@@ -440,5 +440,19 @@ public class ProductService {
         deletedProduct = deletedProduct.sellStatus(3).builder();
         System.out.println(deletedProduct);
         productRepository.save(deletedProduct);
+
+    }
+
+    @Transactional
+    public void updateSellStatusToSoldOut(int productCode) {
+        // 상품 존재 확인
+        Product SoldOutProduct = productRepository.findById(productCode)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. " + productCode));
+        // 상품의 판매 상태를 '판매완료'로 업데이트
+        System.out.println(SoldOutProduct);
+        SoldOutProduct = SoldOutProduct.sellStatus(2).builder();
+        System.out.println(SoldOutProduct);
+        productRepository.save(SoldOutProduct);
+
     }
 }
