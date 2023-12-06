@@ -108,6 +108,12 @@ public class InqController {
             inqCateCode = 0;
         }
 
+        System.out.println("컨트롤러 role!!!!!!!!!!" + page );
+        System.out.println("컨트롤러 role!!!!!!!!!!" + userCode );
+        System.out.println("컨트롤러 role!!!!!!!!!!" + inqCateCode );
+        System.out.println("컨트롤러 role!!!!!!!!!!" + inqStatus );
+        System.out.println("컨트롤러 role!!!!!!!!!!" + role );
+        System.out.println("컨트롤러 keyword!!!!!!!!!!" + keyword );
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -117,13 +123,12 @@ public class InqController {
         int offset = limit * (page - 1);
 
         List<InqSelectListDTO> inqSelectListDTOList = inqService.selectInqList(page, userCode, inqCateCode, inqStatus, role, offset, limit, keyword);
-
-
-
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("inqSelectListDTOList", inqSelectListDTOList);
-        double totalInq = Long.valueOf(inqService.countMsgList1(page, userCode, inqCateCode, inqStatus, role, keyword)).doubleValue();
+        double totalInq = Long.valueOf(inqService.countMsgList(page, userCode, inqCateCode, inqStatus, role, keyword, offset, limit)).doubleValue();
+        System.out.println("totalInq" + totalInq);
         int totalPage = (int) Math.ceil(totalInq / limit);
+        System.out.println("totalPage" + totalPage);
 
         if(page >= totalPage){
             page = totalPage;

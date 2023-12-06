@@ -141,8 +141,10 @@ public class MsgController {
         List<MsgListDTO> msgList = msgService.getMessages(userCode, page, offset, limit, isReceived, keyword);
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("msgList", msgList);
-        double totalMsg = Long.valueOf(msgService.countMsgList(page, userCode, isReceived, keyword)).doubleValue();
+        double totalMsg = Long.valueOf(msgService.countMsgList(page, userCode, offset, limit, isReceived, keyword)).doubleValue();
+        System.out.println("totalMsg :" + totalMsg);
         int totalPage = (int) Math.ceil(totalMsg / limit);
+        System.out.println("totalMsg :" + totalMsg);
 
         if(page >= totalPage){
             page = totalPage;
