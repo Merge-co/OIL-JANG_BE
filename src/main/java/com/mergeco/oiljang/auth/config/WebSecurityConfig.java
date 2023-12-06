@@ -1,12 +1,9 @@
 package com.mergeco.oiljang.auth.config;
 
 import com.mergeco.oiljang.auth.filter.CustomAuthenticationFilter;
-//import com.mergeco.oiljang.auth.filter.OAuth2AuthenticationFilter;
 import com.mergeco.oiljang.auth.handler.*;
-/*import lombok.RequiredArgsConstructor;*/
 import com.mergeco.oiljang.auth.model.DetailsUser;
 import com.mergeco.oiljang.auth.model.service.OAuth2DetailsService;
-/*import com.mergeco.oiljang.user.repository.CustomOAuth2AuthorizationRequestRepository;*/
 import com.mergeco.oiljang.user.repository.CustomOAuth2AuthorizationRequestRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +58,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private OAuth2Config oAuth2Config;
-
-
 
     @Autowired
     public WebSecurityConfig(TokenProvider tokenProvider, BCryptPasswordEncoder passwordEncoder, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler, CustomAuthSuccessHandler customAuthSuccessHandler, CustomAuthFailureHandler customAuthFailureHandler, UserDetailsService userDetailsService, CustomAuthenticationProvider customAuthenticationProvider, OAuth2SuccessHandler oAuth2SuccessHandler, OAuth2DetailsService oAuth2DetailsService) {

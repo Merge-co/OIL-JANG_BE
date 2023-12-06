@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -73,4 +76,35 @@ public class SanctionsService {
         return sancations;
 
     }
+
+
+
+
+
+
+
+
+
+
+
+    public Optional<LocalDate> selectSanctionsByUser(int userCode) {
+        log.info("[SanctionsService] selectSanctionsByUser Start =======");
+
+        System.out.println("userCode : " + userCode);
+
+        Date sqlDate = userSanctionsRepository.findByUserDate(userCode);
+
+        if (sqlDate != null) {
+            LocalDate sanctionsDate = sqlDate.toLocalDate();
+            System.out.println("sanctionsDate : " + sanctionsDate);
+            return Optional.of(sanctionsDate);
+        } else {
+            log.info("[SanctionsService] sanctionsDate not found for userCode: {}", userCode);
+            return Optional.empty();
+        }
+    }
+
+
+
+
 }
