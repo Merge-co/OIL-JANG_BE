@@ -418,7 +418,10 @@ public class ProductService {
     }
 
     public Long countSellingList(int refUserCode) {
-        Long countPage = productRepository.countByRefUserCode(refUserCode);
+        String jpql = "select count (*) from Product p WHERE p.refUserCode = :refUserCode and p.SellStatus.sellStatusCode in(1, 2) ORDER BY p.productCode DESC";
+        Long countPage = (Long) entityManager.createQuery(jpql)
+                .setParameter("refUserCode", refUserCode)
+                .getSingleResult();
         return countPage;
     }
     public void updateViewCount(Long productId) {
