@@ -87,7 +87,7 @@ public class InqService {
 //                    + "AND ((u.name LIKE CONCAT('%', :keyword, '%')) OR (i.inqTitle LIKE CONCAT('%', :keyword, '%')) OR (c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
             System.out.println("거치는지 확인해야한다 무조건..");
             if(inqStatus != null && inqStatus != "") {
-                jpql += "AND i.inqStatus = :inqStatus";
+                jpql += "AND i.inqStatus = :inqStatus ORDER BY i.inqTime DESC";
                 TypedQuery<InqSelectListDTO> query = entityManager.createQuery(jpql, InqSelectListDTO.class)
                         .setParameter("userCode", userCode)
                         .setParameter("inqStatus", inqStatus)
@@ -98,7 +98,7 @@ public class InqService {
             }
 
             if(inqCateCode != null && inqCateCode != 0){
-                jpql += "AND c.inqCateCode = :inqCateCode";
+                jpql += "AND c.inqCateCode = :inqCateCode ORDER BY i.inqTime DESC";
                 TypedQuery<InqSelectListDTO> query = entityManager.createQuery(jpql, InqSelectListDTO.class)
                         .setParameter("userCode", userCode)
                         .setParameter("inqCateCode", inqCateCode)
@@ -108,7 +108,7 @@ public class InqService {
             }
 
             if(keyword != null && keyword != ""){
-                jpql += "AND u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR (c.inqCateName LIKE :keyword) ";
+                jpql += "AND u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR (c.inqCateName LIKE :keyword) ORDER BY i.inqTime DESC";
                 TypedQuery<InqSelectListDTO> query = entityManager.createQuery(jpql, InqSelectListDTO.class)
                         .setParameter("userCode", userCode)
                         .setParameter("keyword", "%" + keyword + "%")
@@ -116,7 +116,6 @@ public class InqService {
                         .setMaxResults(limit);
                 return query.getResultList();
             }
-
 
             System.out.println("ROLE_ADMIN.equals(role)" + "ROLE_ADMIN".equals(role));
 
@@ -132,7 +131,7 @@ public class InqService {
 //                    + "AND ((u.name LIKE CONCAT('%', :keyword, '%')) OR (i.inqTitle LIKE CONCAT('%', :keyword, '%')) OR (c.inqCateName LIKE CONCAT('%', :keyword, '%')))";
 
             if(inqStatus != null && !inqStatus.isEmpty()) {
-                jpql += "AND i.inqStatus = :inqStatus ";
+                jpql += "AND i.inqStatus = :inqStatus ORDER BY i.inqTime DESC";
                 TypedQuery<InqSelectListDTO> query  = entityManager.createQuery(jpql, InqSelectListDTO.class)
                         .setParameter("userCode", userCode)
                         .setParameter("inqStatus", inqStatus)
@@ -143,7 +142,7 @@ public class InqService {
             System.out.println("inqStatus" + inqStatus);
 
             if(inqCateCode != null && inqCateCode != 0){
-                jpql += "AND c.inqCateCode = :inqCateCode ";
+                jpql += "AND c.inqCateCode = :inqCateCode ORDER BY i.inqTime DESC";
                 TypedQuery<InqSelectListDTO> query = entityManager.createQuery(jpql, InqSelectListDTO.class)
                         .setParameter("userCode", userCode)
                         .setParameter("inqCateCode", inqCateCode)
@@ -154,7 +153,7 @@ public class InqService {
             System.out.println("inqCateCode" + inqCateCode);
 
             if(keyword != null && !keyword.isEmpty()){
-                jpql += "AND u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR (c.inqCateName LIKE :keyword) ";
+                jpql += "AND u.name LIKE :keyword OR i.inqTitle LIKE :keyword OR (c.inqCateName LIKE :keyword) ORDER BY i.inqTime DESC";
                 TypedQuery<InqSelectListDTO> query = entityManager.createQuery(jpql, InqSelectListDTO.class)
                         .setParameter("userCode", userCode)
                         .setParameter("keyword", "%" + keyword + "%")
@@ -164,13 +163,13 @@ public class InqService {
             }
             System.out.println("keyword" + keyword);
 
-
             System.out.println(" 거쳐가는지?================================================");
         }
 
         if(keyword == null || keyword.isEmpty()){
             keyword = "";
         }
+        jpql += "ORDER BY i.inqTime DESC";
 
         TypedQuery<InqSelectListDTO> query = entityManager.createQuery(jpql, InqSelectListDTO.class)
                 .setParameter("userCode", userCode)

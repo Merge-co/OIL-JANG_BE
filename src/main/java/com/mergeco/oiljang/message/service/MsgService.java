@@ -143,37 +143,63 @@ public class MsgService {
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.senderCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
-                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 3) "
-                    + "AND m.msgContent LIKE :keyword OR u.name LIKE :keyword";
+                    + "WHERE m.receiverCode = :userCode AND md.msgDeleteCode IN (1, 3) ";
+
+
             System.out.println("거치는지 확인");
+
+            if(keyword != null && keyword != ""){
+                jpql += "AND m.msgContent LIKE :keyword OR u.name LIKE :keyword ORDER BY m.msgTime DESC ";
+
+                TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("keyword", "%" + keyword + "%")
+                        .setFirstResult(offset)
+                        .setMaxResults(limit);
+                return query.getResultList();
+            }
 
         } else {
             jpql = "SELECT new com.mergeco.oiljang.message.dto.MsgListDTO(u.userCode, u.name, u.id, m.msgCode, m.senderCode, m.receiverCode, m.msgContent, m.msgStatus, m.msgTime, md.msgDeleteCode) "
                     + "FROM message_and_delete m "
                     + "LEFT JOIN User u ON m.receiverCode = u.userCode "
                     + "JOIN m.msgDeleteInfo md "
-                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2) "
-                    + "AND m.msgContent LIKE :keyword OR u.name LIKE :keyword";
+                    + "WHERE m.senderCode = :userCode AND md.msgDeleteCode IN (1, 2) ";
+
+
+
+            if(keyword != null && keyword != ""){
+                jpql += "AND m.msgContent LIKE :keyword OR u.name LIKE :keyword ORDER BY m.msgTime DESC ";
+
+                TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class)
+                        .setParameter("userCode", userCode)
+                        .setParameter("keyword", "%" + keyword + "%")
+                        .setFirstResult(offset)
+                        .setMaxResults(limit);
+                return query.getResultList();
+            }
+
             System.out.println("거치는지 확인 2222222222222222");
         }
 
         if(keyword == null || keyword.isEmpty()){
             keyword = "";
         }
+        jpql += "ORDER BY m.msgTime DESC";
 
-        TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class);
-        query.setParameter("userCode", userCode);
-        query.setParameter("keyword", "%" + keyword + "%");
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
+        TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class)
+                .setParameter("userCode", userCode)
+               // .setParameter("keyword", "%" + keyword + "%")
+                .setFirstResult(offset)
+                .setMaxResults(limit);
 
-        System.out.println("userCode:" + userCode);
-        System.out.println("keyword:" + keyword);
-        System.out.println("page:" + page);
-        System.out.println("offset:" + offset);
-        System.out.println("limit:" + limit);
-        System.out.println("isReceived:" + isReceived);
-        System.out.println("1111111111111111111111111" + query.getResultList());
+//        System.out.println("userCode:" + userCode);
+//        System.out.println("keyword:" + keyword);
+//        System.out.println("page:" + page);
+//        System.out.println("offset:" + offset);
+//        System.out.println("limit:" + limit);
+//        System.out.println("isReceived:" + isReceived);
+//        System.out.println("1111111111111111111111111" + query.getResultList());
         return query.getResultList();
     }
 
