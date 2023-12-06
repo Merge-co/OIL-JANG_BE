@@ -141,7 +141,6 @@ public class UserService {
                     .withdrawStatus("N")
                     .email(joinDTO.getEmail())
                     .enrollDate(LocalDateTime.now())
-                    .profileImageUrl(userProfileThumbPath)
                     .build();
 
             user.setUserProfile(userProfile);
@@ -298,7 +297,6 @@ public class UserService {
                     .withdrawStatus(user.getWithdrawStatus())
                     .email(user.getEmail())
                     .enrollDate(user.getEnrollDate())
-                    .profileImageUrl(user.getProfileImageUrl())
                     .userProfile(user.getUserProfile())
                     .build();
 
@@ -357,7 +355,6 @@ public class UserService {
                     .withdrawStatus(user.getWithdrawStatus())
                     .email(user.getEmail())
                     .enrollDate(user.getEnrollDate())
-                    .profileImageUrl(user.getProfileImageUrl())
                     .userProfile(user.getUserProfile())
                     .build();
             updatePasswordAndSave(updatedUser);
@@ -408,7 +405,6 @@ public class UserService {
         userProfileRepository.save(updatedUserProfile);
         System.out.println(Paths.get(uploadDir, thumbnailFilename).toString());
         System.out.println(updatedUser.getUserCode());
-        userRepository.editProfileUrl(Paths.get(uploadDir,thumbnailFolderName, thumbnailFilename).toString(), updatedUser.getUserCode());
     }
 
     private void deleteProfileImage(String userImageOriginAddr) {
@@ -521,7 +517,6 @@ public class UserService {
                     .withdrawStatus(user.getWithdrawStatus())
                     .email(user.getEmail())
                     .enrollDate(user.getEnrollDate())
-                    .profileImageUrl(user.getProfileImageUrl())
                     .userProfile(user.getUserProfile())
                     .build();
 

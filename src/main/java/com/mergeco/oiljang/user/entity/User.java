@@ -58,9 +58,6 @@ public class User {
     @ColumnDefault("NORMAL")
     private EnrollType enrollType;
 
-    @Column(name = "token")
-    private String token;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "auth_name")
     @ColumnDefault("ROLE_USER")
@@ -80,9 +77,6 @@ public class User {
     @OneToOne(mappedBy = "refUserCode", cascade = CascadeType.ALL)
     @JsonManagedReference
     private UserProfile userProfile;
-
-    @Column(name = "profile_Image_Url")
-    private String profileImageUrl;
 
 
     public void setUserProfile(UserProfile userProfile) {
@@ -104,10 +98,6 @@ public class User {
         this.pwd= passwordEncoder.encode(this.pwd);
     }
 
-
-    public void updateRefreshToken(String updateRefreshToken) {
-        this.token = updateRefreshToken;
-    }
 
     public List<String> getRoleList() {
         if(this.role.getRole().length() > 0) {
