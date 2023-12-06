@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReportService {
     private final ProductRepository productRepository;
-
     @PersistenceContext
     private final EntityManager manager;
     private final ReportRepository reportRepository;
@@ -75,12 +74,9 @@ public class ReportService {
                     .sellStatusCode(new SellStatus(reportDTO.getSellStatusCode(), null))
                     .build();
             result = 1;
-            System.out.println("리포트 변경값 : " + report);
 
             product = product
                     .sellStatus(reportDTO.getSellStatusCode()).builder();
-
-            System.out.println("상품 변경값 : " + product);
 
         } catch (Exception e) {
             log.info("[Report update] Exception !!" + e);
@@ -217,7 +213,7 @@ public class ReportService {
 
         TypedQuery<ReportsDTO> query = manager.createQuery(jpql, ReportsDTO.class);
         query.setParameter("search", "%" + searchs + "%");
-        System.out.println("서비스에서 보여지는쿼리문 " + query);
+
         List<ReportsDTO> management = query.getResultList();
 
         int start = (int) pageable.getOffset();
