@@ -24,7 +24,6 @@ public class UserDTO {
     private String role;
     private String birthDate;
     private String withdrawStatus;
-    private String profileImageUrl;
     private String userImageOriginName;
     private String userImageName;
     private String userImageOriginAddr;
@@ -42,7 +41,6 @@ public class UserDTO {
         userDTO.setGender(user.getGender());
         userDTO.setBirthDate(user.getBirthDate());
         userDTO.setWithdrawStatus(user.getWithdrawStatus());
-        userDTO.setProfileImageUrl(user.getProfileImageUrl());
         userDTO.setEnrollType(user.getEnrollType().toString());
         userDTO.setRole(user.getRole().toString());
 

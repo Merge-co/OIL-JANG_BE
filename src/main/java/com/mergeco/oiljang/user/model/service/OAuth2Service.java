@@ -152,7 +152,6 @@ public class OAuth2Service {
                 .nickname(nickname)
                 .pwd(pwd)
                 .email(email)
-                .profileImageUrl(userProfileThumbPath)
                 .role(UserRole.ROLE_USER)
                 .birthDate("소셜 로그인")
                 .gender("알 수 없음")
@@ -161,7 +160,6 @@ public class OAuth2Service {
                 .withdrawStatus("N")
                 .enrollDate(LocalDateTime.now())
                 .enrollType(EnrollType.GOOGLE)
-                .profileImageUrl(userProfileThumbPath)
                 .build();
 
 
@@ -264,7 +262,6 @@ public class OAuth2Service {
                 .nickname(nickname)
                 .pwd(pwd)
                 .email(email)
-                .profileImageUrl(userProfileThumbPath)
                 .role(UserRole.ROLE_USER)
                 .birthDate(birthyear)
                 .gender(gender)
@@ -273,7 +270,6 @@ public class OAuth2Service {
                 .withdrawStatus("N")
                 .enrollDate(LocalDateTime.now())
                 .enrollType(EnrollType.NAVER)
-                .profileImageUrl(userProfileThumbPath)
                 .build();
 
 
