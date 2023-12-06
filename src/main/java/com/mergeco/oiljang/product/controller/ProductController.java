@@ -237,6 +237,19 @@ public class ProductController {
         return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "중고 상품 판매완료")
+    @PutMapping(value = "/products/{productCode}/soldOut")
+    public ResponseEntity<ResponseMessage> SoldOutProduct(@PathVariable int productCode) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        productService.updateSellStatusToSoldOut(productCode);
+
+        ResponseMessage responseMessage = new ResponseMessage(200, "상품 삭제 성공", null);
+
+        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
+    }
+
     // 내 판매목록 조회
     @GetMapping("users/{userCode}/products")
     public ResponseEntity<ResponseMessage> selectSellingProduct(@PathVariable int userCode, @RequestParam(required = false) Integer page) {
