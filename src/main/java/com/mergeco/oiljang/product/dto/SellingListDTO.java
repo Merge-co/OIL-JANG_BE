@@ -21,8 +21,7 @@ public class SellingListDTO {
         this.productName = productName;
         this.productPrice = productPrice;
         this.wishCount = wishCount;
-
-        this.sellStatus = (sellStatusCode != null && sellStatusCode.equals("판매완료")) ? "판매완료" : "판매중";
+        this.sellStatus = sellStatusCode;
     }
 
 }
