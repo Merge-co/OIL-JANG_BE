@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @NoArgsConstructor
@@ -20,8 +21,8 @@ public class MsgDTO {
     private int msgCode;
     private String msgContent;
     private String msgStatus;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate msgTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime msgTime;
     private int refProductCode;
     private int senderCode;
     private int receiverCode;

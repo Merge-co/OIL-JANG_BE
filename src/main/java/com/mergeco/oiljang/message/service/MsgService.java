@@ -189,17 +189,9 @@ public class MsgService {
 
         TypedQuery<MsgListDTO> query = entityManager.createQuery(jpql, MsgListDTO.class)
                 .setParameter("userCode", userCode)
-               // .setParameter("keyword", "%" + keyword + "%")
                 .setFirstResult(offset)
                 .setMaxResults(limit);
 
-//        System.out.println("userCode:" + userCode);
-//        System.out.println("keyword:" + keyword);
-//        System.out.println("page:" + page);
-//        System.out.println("offset:" + offset);
-//        System.out.println("limit:" + limit);
-//        System.out.println("isReceived:" + isReceived);
-//        System.out.println("1111111111111111111111111" + query.getResultList());
         return query.getResultList();
     }
 

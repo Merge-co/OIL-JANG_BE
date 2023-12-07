@@ -97,7 +97,7 @@ public class MessageTests {
     @ParameterizedTest
     @MethodSource("getMsgInfos")
     void msgInsertTest(String msgContent, String msgStatus,
-                       LocalDate msgTime,int refProductCode, int senderCode, int receiverCode,
+                       LocalDateTime msgTime,int refProductCode, int senderCode, int receiverCode,
                        int msgDeleteCode, String msgDeleteStatus){
         MsgInsertDTO msgInfo = new MsgInsertDTO(
                 msgContent,
