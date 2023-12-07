@@ -30,4 +30,25 @@ public interface MsgRepository extends JpaRepository<Message, Integer> {
 //            + "LEFT JOIN User u ON m.receiverCode = :userCode "
 //            + "WHERE m.senderCode = :userCode AND m.msgStatus IN ('삭제', '미삭제') ")
 //    List<MsgListDTO> findReceivedMessages(@Param("userCode") int userCode, @Param("offset") int offset,@Param("limit") int limit, @Param("isReceived") Boolean isReceived);
+
+
+//    @Query(value = "SELECT u.user_code, u.name, u.id, m.msg_code, m.sender_code, m.receiver_code, m.msg_content, m.msg_status, m.msg_time, md.msg_delete_code " +
+//            "FROM message_and_delete m " +
+//            "LEFT JOIN user u ON (CASE WHEN :isReceived THEN m.sender_code ELSE m.receiver_code END) = u.user_code " +
+//            "JOIN m.msg_delete_info md " +
+//            "WHERE " +
+//            "(CASE WHEN :isReceived THEN m.receiver_code ELSE m.sender_code END) = :userCode AND " +
+//            "(md.msg_delete_code IN (1, CASE WHEN :isReceived THEN 2 ELSE 3 END)) " +
+//            "AND (m.msg_content LIKE :keyword OR u.name LIKE :keyword) " +
+//            "ORDER BY m.msg_time DESC " +
+//            "LIMIT :limit OFFSET :offset", nativeQuery = true)
+//    List<MsgListDTO> getMessages(
+//            @Param("userCode") int userCode,
+//            @Param("page") int page,
+//            @Param("offset") int offset,
+//            @Param("limit") int limit,
+//            @Param("isReceived") boolean isReceived,
+//            @Param("keyword") String keyword
+//
+//    );
 }

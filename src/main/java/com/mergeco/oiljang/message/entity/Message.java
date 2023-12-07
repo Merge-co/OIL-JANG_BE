@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "message_and_delete")
@@ -42,8 +43,8 @@ public class Message {
     private String msgStatus;
 
     @Column(name = "msg_time")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate msgTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime msgTime;
 
     @Column(name = "ref_product_code")
     private int refProductCode;
@@ -74,7 +75,7 @@ public class Message {
         msgStatus = val;
         return this;
     }
-    public Message msgTime(LocalDate val){
+    public Message msgTime(LocalDateTime val){
         msgTime = val;
         return this;
     }

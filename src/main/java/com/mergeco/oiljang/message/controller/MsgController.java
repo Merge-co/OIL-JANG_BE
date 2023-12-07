@@ -4,24 +4,20 @@ import com.mergeco.oiljang.common.paging.JpqlPagingButton;
 import com.mergeco.oiljang.common.restApi.LoginMessage;
 import com.mergeco.oiljang.common.restApi.ResponseMessage;
 import com.mergeco.oiljang.message.dto.*;
+import com.mergeco.oiljang.message.repository.MsgRepository;
 import com.mergeco.oiljang.message.service.MsgService;
-import com.mergeco.oiljang.product.dto.ProductListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @Api(tags = "쪽지 컨트롤러")
@@ -29,8 +25,11 @@ public class MsgController {
 
     public final MsgService msgService;
 
-    public MsgController(MsgService msgService) {
+    public final MsgRepository msgRepository;
+
+    public MsgController(MsgService msgService, MsgRepository msgRepository) {
         this.msgService = msgService;
+        this.msgRepository = msgRepository;
     }
 
 //    @GetMapping("/regist")
@@ -55,46 +54,7 @@ public class MsgController {
     }
 
 
-//    @GetMapping("/messages/{msgCode}/{userCode}")
-//    public ResponseEntity<ResponseMessage> selectSenderReceiver(@RequestBody MsgUserDTO msgUserDTO, @PathVariable int msgCode, @PathVariable UUID userCode){
 //
-//            HttpHeaders headers = new HttpHeaders();
-//
-//            headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-//
-//            List<MsgUserDTO> msgUserDTOList = msgService.selectSenderReceiver(msgCode, userCode);
-//            System.out.println("controller : " + msgUserDTO);
-//
-//            Map<String, Object> responseMap = new HashMap<>();
-//            responseMap.put("msgUserList", msgUserDTOList);
-//
-//            ResponseMessage responseMessage = new ResponseMessage(200,"쪽지 유저 정보" ,responseMap);
-//
-//            return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
-//    }
-
-//    @ApiOperation(value = "쪽지 모달 조회")
-//    @GetMapping("/users/{userCode}/products/{productCode}/messages")
-//    public ResponseEntity<ResponseMessage> selectReceiver(
-//            @PathVariable int userCode,
-//            @PathVariable int productCode
-//    ) {
-//
-//        HttpHeaders headers = new HttpHeaders();
-//
-//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-//
-//        List<MsgReceiverDTO> msgReceiverList = msgService.selectReceiver(userCode, productCode);
-//        System.out.println("controller: " + msgReceiverList);
-//
-//        Map<String, Object> responseMap = new HashMap<>();
-//        responseMap.put("msgReceiveList", msgReceiverList);
-//
-//        ResponseMessage responseMessage = new ResponseMessage(200, "쪽지 모달 receiver", responseMap);
-//
-//        return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
-//
-//    }
 
     @ApiOperation(value = "쪽지 상세 조회")
     @GetMapping("/messages/{msgCode}")
